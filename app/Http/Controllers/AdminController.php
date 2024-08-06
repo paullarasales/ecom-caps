@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class AdminController extends Controller
 {
     public function chat()
     {
-        return view('admin.chat');
+        $users = User::all();
+        return view('admin.chat', compact('users'));
     }
 
     public function profile()

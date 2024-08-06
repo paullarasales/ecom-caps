@@ -26,15 +26,33 @@ class ChatController extends Controller
         return response()->json(['status' => 'Message sent']);
     }
 
-    public function getMessages()
+    public function getMessages(Request $request)
     {
         $user = auth()->user();
+        $receiverId = $request->query('receiver_id');
 
-        $messages = Message::where(function($query) use ($user) {
-            $query->where('sender_id', $user->id)
-                ->orWhere('receiver_id', $user->id);
+        if (!$receiverId) {
+            return response()->json(['error' => 'Error fetching user id'], 404);
+        }
+
+        $messages = Message::where(function($query) use ($user, $receiverId) {
+            $query->where(function ($q) use ($user, $receiverId) {
+                $q->where('sender_id', $user->id)
+                    ->where('receiver_id', $receiverId);
+            })
+            ->orWhere(function ($q) use ($user, $receiverId) {
+                $q->where('sender_id', $receiverId)
+                    ->where('receiver_id', $user->id);
+            });
         })->get();
 
         return response()->json($messages);
+    }
+
+    public function getUsers()
+    {
+        $users = User::where('usertype', 'user')->get();
+
+        return response()->json($users);
     }
 }

@@ -8,7 +8,7 @@
             background-color: #f7fafc; 
         }
 
-         #message-list {
+        #message-list {
             flex: 1;
             overflow-y: auto;
             display: flex;
@@ -62,22 +62,51 @@
         #send-button:hover {
             background-color: #2563eb;
         }
+
+        #container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        #sidebar {
+            width: 40%;
+            padding: 1rem;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+        }
+
+        #chat-container-wrapper {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-list-item {
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        }
+
+        .user-list-item:hover {
+            background-color: #e2e8f0;
+        }
     </style>
 
-    <div class="flex h-full">
+    <div id="container">
         <!-- Sidebar -->
-        <div class="w-1/4 p-4 overflow-y-auto">
-            <h3 class="text-lg font-semibold mb-4">Customers</h3>
-            <div class="space-y-2">
+        <div id="sidebar">
+            <h3 class="text-lg font-semibold mb-4">Customer</h3>
+            <div id="user-list">
                 
             </div>
         </div>
 
-        <!-- Message Container -->
-        <div class="flex-1 bg-gray-100 p-4 overflow-y-auto">
+        <!-- Chat Container -->
+        <div id="chat-container-wrapper">
             <div id="chat-container">
                 <div id="message-list">
-                    
                 </div>
                 <div id="message-input-container">
                     <input type="text" id="message-input" placeholder="Type a message" class="flex-1 mr-2">
@@ -90,11 +119,65 @@
     <script>
         window.authUserId = @json(auth()->id());
         window.authUserType = @json(auth()->user()->usertype);
+        let currentReceiverId = null;
 
-        function getReceiverId() {
-            const receiverSelect = document.getElementById('receiver-select');
-            return receiverSelect ? receiverSelect.value : null;
+        async function fetchUserList() {
+            try {
+                const response = await fetch('/get-users');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const users = await response.json();
+                console.log(users);
+                const userList = document.getElementById('user-list');
+
+                userList.innerHTML = '';
+
+                users.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.className = 'user-list-item';
+                    userElement.textContent = user.name;
+                    userElement.dataset.userId = user.id;
+
+                    userElement.addEventListener('click', () => {
+                        currentReceiverId = user.id;
+                        fetchMessages();
+                    });
+
+                    userList.appendChild(userElement);
+                });
+            } catch (error) {
+                console.error('Error fetching user list:', error);
+            }
         }
+
+
+        async function fetchMessages() {
+            if (!currentReceiverId) return;
+
+            try {
+                const response = await fetch(`/get-messages?receiver_id=${currentReceiverId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const messages = await response.json();
+                console.log(messages);
+                const messageList = document.getElementById('message-list');
+
+                messageList.innerHTML = '';
+
+                messages.forEach(msg => {
+                    const msgElement = document.createElement('div');
+                    msgElement.className = `message ${msg.sender_id === window.authUserId ? 'sender' : 'receiver'}`;
+                    msgElement.textContent = msg.content;
+                    messageList.appendChild(msgElement);
+                });
+                messageList.scrollTop = messageList.scrollHeight;
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
+        }
+
 
         document.addEventListener('DOMContentLoaded', function() {
             const button = document.getElementById('send-button');
@@ -103,45 +186,21 @@
                 const messageInput = document.getElementById('message-input');
                 const message = messageInput.value;
 
-                if (message.trim() !== '') {
-                    const receiverId = window.authUserType === 'customer' ? null : getReceiverId(); 
-
+                if (message.trim() !== '' && currentReceiverId) {
                     await fetch('/send-message', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         },
-                        body: JSON.stringify({ message, receiver_id: receiverId })
+                        body: JSON.stringify({ message, receiver_id: currentReceiverId })
                     });
                     messageInput.value = '';
+                    fetchMessages();
                 }
             });
 
-            async function fetchMessages() {
-                try {
-                    const response = await fetch('/get-messages');
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const messages = await response.json();
-                    console.log(messages);
-                    const messageList = document.getElementById('message-list');
-
-                    messageList.innerHTML = '';
-
-                    messages.forEach(msg => {
-                        const msgElement = document.createElement('div');
-                        msgElement.className = `message ${msg.sender_id === window.authUserId ? 'sender' : 'receiver'}`;
-                        msgElement.textContent = msg.content;
-                        messageList.appendChild(msgElement);
-                    });
-                    messageList.scrollTop = messageList.scrollHeight;
-                } catch (error) {
-                    console.error('Error fetching messages:', error);
-                }
-            }
-
+            fetchUserList();
             setInterval(fetchMessages, 2000);
         });
     </script> 
