@@ -25,6 +25,8 @@ Route::get('/get-messages', [ChatController::class, 'getMessages']);
 Route::get('/get-users', [ChatController::class, 'getUsers']);
 
 Route::get('/admin/dashboard', [AdminController::class, 'chat'])->middleware(['auth', 'verified'])->name('admin.chat');
+
+
 Route::get('/dashbaord', [UserController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/others', [AdminController::class, 'others'])->middleware(['auth', 'verified'])->name('others');
 Route::get('/admin/profile', [AdminController::class, 'profile'])->middleware(['auth', 'verified'])->name('profile');

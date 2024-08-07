@@ -14,6 +14,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            margin: 10px 0;
         }
 
         .message {
@@ -27,12 +28,15 @@
             align-self: flex-end;
             background-color: #d1fae5; 
             text-align: right;
+            margin-right: 20px;
         }
 
         .receiver {
             align-self: flex-start;
             background-color: #edf2f7;
             text-align: left;
+            margin-left: 20px;
+            border: 1px solid yellow;
         }
 
         #message-input-container {
