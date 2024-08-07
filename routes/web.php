@@ -23,6 +23,7 @@ Route::middleware('auth')->group(function () {
 Route::post('/send-message', [ChatController::class, 'sendMessage']);
 Route::get('/get-messages', [ChatController::class, 'getMessages']);
 Route::get('/get-users', [ChatController::class, 'getUsers']);
+Route::get('/get-admin', [ChatController::class, 'getAdminAcc']);
 
 Route::get('/admin/dashboard', [AdminController::class, 'chat'])->middleware(['auth', 'verified'])->name('admin.chat');
 Route::get('/dashbaord', [UserController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
