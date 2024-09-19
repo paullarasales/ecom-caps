@@ -38,20 +38,28 @@ class ChatController extends Controller
         $messages = Message::where(function($query) use ($user, $receiverId) {
             $query->where(function ($q) use ($user, $receiverId) {
                 $q->where('sender_id', $user->id)
-                    ->where('receiver_id', $receiverId);
+                ->where('receiver_id', $receiverId);
             })
             ->orWhere(function ($q) use ($user, $receiverId) {
                 $q->where('sender_id', $receiverId)
-                    ->where('receiver_id', $user->id);
+                ->where('receiver_id', $user->id);
             });
         })->get();
 
         return response()->json($messages);
     }
 
+
     public function getUsers()
     {
         $users = User::where('usertype', 'user')->get();
+
+        return response()->json($users);
+    }
+
+    public function getAdminAcc()
+    {
+        $users = User::where('usertype', 'admin')->get();
 
         return response()->json($users);
     }

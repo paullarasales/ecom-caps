@@ -29,7 +29,15 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         if ($request->user()->usertype === 'admin') {
-            return redirect()->route('admin.chat');
+            return redirect()->route('admindashboard');
+        }
+        
+        if ($request->user()->usertype === 'owner') {
+            return redirect()->route('ownerdashboard');
+        }
+
+        if ($request->user()->usertype === 'manager') {
+            return redirect()->route('managerdashboard');
         }
 
         return redirect()->intended(route('dashboard', absolute: false));

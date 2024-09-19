@@ -101,7 +101,7 @@
     <div id="container">
         <!-- Sidebar -->
         <div id="sidebar">
-            <h3 class="text-lg font-semibold mb-4">Customer</h3>
+            <h3 class="text-lg font-semibold mb-4">Clients</h3>
             <div id="user-list">
                 
             </div>

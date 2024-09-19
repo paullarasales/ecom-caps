@@ -6,6 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 
 class User extends Authenticatable
 {
@@ -21,6 +24,13 @@ class User extends Authenticatable
         'email',
         'password',
         'usertype',
+        'firstname',
+        'lastname',
+        'birthday',
+        'phone',
+        'address',
+        'city',
+        'photo',
     ];
 
     /**
@@ -54,5 +64,22 @@ class User extends Authenticatable
     public function isCustomer()
     {
         return $this->usertype === 'user';
+    }
+
+    public function package(): HasMany
+    {
+        return $this->hasMany(Package::class);
+    }
+    public function faq(): HasMany
+    {
+        return $this->hasMany(Faqs::class);
+    }
+    public function post(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+    public function appointment(): HasMany
+    {
+        return $this->hasMany(Appointment::class);
     }
 }
