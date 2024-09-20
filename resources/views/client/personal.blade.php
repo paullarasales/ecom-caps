@@ -46,25 +46,57 @@
                                     <label for="city">City</label>
                                     {{-- <input type="text" name="city" id="city" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" /> --}}
                                     <select name="city" id="city" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
-                                        <option value="San Carlos City" {{ $user->city === 'San Carlos City' ? 'selected' : '' }}>San Carlos City</option>
-                                        <option value="Calasiao" {{ $user->city === 'Calasiao' ? 'selected' : '' }}>Calasiao</option>
-                                        <option value="Dagupan City" {{ $user->city === 'Dagupan City' ? 'selected' : '' }}>Dagupan City</option>
-                                        <option value="Sta. Barbara" {{ $user->city === 'Sta. Barbara' ? 'selected' : '' }}>Sta. Barbara</option>
-                                        <option value="Lingayen" {{ $user->city === 'Lingayen' ? 'selected' : '' }}>Lingayen</option>
-                                        <option value="Basista" {{ $user->city === 'Basista' ? 'selected' : '' }}>Basista</option>
-                                        <option value="Bayambang" {{ $user->city === 'Bayambang' ? 'selected' : '' }}>Bayambang</option>
-                                        <option value="Mangatarem" {{ $user->city === 'Mangatarem' ? 'selected' : '' }}>Mangatarem</option>
-                                        <option value="Urbiztondo" {{ $user->city === 'Urbiztondo' ? 'selected' : '' }}>Urbiztondo</option>
+                                        <option selected disabled></option>
+                                        <option value="Agno" {{ $user->city === 'Agno' ? 'selected' : '' }}>Agno</option>
                                         <option value="Aguilar" {{ $user->city === 'Aguilar' ? 'selected' : '' }}>Aguilar</option>
+                                        <option value="Alaminos City" {{ $user->city === 'Alaminos City' ? 'selected' : '' }}>Alaminos City</option>
+                                        <option value="Alcala" {{ $user->city === 'Alcala' ? 'selected' : '' }}>Alcala</option>
+                                        <option value="Anda" {{ $user->city === 'Anda' ? 'selected' : '' }}>Anda</option>
+                                        <option value="Asingan" {{ $user->city === 'Asingan' ? 'selected' : '' }}>Asingan</option>
+                                        <option value="Balungao" {{ $user->city === 'Balungao' ? 'selected' : '' }}>Balungao</option>
+                                        <option value="Bani" {{ $user->city === 'Bani' ? 'selected' : '' }}>Bani</option>
+                                        <option value="Basista" {{ $user->city === 'Basista' ? 'selected' : '' }}>Basista</option>
+                                        <option value="Bautista" {{ $user->city === 'Bautista' ? 'selected' : '' }}>Bautista</option>
+                                        <option value="Bayambang" {{ $user->city === 'Bayambang' ? 'selected' : '' }}>Bayambang</option>
+                                        <option value="Binalonan" {{ $user->city === 'Binalonan' ? 'selected' : '' }}>Binalonan</option>
+                                        <option value="Binmaley" {{ $user->city === 'Binmaley' ? 'selected' : '' }}>Binmaley</option>
+                                        <option value="Bolinao" {{ $user->city === 'Bolinao' ? 'selected' : '' }}>Bolinao</option>
                                         <option value="Bugallon" {{ $user->city === 'Bugallon' ? 'selected' : '' }}>Bugallon</option>
-                                        <option value="Mangaldan" {{ $user->city === 'Mangaldan' ? 'selected' : '' }}>Mangaldan</option>
-                                        <option value="Mapandan" {{ $user->city === 'Mapandan' ? 'selected' : '' }}>Mapandan</option>
-                                        <option value="Manaoag" {{ $user->city === 'Manaoag' ? 'selected' : '' }}>Manaoag</option>
-                                        <option value="San Fabian" {{ $user->city === 'San Fabian' ? 'selected' : '' }}>San Fabian</option>
-                                        <option value="Urdaneta City" {{ $user->city === 'Urdaneta City' ? 'selected' : '' }}>Urdaneta City</option>
-                                        <option value="Villasis" {{ $user->city === 'Villasis' ? 'selected' : '' }}>Villasis</option>
+                                        <option value="Burgos" {{ $user->city === 'Burgos' ? 'selected' : '' }}>Burgos</option>
+                                        <option value="Calasiao" {{ $user->city === 'Calasiao' ? 'selected' : '' }}>Calasiao</option>
+                                        <option value="Dasol" {{ $user->city === 'Dasol' ? 'selected' : '' }}>Dasol</option>
+                                        <option value="Dagupan City" {{ $user->city === 'Dagupan City' ? 'selected' : '' }}>Dagupan City</option>
+                                        <option value="Infanta" {{ $user->city === 'Infanta' ? 'selected' : '' }}>Infanta</option>
+                                        <option value="Labrador" {{ $user->city === 'Labrador' ? 'selected' : '' }}>Labrador</option>
+                                        <option value="Laoac" {{ $user->city === 'Laoac' ? 'selected' : '' }}>Laoac</option>
+                                        <option value="Lingayen" {{ $user->city === 'Lingayen' ? 'selected' : '' }}>Lingayen</option>
+                                        <option value="Mabini" {{ $user->city === 'Mabini' ? 'selected' : '' }}>Mabini</option>
                                         <option value="Malasiqui" {{ $user->city === 'Malasiqui' ? 'selected' : '' }}>Malasiqui</option>
+                                        <option value="Manaoag" {{ $user->city === 'Manaoag' ? 'selected' : '' }}>Manaoag</option>
+                                        <option value="Mangaldan" {{ $user->city === 'Mangaldan' ? 'selected' : '' }}>Mangaldan</option>
+                                        <option value="Mangatarem" {{ $user->city === 'Mangatarem' ? 'selected' : '' }}>Mangatarem</option>
+                                        <option value="Mapandan" {{ $user->city === 'Mapandan' ? 'selected' : '' }}>Mapandan</option>
+                                        <option value="Natividad" {{ $user->city === 'Natividad' ? 'selected' : '' }}>Natividad</option>
+                                        <option value="Pozorrubio" {{ $user->city === 'Pozorrubio' ? 'selected' : '' }}>Pozorrubio</option>
+                                        <option value="Rosales" {{ $user->city === 'Rosales' ? 'selected' : '' }}>Rosales</option>
+                                        <option value="San Carlos City" {{ $user->city === 'San Carlos City' ? 'selected' : '' }}>San Carlos City</option>
+                                        <option value="San Fabian" {{ $user->city === 'San Fabian' ? 'selected' : '' }}>San Fabian</option>
+                                        <option value="San Jacinto" {{ $user->city === 'San Jacinto' ? 'selected' : '' }}>San Jacinto</option>
+                                        <option value="San Manuel" {{ $user->city === 'San Manuel' ? 'selected' : '' }}>San Manuel</option>
+                                        <option value="San Nicolas" {{ $user->city === 'San Nicolas' ? 'selected' : '' }}>San Nicolas</option>
+                                        <option value="San Quintin" {{ $user->city === 'San Quintin' ? 'selected' : '' }}>San Quintin</option>
+                                        <option value="Santa Barbara" {{ $user->city === 'Santa Barbara' ? 'selected' : '' }}>Santa Barbara</option>
+                                        <option value="Santa Maria" {{ $user->city === 'Santa Maria' ? 'selected' : '' }}>Santa Maria</option>
+                                        <option value="Santo Tomas" {{ $user->city === 'Santo Tomas' ? 'selected' : '' }}>Santo Tomas</option>
+                                        <option value="Sison" {{ $user->city === 'Sison' ? 'selected' : '' }}>Sison</option>
+                                        <option value="Sual" {{ $user->city === 'Sual' ? 'selected' : '' }}>Sual</option>
+                                        <option value="Tayug" {{ $user->city === 'Tayug' ? 'selected' : '' }}>Tayug</option>
+                                        <option value="Umingan" {{ $user->city === 'Umingan' ? 'selected' : '' }}>Umingan</option>
+                                        <option value="Urdaneta City" {{ $user->city === 'Urdaneta City' ? 'selected' : '' }}>Urdaneta City</option>
+                                        <option value="Urbiztondo" {{ $user->city === 'Urbiztondo' ? 'selected' : '' }}>Urbiztondo</option>
+                                        <option value="Villasis" {{ $user->city === 'Villasis' ? 'selected' : '' }}>Villasis</option>
                                     </select>
+                                    
                                 </div>
     
                                 <div class="md:col-span-5">

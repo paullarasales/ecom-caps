@@ -45,6 +45,9 @@
 
     </div>
 
+    
+    
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -79,7 +82,7 @@
     });
     </script>
     
-    <div class="row jsutify-content-center">
+    <div class="row jsutify-content-center ">
         <div class="col-md-8">
             <div class="card lg:mx-5 lg:my-5">
                 <div class="card-header">
@@ -111,6 +114,14 @@
             </div>
         </div>
     </div>
+
+    {{-- <div class="text-center flex flex-wrap justify-center gap-2 py-2 my-2">
+        <h2 class="bg-green-500 w-[80px] sm:w-[100px] py-2 text-gray-100 rounded-2xl text-sm sm:text-base">Booked</h2>
+        <h2 class="bg-yellow-500 w-[80px] sm:w-[100px] py-2 text-gray-100 rounded-2xl text-sm sm:text-base">Pending</h2>
+        <h2 class="bg-red-500 w-[80px] sm:w-[100px] py-2 text-gray-100 rounded-2xl text-sm sm:text-base">Cancelled</h2>
+        <h2 class="bg-blue-500 w-[80px] sm:w-[100px] py-2 text-gray-100 rounded-2xl text-sm sm:text-base">Done</h2>
+    </div>
+     --}}
 
 
 

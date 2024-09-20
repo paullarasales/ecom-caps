@@ -1,11 +1,103 @@
 <x-admin-layout>
 
-<form action="" method="POST">
+<form action="{{ route('directsave') }}" method="POST">
     @csrf
 <div class="min-h-screen p-6 flex items-center justify-center">
     <div class="container max-w-screen-lg mx-auto">
         <div>
             <div class="bg-white rounded shadow-lg shadow-yellow-100 p-4 px-4 md:p-8 mb-6">
+                <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+                    <div class="text-gray-600">
+                        <p class="font-medium text-lg">Personal Details</p>
+                        <p>Please fill out all the fields.</p>
+                    </div>
+
+                <div class="lg:col-span-2">
+                    <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+                        <div class="md:col-span-3">
+                            <label for="firstname">First Name</label>
+                            <input type="text" name="firstname" id="firstname" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label for="lastname">Last Name</label>
+                            <input type="text" name="lastname" id="lastname" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label for="age">Birthday</label>
+                            <input type="date" name="birthday" id="birthday" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" min="18" value="" />
+                        </div>
+
+                        <div class="md:col-span-3">
+                            <label for="email">Phone Number</label>
+                            <input type="tel" name="phone" id="phone" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
+                        </div>
+
+                        <div class="md:col-span-3">
+                            <label for="address">Home Address / Street</label>
+                            <input type="text" name="address" id="address" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label for="city">City</label>
+                            {{-- <input type="text" name="city" id="city" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" /> --}}
+                            <select name="city" id="city" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                                <option selected disabled></option>
+                                <option value="Agno" >Agno</option>
+                                <option value="Aguilar" >Aguilar</option>
+                                <option value="Alaminos City" >Alaminos City</option>
+                                <option value="Alcala" >Alcala</option>
+                                <option value="Anda" >Anda</option>
+                                <option value="Asingan" >Asingan</option>
+                                <option value="Balungao" >Balungao</option>
+                                <option value="Bani" >Bani</option>
+                                <option value="Basista" >Basista</option>
+                                <option value="Bautista" >Bautista</option>
+                                <option value="Bayambang" >Bayambang</option>
+                                <option value="Binalonan" >Binalonan</option>
+                                <option value="Binmaley" >Binmaley</option>
+                                <option value="Bolinao" >Bolinao</option>
+                                <option value="Bugallon" >Bugallon</option>
+                                <option value="Burgos" >Burgos</option>
+                                <option value="Calasiao" >Calasiao</option>
+                                <option value="Dasol" >Dasol</option>
+                                <option value="Dagupan City" >Dagupan City</option>
+                                <option value="Infanta" >Infanta</option>
+                                <option value="Labrador" >Labrador</option>
+                                <option value="Laoac" >Laoac</option>
+                                <option value="Lingayen" >Lingayen</option>
+                                <option value="Mabini" >Mabini</option>
+                                <option value="Malasiqui" >Malasiqui</option>
+                                <option value="Manaoag" >Manaoag</option>
+                                <option value="Mangaldan" >Mangaldan</option>
+                                <option value="Mangatarem" >Mangatarem</option>
+                                <option value="Mapandan" >Mapandan</option>
+                                <option value="Natividad" >Natividad</option>
+                                <option value="Pozorrubio" >Pozorrubio</option>
+                                <option value="Rosales" >Rosales</option>
+                                <option value="San Carlos City" >San Carlos City</option>
+                                <option value="San Fabian" >San Fabian</option>
+                                <option value="San Jacinto" >San Jacinto</option>
+                                <option value="San Manuel" >San Manuel</option>
+                                <option value="San Nicolas" >San Nicolas</option>
+                                <option value="San Quintin" >San Quintin</option>
+                                <option value="Santa Barbara" >Santa Barbara</option>
+                                <option value="Santa Maria" >Santa Maria</option>
+                                <option value="Santo Tomas" >Santo Tomas</option>
+                                <option value="Sison" >Sison</option>
+                                <option value="Sual" >Sual</option>
+                                <option value="Tayug" >Tayug</option>
+                                <option value="Umingan" >Umingan</option>
+                                <option value="Urdaneta City" >Urdaneta City</option>
+                                <option value="Urbiztondo" >Urbiztondo</option>
+                                <option value="Villasis" >Villasis</option>
+                            </select>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
                 <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                         <div class="text-gray-600">
                             <p class="font-medium text-lg">Event Details</p>
@@ -210,6 +302,20 @@
     }
 </script>
 
-
+@if(session('alert'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('alert') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@elseif(session('error'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('error') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@endif
 
 </x-admin-layout>

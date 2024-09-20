@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -86,9 +87,62 @@ class AppointmentController extends Controller
         $appointment->atime = 'null';
         $appointment->save();
 
-        return redirect()->route('dashboard')->with('alert', 'Request Submitted');
+        return redirect()->route('dashboard')->with('alert', 'Request Submitted. Your reference number is ' . $appointment->reference);
     }
     
+    public function directsave(Request $request)
+    {
+        $request->validate([
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'birthday' => 'required',
+            'phone' => 'required',
+            'address' => 'required',
+            'city' => 'required',
+            'location' => 'required',
+            'edate' => 'required|date|after_or_equal:today',
+            'etime' => 'required',
+            'type' => 'required',
+            'package_id' => 'required|exists:packages,package_id',
+        ]);
+
+        $existingAppointments = Appointment::where('edate', $request->edate)
+                                            ->where('status', 'accepted')
+                                            ->count();
+    
+        if ($existingAppointments >= 3) {
+            // Redirect back with an error message
+            return redirect()->route('direct')->with('alert', 'The selected date is fully booked, please select other date.');
+        }
+
+        // Create and save new user
+        $user = new User();
+        $user->firstname = $request->input('firstname');
+        $user->lastname = $request->input('lastname');
+        $user->birthday = $request->input('birthday');
+        $user->phone = $request->input('phone');
+        $user->address = $request->input('address');
+        $user->city = $request->input('city');
+        $user->save();
+
+        // Create and save new appointment
+        $appointment = new Appointment();
+        $appointment->user_id = $user->id; // Set the foreign key
+        $appointment->location = $request->input('location');
+        $appointment->edate = $request->input('edate');
+        $appointment->etime = $request->input('etime');
+        $appointment->type = $request->input('type');
+        $appointment->package_id = $request->input('package_id');
+        $appointment->reference = strtoupper(uniqid('APP'));
+        $appointment->adate = now();
+        $appointment->atime = 'null';
+        $appointment->theme ='undefined';
+        $appointment->status = 'booked'; // Consider using null instead of 'null' if you want it to be a database NULL
+        $appointment->save();
+
+        return redirect()->back()->with('alert', 'User and appointment created successfully.');
+    }
+
 
 
     //STATUS

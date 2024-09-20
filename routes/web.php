@@ -63,6 +63,7 @@ Route::get('/admin/returned', [AppointmentsPagesController::class, 'returned'])-
 Route::get('/admin/cancelled', [AppointmentsPagesController::class, 'cancelled'])->middleware(['auth', 'verified','admin'])->name('cancelled');
 Route::get('/admin/done', [AppointmentsPagesController::class, 'done'])->middleware(['auth', 'verified','admin'])->name('done');
 Route::get('/admin/direct', [AppointmentsPagesController::class, 'direct'])->middleware(['auth', 'verified','admin'])->name('direct');
+Route::post('/admin/direct/save', [AppointmentController::class, 'directsave'])->middleware(['auth', 'verified','admin'])->name('directsave');
 
 
 //ADMIN PACKAGES
@@ -176,8 +177,8 @@ Route::get('/events', [UserController::class, 'eventsView'])->middleware(['auth'
 Route::get('/book-form', [UserController::class, 'book'])->middleware(['auth', 'verified','user'])->name('book-form');
 Route::get('/form', [UserController::class, 'form'])->middleware(['auth', 'verified','user'])->name('form');
 Route::get('/idverify', [UserController::class, 'idverify'])->middleware(['auth', 'verified','user'])->name('idverify');
-Route::get('/personal{id}', [UserController::class, 'personal'])->middleware(['auth', 'verified','user'])->name('personal');
-Route::patch('/update-personal{id}', [UserController::class, 'update'])->middleware(['auth', 'verified','user'])->name('update-personal');
+Route::get('/personal/{id}', [UserController::class, 'personal'])->middleware(['auth', 'verified','user'])->name('personal');
+Route::patch('/update-personal/{id}', [UserController::class, 'update'])->middleware(['auth', 'verified','user'])->name('update-personal');
 
 //VERIFY
 Route::get('/verify/{id}/edit', [VerifyIdController::class, 'edit'])

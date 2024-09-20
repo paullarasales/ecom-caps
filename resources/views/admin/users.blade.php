@@ -49,7 +49,7 @@
                         @endif
                     </td>
                     <td class="px-6 py-4">{{ $user->verifystatus }}</td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 flex justify-between gap-2">
                         <a href="{{route('usertype-edit', $user->id)}}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Edit
                             <i class="fa-regular fa-pen-to-square ml-3"></i>

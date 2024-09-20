@@ -14,7 +14,7 @@
     </div>
 
     <div class="max-w-5xl mx-auto">
-        <div class="grid grid-cols-1 gap-6">
+        <div class="grid grid-cols-1 gap-6 rounded shadow-lg shadow-yellow-100 p-4 px-4">
             <!-- List of customizable items -->
             <div class="flex justify-between">
                 <div class="grid grid-cols-1 gap-4">
