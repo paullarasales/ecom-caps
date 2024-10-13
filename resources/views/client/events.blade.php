@@ -26,6 +26,13 @@
         font-size: 18px; /* Adjust this value for phones */
     }
 }
+.fc-event-title {
+    color: white;
+}
+
+.fc-event.blocked-event {
+    color: white;
+}
 
     </style>
 
@@ -39,7 +46,7 @@
     </div>
 
 
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
             const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -84,7 +91,84 @@
             });
             calendar.render();
         });
+    </script> --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: '{{ route("events") }}',
+                eventSourceSuccess: function(content) {
+                const eventCounts = {}; // Object to store the count of events by date
+
+                // Count booked events by date
+                content.forEach(event => {
+                    if (event.color === '#ffc107') { // Only count booked events
+                        const eventDate = event.start.slice(0, 10); // Extract the date part (YYYY-MM-DD)
+                        if (!eventCounts[eventDate]) {
+                            eventCounts[eventDate] = 0;
+                        }
+                        eventCounts[eventDate]++;
+                    }
+                });
+
+                // Modify the events based on the aggregation
+                return content.map((event) => {
+                    const eventDate = event.start.slice(0, 10); // Extract the date part (YYYY-MM-DD)
+                    if (event.color === '#ffc107') {
+                        if (eventCounts[eventDate] > 0) {
+                            // Set the title as "Booked (n)" only for the first occurrence of a booked event
+                            event.title = `Booked ${eventCounts[eventDate]} event(s)`;
+                            // Hide this event by removing it after setting its title
+                            eventCounts[eventDate] = 0; // Prevent counting again
+                        } else {
+                            // For subsequent events, return null to hide them
+                            return null; // Hide subsequent booked events
+                        }
+                    }
+                    return event; // Return modified event or null
+                }).filter(event => event !== null); // Filter out null values
+            },
+                eventMouseEnter: function(info) {
+                    // Create a tooltip element
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'tooltip';
+                    if (info.event.classNames.includes('blocked-event')) {
+                    tooltip.innerText = info.event.title; // Title of the blocked date
+                    } else {
+                        tooltip.innerText = 'We can cater up to 3 events per day';
+                    } // Use the title of the event
+                    
+                    // Style the tooltip
+                    tooltip.style.position = 'absolute';
+                    tooltip.style.background = '#EEEDEB';
+                    tooltip.style.color = '#021526';
+                    tooltip.style.padding = '5px 10px';
+                    tooltip.style.borderRadius = '4px';
+                    tooltip.style.fontSize = '15px';
+                    tooltip.style.pointerEvents = 'none';
+                    
+                    document.body.appendChild(tooltip);
+    
+                    // Position the tooltip near the event
+                    tooltip.style.left = (info.jsEvent.pageX + 10) + 'px';
+                    tooltip.style.top = (info.jsEvent.pageY + 10) + 'px';
+    
+                    // Store the tooltip reference in the event element
+                    info.el.tooltip = tooltip;
+                },
+                eventMouseLeave: function(info) {
+                    // Remove the tooltip when the mouse leaves the event
+                    if (info.el.tooltip) {
+                        info.el.tooltip.remove();
+                        info.el.tooltip = null;
+                    }
+                }
+            });
+            calendar.render();
+        });
     </script>
+    
     
     <div class="row jsutify-content-center">
         <div class="col-md-8">

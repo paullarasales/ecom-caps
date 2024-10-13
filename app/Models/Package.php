@@ -28,5 +28,9 @@ class Package extends Model
     {
         return $this->hasMany(Appointment::class);
     }
+    public function custom(): HasMany
+    {
+        return $this->hasMany(Custom::class);
+    }
 
 }

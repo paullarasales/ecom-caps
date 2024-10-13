@@ -16,6 +16,12 @@
                 <label class="text-gray-900 mt-2" for="">Email</label>
                 <input class="text-gray-900 rounded-md h-12 w-full mb-1 dark:bg-gray-400 focus:border-yellow-500 focus:ring-yellow-500" type="text" name="email" value="{{$user->email}}">
 
+                <label class="text-gray-900 mt-2" for="">First Name</label>
+                <input class="text-gray-900 rounded-md h-12 w-full mb-1 dark:bg-gray-400 focus:border-yellow-500 focus:ring-yellow-500" type="text" name="firstname" value="{{$user->firstname}}">
+
+                <label class="text-gray-900 mt-2" for="">Last Name</label>
+                <input class="text-gray-900 rounded-md h-12 w-full mb-1 dark:bg-gray-400 focus:border-yellow-500 focus:ring-yellow-500" type="text" name="lastname" value="{{$user->lastname}}">
+
                 <label class="text-gray-900 mt-2" for="">User Type</label>
                 {{-- <input class="text-gray-300 rounded-md h-12 w-full mb-1 dark:bg-gray-800 focus:border-yellow-500 focus:ring-yellow-500" type="text" name="usertype" value="{{$user->usertype}}"> --}}
                 <select name="usertype" id="usertype"  class="text-gray-900 rounded-md h-12 w-full mb-1 dark:bg-gray-400 focus:border-yellow-500 focus:ring-yellow-500">

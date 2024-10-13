@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Models\Package;
+use App\Models\Blockeddate;
 
 class AppointmentController extends Controller
 {
@@ -38,13 +40,25 @@ class AppointmentController extends Controller
             'etime' => 'required',
             'type' => 'required',
             'package_id' => 'required|exists:packages,package_id',
-            'appointment_date' => 'required|date',
+            'appointment_date' => [
+            'required',
+            'date',
+            'before_or_equal:' . Carbon::parse($request->edate)->subDays(7)->toDateString(), // Ensure appointment_date is at least 7 days before edate
+        ],
             'appointment_time' => 'required|date_format:H:i',
         ]);
 
+        // Check if the selected date is blocked
+        $blockedDateExists = BlockedDate::where('blocked_date', $request->edate)->exists();
+
+        if ($blockedDateExists) {
+            // Redirect back with an error message if the date is blocked
+            return redirect()->route('book-form')->with('error', 'The selected date is blocked, please select another date.');
+        }
+
         // Check if there are already 3 accepted event on the same date
         $existingAppointments = Appointment::where('edate', $request->edate)
-                                            ->where('status', 'accepted')
+                                            ->where('status', 'booked')
                                             ->count();
     
         if ($existingAppointments >= 3) {
@@ -95,7 +109,7 @@ class AppointmentController extends Controller
         $request->validate([
             'firstname' => 'required',
             'lastname' => 'required',
-            'birthday' => 'required',
+            'birthday' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
             'phone' => 'required',
             'address' => 'required',
             'city' => 'required',
@@ -106,13 +120,21 @@ class AppointmentController extends Controller
             'package_id' => 'required|exists:packages,package_id',
         ]);
 
+        // Check if the selected date is blocked
+        $blockedDateExists = BlockedDate::where('blocked_date', $request->edate)->exists();
+
+        if ($blockedDateExists) {
+            // Redirect back with an error message if the date is blocked
+            return redirect()->route('direct')->with('error', 'The selected date is blocked, please select another date.');
+        }
+
         $existingAppointments = Appointment::where('edate', $request->edate)
                                             ->where('status', 'accepted')
                                             ->count();
     
         if ($existingAppointments >= 3) {
             // Redirect back with an error message
-            return redirect()->route('direct')->with('alert', 'The selected date is fully booked, please select other date.');
+            return redirect()->route('direct')->with('error', 'The selected date is fully booked, please select other date.');
         }
 
         // Create and save new user
@@ -153,6 +175,13 @@ class AppointmentController extends Controller
         // Get the date of the appointment
         $appointmentDate = $appointment->edate; // Assuming 'edate' is a field in the appointments table
 
+        $blockedDateExists = BlockedDate::where('blocked_date', $appointmentDate)->exists();
+
+        if ($blockedDateExists) {
+            // Redirect back with an error message if the date is blocked
+            return redirect()->route('pending')->with('error', 'The selected date is blocked, please select another date.');
+        }
+
         // Count the number of accepted appointments on the same date
         $acceptedAppointmentsCount = Appointment::where('edate', $appointmentDate)
                                                     ->where('status', 'booked')
@@ -170,6 +199,38 @@ class AppointmentController extends Controller
 
         // Redirect back or to a specific route
         return redirect("admin/pending")->with('alert', 'Request Successfully Accepted');
+    }
+    public function rebook(Request $request, string $appointment_id)
+    {
+        $appointment = Appointment::findOrFail($appointment_id);
+        
+        // Get the date of the appointment
+        $appointmentDate = $appointment->edate; // Assuming 'edate' is a field in the appointments table
+
+        $blockedDateExists = BlockedDate::where('blocked_date', $appointmentDate)->exists();
+
+        if ($blockedDateExists) {
+            // Redirect back with an error message if the date is blocked
+            return redirect()->route('cancelled')->with('error', 'The selected date is blocked, please select another date.');
+        }
+
+        // Count the number of accepted appointments on the same date
+        $acceptedAppointmentsCount = Appointment::where('edate', $appointmentDate)
+                                                    ->where('status', 'booked')
+                                                    ->count();
+
+        // Check if the count is less than 3
+        if ($acceptedAppointmentsCount >= 3) {
+            // Redirect back with an error message
+            return redirect("admin/pending")->with('error', 'Date is Fully booked');
+        }
+
+        // Update appointment status to "accepted"
+        $appointment->status = 'booked';
+        $appointment->save();
+
+        // Redirect back or to a specific route
+        return redirect("admin/cancelled")->with('alert', 'Event Successfully Re-booked');
     }
     public function done(Request $request, string $appointment_id)
     {
@@ -217,6 +278,75 @@ class AppointmentController extends Controller
             // Redirect back or to a specific route with an error message
             return redirect("admin/booked")->with('error', 'The event is not eligible for cancellation.');
         }
+    }
+
+    //Details Edit
+    public function detailsedit(string $appointment_id)
+    {
+        $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $appointment = Appointment::find($appointment_id);
+
+        return view('admin.booked-edit', compact('packages', 'appointment'));
+    }
+
+    public function save(Request $request, string $appointment_id)
+    {
+        $request->validate([
+            'location' => 'required',
+            'edate' => 'required|date|after_or_equal:today',
+            'etime' => 'required',
+            'type' => 'required',
+            'package_id' => 'required|exists:packages,package_id',
+        ]);
+
+        $appointment = Appointment::findOrFail($appointment_id);
+        
+        // Update appointment details
+        $appointment->location = $request->input('location');
+        $appointment->edate = $request->input('edate');
+        $appointment->etime = $request->input('etime');
+        $appointment->type = $request->input('type');
+        $appointment->package_id = $request->input('package_id');
+
+        // Save the updated appointment
+        $appointment->save();
+
+        // Redirect back or to a success page
+        return redirect()->route('booked')->with('alert', 'Event updated successfully!');
+    }
+
+
+    //BLOCK UNBLOCK
+    public function block(Request $request)
+    {
+        $request->validate([
+            'blocked_date' => 'required|date|unique:blockeddates,blocked_date',
+            'reason' => 'nullable|string|max:255',
+        ]);
+
+        // Save the blocked date and reason to the database
+        BlockedDate::create([
+            'blocked_date' => $request->blocked_date,
+            'reason' => $request->reason,
+        ]);
+
+        return redirect()->back()->with('alert', 'Date blocked successfully!');
+    }
+    public function unblock(Request $request)
+    {
+        $request->validate([
+            'unblocked_date' => 'required|date',
+        ]);
+
+        // Get the date to unblock
+        $unblockedDate = $request->input('unblocked_date');
+
+        // Logic to unblock the date (assuming you have a model for appointments)
+        // For example, if you have a `BlockedDate` model that tracks blocked dates:
+        BlockedDate::where('blocked_date', $unblockedDate)->delete();
+
+        // Optional: Return a response or redirect with a success message
+        return redirect()->back()->with('alert', 'Date unblocked successfully!');
     }
 
     /**

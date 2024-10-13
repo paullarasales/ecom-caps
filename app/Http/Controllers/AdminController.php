@@ -111,6 +111,7 @@ class AdminController extends Controller
 
         $usersByCity = User::select('city', DB::raw('count(*) as count'))
             ->where('usertype', 'user')
+            ->whereNotNull('city')
             ->groupBy('city')
             ->orderBy('count', 'desc')
             ->take($topCities)

@@ -58,23 +58,34 @@
                     <h4 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">{{$appointment->type}}</h4>
                     {{-- <h4 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">{{$appointment->theme}}</h4> --}}
                     <h4 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">{{ $appointment->package->packagename }}</h4>
-                    <div class="flex justify-end gap-3">
+                    <div class="flex justify-end gap-3 capitalize">
                         <form action="{{  route('appointment.done', $appointment->appointment_id) }}" method="POST">
                             @csrf
                             @method("PUT")
                             <input type="hidden" name="status" value="{{$appointment->status}}">
-                            <input type="submit" name="submit" value="Done" class="inline-flex cursor-pointer items-center px-2 py-2 text-xs sm:text-sm md:text-base font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"></input>
+                            <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                Done
+                                <i class="fa-solid fa-check ml-3"></i>
+                            </button>                        
                         </form>
+                        <a href="{{ route('details.edit', $appointment->appointment_id) }}" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            Edit
+                            <i class="fa-regular fa-pen-to-square ml-3"></i>
+                        </a>
                         <form action="{{  route('appointment.cancel', $appointment->appointment_id) }}" method="POST">
                             @csrf
                             @method("PUT")
                             <input type="hidden" name="status" value="{{$appointment->status}}">
-                            <input type="submit" name="submit" value="Cancel" class="inline-flex cursor-pointer items-center px-2 py-2 text-xs sm:text-sm md:text-base font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"></input>
+                            {{-- <input type="submit" name="submit" value="Cancel" class="inline-flex cursor-pointer items-center px-2 py-2 text-xs sm:text-sm md:text-base font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"></input> --}}
+                            <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                Cancel
+                                <i class="fa-solid fa-ban ml-3"></i>
+                            </button> 
                         </form>
-                        <a href="" class="inline-flex capitalize  items-center px-2 py-2 text-xs sm:text-sm md:text-base font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        {{-- <a href="" class="inline-flex capitalize  items-center px-2 py-2 text-xs sm:text-sm md:text-base font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Chat
                             <i class="fa-solid fa-message ml-3"></i>
-                        </a>
+                        </a> --}}
                     </div>
                 </div>
             </div>

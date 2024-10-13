@@ -61,6 +61,16 @@ class User extends Authenticatable
         return $this->usertype === 'admin';
     }
 
+    public function isManager()
+    {
+        return $this->usertype === 'manager';
+    }
+
+    public function isOwner()
+    {
+        return $this->usertype === 'owner';
+    }
+
     public function isCustomer()
     {
         return $this->usertype === 'user';
@@ -81,5 +91,9 @@ class User extends Authenticatable
     public function appointment(): HasMany
     {
         return $this->hasMany(Appointment::class);
+    }
+    public function custom(): HasMany
+    {
+        return $this->hasMany(Custom::class);
     }
 }

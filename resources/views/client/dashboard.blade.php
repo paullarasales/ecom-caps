@@ -12,15 +12,19 @@
 
     <main class="pt-8 mx-5 pb-16 lg:pt-16 lg:pb-24 bg-white antialiased">
         <div class="text-center">
+
+            <h2 class="font-heading mb-4 bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-80 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
+                        Previous Events And Updates
+            </h2>
             
-            <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
+            {{-- <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
                 Previous <span class="text-yellow-600">Events</span> and <span class="text-yellow-600">Updates</span>
-            </h3>
+            </h3> --}}
 
         </div>
         <div class="flex justify-between px-4  mx-auto max-w-screen-xl border border-yellow-700">
             <article class="mx-auto w-full max-w-6xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
-                @foreach ($post as $pt)
+                @forelse ($post as $pt)
                 <div>
                     <p class="lead text-md mt-10">{{ $pt->postdesc }}</p>
                 </div>
@@ -49,7 +53,9 @@
                         </a>                
                     </div> --}}
                     <hr class="my-8 border-t border-yellow-700"> <!-- Horizontal line after each blog -->
-                @endforeach
+                @empty
+                    <p class="text-center text-gray-600 py-10">No post and updates at the moment.</p>
+                @endforelse
             </article>
         </div>
     </main>

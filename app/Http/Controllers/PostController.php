@@ -54,7 +54,18 @@ class PostController extends Controller
         $post->postimage = $imageData; // Save all image paths as an array
         $post->save();
     
-        return redirect()->route('adminpost')->with('alert', 'Uploaded successfully!');
+        if (Auth::check()) {
+            $user = Auth::user();
+        
+            if ($user->usertype === 'admin') {
+                return redirect()->route('adminpost')->with('alert', 'Uploaded successfully!');
+            } elseif ($user->usertype === 'owner') {
+                return redirect()->route('ownerpost')->with('alert', 'Uploaded successfully!');
+            }
+            else {
+                return redirect()->route('managerpost')->with('alert', 'Uploaded successfully!');
+            }
+        }
     }
 
     /**
@@ -72,6 +83,16 @@ class PostController extends Controller
     {
         $post = Post::find($post_id);
         return view('admin.post-edit')->with("post", $post);
+    }
+    public function owneredit(string $post_id)
+    {
+        $post = Post::find($post_id);
+        return view('owner.post-edit')->with("post", $post);
+    }
+    public function managerredit(string $post_id)
+    {
+        $post = Post::find($post_id);
+        return view('manager.post-edit')->with("post", $post);
     }
 
     /**
@@ -119,7 +140,18 @@ class PostController extends Controller
     $post->postimage = $imageData; // Update the image paths with new ones
     $post->save();
 
-    return redirect()->route('viewpost')->with('alert', 'Updated successfully!');
+        if (Auth::check()) {
+            $user = Auth::user();
+        
+            if ($user->usertype === 'admin') {
+                return redirect()->route('viewpost')->with('alert', 'Updated successfully!');
+            } elseif ($user->usertype === 'owner') {
+                return redirect()->route('ownerviewpost')->with('alert', 'Updated successfully!');
+            }
+            else {
+                return redirect()->route('managerviewpost')->with('alert', 'Updated successfully!');
+            }
+        }
     }
 
     /**
@@ -142,5 +174,41 @@ class PostController extends Controller
         $post->delete();
 
         return redirect()->route('viewpost')->with('alert', 'Post deleted successfully!');
+    }
+    public function ownerdestroy(string $post_id)
+    {
+        $post = Post::findOrFail($post_id);
+
+        // Check if the post has images and delete each one
+        if (!empty($post->postimage)) {
+            foreach ($post->postimage as $image) {
+                if (file_exists(public_path($image))) {
+                    unlink(public_path($image)); // Delete the image from the server
+                }
+            }
+        }
+
+        // Delete the post from the database
+        $post->delete();
+
+        return redirect()->route('ownerviewpost')->with('alert', 'Post deleted successfully!');
+    }
+    public function managerdestroy(string $post_id)
+    {
+        $post = Post::findOrFail($post_id);
+
+        // Check if the post has images and delete each one
+        if (!empty($post->postimage)) {
+            foreach ($post->postimage as $image) {
+                if (file_exists(public_path($image))) {
+                    unlink(public_path($image)); // Delete the image from the server
+                }
+            }
+        }
+
+        // Delete the post from the database
+        $post->delete();
+
+        return redirect()->route('managerviewpost')->with('alert', 'Post deleted successfully!');
     }
 }

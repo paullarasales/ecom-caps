@@ -26,7 +26,7 @@ class UsertypeController extends Controller
     })
     ->orderBy('created_at', 'desc')
     ->whereIn('usertype', ['manager', 'user', 'owner'])
-    ->paginate(5);
+    ->paginate(10);
 
     return view('admin.users', compact('users', 'search'));
     }
@@ -72,6 +72,8 @@ class UsertypeController extends Controller
         $user = User::find($id);
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->firstname = $request->firstname;
+        $user->lastname = $request->lastname;
         $user->usertype = $request->usertype;
         $user->save();
 

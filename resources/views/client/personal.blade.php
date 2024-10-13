@@ -5,6 +5,45 @@
     <form action="{{ route('update-personal', ['id' => $user->id]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PATCH')
+        <!-- Display validation errors -->
+    <div id="errorModal" class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-11/12 max-w-md">
+            <div class="flex justify-between">
+                <h2 class="text-lg font-bold mb-4">Validation Errors</h2>
+                <button id="closeErrorModal" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Close</button>
+            </div>
+            <ul id="errorMessageList" class="text-gray-600">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Check if there are validation errors
+        var errors = @json($errors->any()); // Get the boolean status of errors
+        var errorModal = document.getElementById('errorModal');
+        var closeErrorModalButton = document.getElementById('closeErrorModal');
+
+        // Show the error modal if there are errors
+        if (errors) {
+            errorModal.classList.remove('hidden'); // Show the modal
+        }
+
+        // Close error modal event
+        closeErrorModalButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent any default action (if needed)
+            errorModal.classList.add('hidden'); // Hide the modal
+        });
+
+        // Optional: Close the modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            if (event.target === errorModal) {
+                errorModal.classList.add('hidden'); // Hide the modal
+            }
+        });
+    </script>
     <div class="min-h-screen p-6 flex items-center justify-center">
         <div class="container max-w-screen-lg mx-auto">
             <div>
@@ -101,7 +140,7 @@
     
                                 <div class="md:col-span-5">
                                     <label for="address">Any Valid ID</label>
-                                    <input id="picture" name="photo" type="file" accept=".png, .jpg, .jpeg" class="mt-1 block w-full items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150" value="" />
+                                    <input id="picture" name="photo" required type="file" accept=".png, .jpg, .jpeg" class="mt-1 block w-full items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150" value="" />
                                 </div>
 
                                 <br>
@@ -140,8 +179,18 @@
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">
                                     <!-- Add your terms and conditions content here -->
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada.
-                                </p>
+                                    By submitting your personal data through this platform/application/website, you agree to the following terms and conditions:                                </p>
+                                <hr class="mb-2">
+                                <ul class="mb-2">
+                                    <li class="text-sm text-gray-500 mb-2"><span class="font-semibold text-gray-600">Consent:</span> You consent to the collection, processing, and storage of your personal data as described in our Privacy Policy.</li>
+                                    <li class="text-sm text-gray-500 mb-2"><span class="font-semibold text-gray-600">Accuracy:</span> You certify that all information provided is accurate, complete, and up-to-date to the best of your knowledge.</li>
+                                    <li class="text-sm text-gray-500 mb-2"><span class="font-semibold text-gray-600">Purpose:</span> Your personal data will be used for the specific purposes outlined at the time of collection, unless otherwise agreed upon.</li>
+                                    <li class="text-sm text-gray-500 mb-2"><span class="font-semibold text-gray-600">Security:</span> We implement reasonable security measures to protect your personal data from unauthorized access, alteration, disclosure, or destruction.</li>
+                                    <li class="text-sm text-gray-500 mb-2"><span class="font-semibold text-gray-600">Access and Correction:</span> You have the right to access, correct, or delete your personal data as provided by applicable law. You may do so by contacting us through the contact information provided.</li>
+                                    <li class="text-sm text-gray-500 mb-2"><span class="font-semibold text-gray-600">Changes:</span> We reserve the right to update or modify these terms and conditions at any time without prior notice. Your continued use of our platform/application/website after any such changes constitutes your acceptance of the new terms and conditions.</li>
+                                    <li class="text-sm text-gray-500 mb-2"><span class="font-semibold text-gray-600">Contact:</span> For questions or concerns regarding these terms and conditions or our handling of your personal data, please contact us at thesiblingscateringservices@gmail.com.</li>
+                                </ul>
+                                <hr>    
                             </div>
                         </div>
                     </div>

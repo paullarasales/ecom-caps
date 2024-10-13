@@ -84,7 +84,7 @@
                     </svg>
         
                     <x-side-nav-link href="{{ route('managerappointments') }}" :active="request()->routeIs('managerappointments')" class="text-xl text-black font-medium mt-1 flex items-center w-full">
-                        {{ __('Appointments')}}
+                        {{ __('Events')}}
                     </x-side-nav-link>
                 </div>
         

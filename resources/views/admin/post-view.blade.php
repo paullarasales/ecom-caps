@@ -17,7 +17,7 @@
     <main class="pt-8 mx-5 pb-16 lg:pt-16 lg:pb-24 bg-white antialiased">
         <div class="flex justify-between px-4  mx-auto max-w-screen-xl border border-yellow-700">
             <article class="mx-auto w-full max-w-6xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
-                @foreach ($post as $pt)
+                @forelse ($post as $pt)
                 <div>
                     <p class="lead text-md mt-10">{{ $pt->postdesc }}</p>
                 </div>
@@ -46,7 +46,9 @@
                         </a>                
                     </div>
                     <hr class="my-8 border-t border-yellow-700"> <!-- Horizontal line after each blog -->
-                @endforeach
+                @empty
+                    <p class="text-center text-gray-600 py-10">No post and updates at the moment.</p>
+                @endforelse
             </article>
         </div>
     </main>
@@ -91,5 +93,20 @@
 
     
     
+@if(session('alert'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('alert') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@elseif(session('error'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('error') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@endif
 </x-admin-layout>
     

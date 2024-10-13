@@ -38,7 +38,19 @@ class FaqsController extends Controller
         $appointment->user_id = Auth::id(); // Set the user ID from the authenticated user
         $appointment->save();
 
-        return redirect()->route('addfaqs')->with('alert', 'Request Submitted');
+        // return redirect()->route('addfaqs')->with('alert', 'Request Submitted');
+        if (Auth::check()) {
+            $user = Auth::user();
+        
+            if ($user->usertype === 'admin') {
+                return redirect()->route('addfaqs')->with('alert', 'Uploaded successfully!');
+            } elseif ($user->usertype === 'owner') {
+                return redirect()->route('owneraddfaqs')->with('alert', 'Uploaded successfully!');
+            }
+            else {
+                return redirect()->route('manageraddfaqs')->with('alert', 'Uploaded successfully!');
+            }
+        }
     }
 
     /**
@@ -57,6 +69,16 @@ class FaqsController extends Controller
         $faq = Faqs::find($faq_id);
         return view('admin.faqs-edit')->with("faq", $faq);
     }
+    public function owneredit(string $faq_id)
+    {
+        $faq = Faqs::find($faq_id);
+        return view('owner.faqs-edit')->with("faq", $faq);
+    }
+    public function manageredit(string $faq_id)
+    {
+        $faq = Faqs::find($faq_id);
+        return view('manager.faqs-edit')->with("faq", $faq);
+    }
 
     /**
      * Update the specified resource in storage.
@@ -70,6 +92,24 @@ class FaqsController extends Controller
 
         return redirect()->route('viewfaqs')->with('alert', 'Faqs Successfully Updated');
     }
+    public function ownerupdate(Request $request, string $faq_id)
+    {
+        $faq = Faqs::find($faq_id);
+        $faq->question = $request->input('question');
+        $faq->answer = $request->input('answer');
+        $faq->save();
+
+        return redirect()->route('ownerviewfaqs')->with('alert', 'Faqs Successfully Updated');
+    }
+    public function managerupdate(Request $request, string $faq_id)
+    {
+        $faq = Faqs::find($faq_id);
+        $faq->question = $request->input('question');
+        $faq->answer = $request->input('answer');
+        $faq->save();
+
+        return redirect()->route('managerviewfaqs')->with('alert', 'Faqs Successfully Updated');
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -81,6 +121,24 @@ class FaqsController extends Controller
         // Delete the faq from the database
         $faq->delete();
 
-        return redirect()->route('viewfaqs')->with('alert', 'Package deleted successfully!');
+        return redirect()->route('viewfaqs')->with('alert', 'Faqs deleted successfully!');
+    }
+    public function ownerdestroy(string $faq_id)
+    {
+        $faq = Faqs::findOrFail($faq_id);
+
+        // Delete the faq from the database
+        $faq->delete();
+
+        return redirect()->route('ownerviewfaqs')->with('alert', 'Faqs deleted successfully!');
+    }
+    public function managerdestroy(string $faq_id)
+    {
+        $faq = Faqs::findOrFail($faq_id);
+
+        // Delete the faq from the database
+        $faq->delete();
+
+        return redirect()->route('managerviewfaqs')->with('alert', 'Faqs deleted successfully!');
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\User;
 use App\Models\Package;
+use App\Models\Blockeddate;
 
 class AppointmentsPagesController extends Controller
 {
@@ -16,36 +17,52 @@ class AppointmentsPagesController extends Controller
     public function calendar()
     {
         $events = Appointment::with('package')
-        ->whereIn('status', ['booked', 'pending', 'cancelled', 'done'])
-        ->get()
-        ->map(function ($event) {
-        $color = '';
+            ->whereIn('status', ['booked', 'pending', 'done'])
+            ->get()
+            ->map(function ($event) {
+            $color = '';
 
-        // Assign colors based on status
-        switch ($event->status) {
-            case 'booked':
-                $color = '#28a745'; // Green
-                break;
-            case 'pending':
-                $color = '#ffc107'; // Yellow
-                break;
-            case 'cancelled':
-                $color = '#dc3545'; // Red
-                break;
-            case 'done':
-                $color = '#17a2b8'; // Blue
-                break;
-        }
+            // Assign colors based on status
+            switch ($event->status) {
+                case 'booked':
+                    $color = '#28a745'; // Green
+                    break;
+                case 'pending':
+                    $color = '#ffc107'; // Yellow
+                    break;
+                case 'cancelled':
+                    $color = '#dc3545'; // Red
+                    break;
+                case 'done':
+                    $color = '#17a2b8'; // Blue
+                    break;
+            }
 
-        return [
-            'id' => $event->appointment_id,
-            'title' => $event->type . ' - ' . ($event->package ? $event->package->packagename : 'No Package'),
-            'start' => $event->edate,
-            'color' => $color,  // Include the color in the event data
-        ];
-    });
+            return [
+                'id' => $event->appointment_id,
+                'title' => $event->type . ' - ' .$event->status . ' - ' . ($event->package ? $event->package->packagename : 'No Package'),
+                'start' => $event->edate,
+                'color' => $color,  // Include the color in the event data
+            ];
+        });
 
-    return response()->json($events);
+        $blockedDates = BlockedDate::all()->map(function ($blocked) {
+            return [
+                'id' => $blocked->blocked_id,
+                'title' => 'Blocked: ' . ($blocked->reason ? $blocked->reason : 'Unavailable'),
+                'start' => $blocked->blocked_date,
+                'display' => 'background',  // Set as a background event
+                'backgroundColor' => '#1E201E', // Grey fill for blocked dates
+                'borderColor' => '#6c757d',  // Optional: No border color (same as fill)
+                'allDay' => true,  // Blocked dates are generally full-day events
+                'classNames' => ['blocked-event'], 
+            ];
+        });
+    
+        // Merge both appointments and blocked dates into one collection
+        $mergedEvents = $events->merge($blockedDates);
+
+        return response()->json($mergedEvents);
     }
 
     public function meetingCalendar() 
@@ -168,6 +185,21 @@ class AppointmentsPagesController extends Controller
         return view('admin.cancelled', compact('appointments'));
         // return view('admin.cancelled');
     }
+    public function cancelledView(string $app)
+    {
+        $appointment = Appointment::with(['user', 'package'])
+        ->where('status', 'cancelled')
+        ->where('appointment_id', $app)
+        ->first();
+
+        if (!$appointment) {
+            return redirect()->route('adminappointments')->with('error', 'Appointment not found or not pending.');
+        }
+
+        return view('admin.cancelled-view', compact('appointment'));
+
+            // return view('admin.pending-view');
+    }
     public function done()
     {
         $appointments = Appointment::with('user')
@@ -177,10 +209,30 @@ class AppointmentsPagesController extends Controller
         return view('admin.done', compact('appointments'));
         // return view('admin.done');
     }
+    public function doneView(string $app)
+    {
+        $appointment = Appointment::with(['user', 'package'])
+        ->where('status', 'done')
+        ->where('appointment_id', $app)
+        ->first();
+
+        if (!$appointment) {
+            return redirect()->route('adminappointments')->with('error', 'Appointment not found or not pending.');
+        }
+
+        return view('admin.done-view', compact('appointment'));
+
+            // return view('admin.pending-view');
+    }
 
     public function direct()
     {
-        $packages = Package::orderBy('created_at', 'desc')->paginate(30);
-        return view('admin.direct', compact('packages'));
+        // $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        // return view('admin.direct', compact('packages'));
+
+        $packages = Package::orderBy('created_at', 'desc')->paginate(50);
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray(); // Fetch all blocked dates
+
+        return view('admin.direct', compact('packages', 'blockedDates'));
     }
 }

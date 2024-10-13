@@ -8,6 +8,9 @@ use App\Models\Faqs;
 use App\Models\Post;
 use App\Models\Package;
 use App\Models\Appointment;
+use App\Models\Blockeddate;
+use App\Models\Review;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -27,27 +30,100 @@ class UserController extends Controller
     }
     public function events()
     {
-        $events = Appointment::where('status', 'booked')
-        ->get()
-        ->map(function ($event) {
-            $color = '#ffc107';
+        // Fetch booked appointments
+        $events = Appointment::where('status', 'booked')->get()->map(function ($event) {
             return [
                 'id' => $event->appointment_id,
-                'title' => $event->type,
+                'title' => 'Booked',  // Updated title to 'Booked'
                 'start' => $event->edate,
-                'color' => $color,
+                'color' => '#ffc107', // Color for booked events
             ];
         });
-    
-        return response()->json($events);
+
+        // Fetch blocked dates
+        $blockedDates = BlockedDate::all()->map(function ($blocked) {
+            return [
+                'title' => 'Blocked: ' . ($blocked->reason ? $blocked->reason : 'Unavailable'),
+                'start' => $blocked->blocked_date, // Assuming `date` is the field in BlockedDate
+                'color' => '#6c757d', // Gray color for blocked dates
+                'display' => 'background',  // Set as a background event
+                'backgroundColor' => '#1E201E', // Grey fill for blocked dates
+                'borderColor' => '#6c757d',  // Optional: No border color (same as fill)
+                'allDay' => true,  // Blocked dates are generally full-day events
+                'classNames' => ['blocked-event'],
+            ];
+        });
+
+        // Combine booked events and blocked dates
+        $allEvents = $events->merge($blockedDates);
+
+        return response()->json($allEvents);
     }
+
     public function eventsView()
     {
         return view('client.events');
     }
     public function reviews()
     {
-        return view('client.reviews');
+        $reviews = Review::with(['user', 'appointment']) // Eager load the relationships
+            ->where('reviewstatus', 'approved')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('client.reviews', compact('reviews'));
+    }
+    public function makereviews(string $appointment)
+    {
+        $appointment = Appointment::with(['user', 'package'])
+        ->where('status', 'done')
+        ->where('appointment_id', $appointment)
+        ->first();
+
+        if (!$appointment) {
+            return redirect()->route('mydone')->with('error', 'Appointment not found or not pending.');
+        }
+
+        return view('client.reviews-make', compact('appointment'));
+    }
+    public function myevent()
+    {
+        return view('client.myevent');
+    }
+    public function myrequest()
+    {
+        // return view('client.myrequest');
+        $user = Auth::user();
+        $pendingAppointments = Appointment::with('package')
+        ->where('user_id', $user->id)
+        ->where('status', 'pending')
+        ->get();
+        
+        return view('client.myrequest', compact('pendingAppointments'));
+    }
+    public function mybooked()
+    {
+        // return view('client.myrequest');
+        $user = Auth::user();
+        $bookedAppointments = Appointment::with('package')
+        ->where('user_id', $user->id)
+        ->where('status', 'booked')
+        ->orderBy('edate', 'desc')
+        ->get();
+        
+        return view('client.mybooked', compact('bookedAppointments'));
+    }
+    public function mydone()
+    {
+        // return view('client.myrequest');
+        $user = Auth::user();
+        $doneAppointments = Appointment::with(['package','review'])
+        ->where('user_id', $user->id)
+        ->where('status', 'done')
+        ->orderBy('edate', 'asc')
+        ->get();
+        
+        return view('client.mydone', compact('doneAppointments'));
     }
     public function chat()
     {
@@ -55,8 +131,12 @@ class UserController extends Controller
     }
     public function book()
     {
-        $packages = Package::orderBy('created_at', 'desc')->paginate(30);
-        return view('client.book-form', compact('packages'));
+        $packages = Package::where('packagename', '!=', 'Custom')
+                   ->orderBy('created_at', 'desc')
+                   ->paginate(50);
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
+
+        return view('client.book-form', compact('packages', 'blockedDates'));
         // return view('client.book-form');
     }
     public function form()
@@ -77,11 +157,11 @@ class UserController extends Controller
         $request->validate([
             'firstname' => 'required',
             'lastname' => 'required',
-            'birthday' => 'required',
+            'birthday' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
             'phone' => 'required',
             'address' => 'required',
             'city' => 'required',
-            'photo' => 'nullable|mimes:png,jpg,jpeg,webp',
+            'photo' => 'required|mimes:png,jpg,jpeg,webp',
         ]);
     
         $user = User::findOrFail($id);

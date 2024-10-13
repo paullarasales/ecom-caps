@@ -57,24 +57,53 @@
                     <h4 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">{{$appointment->type}}</h4>
                     {{-- <h4 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">{{$appointment->theme}}</h4> --}}
                     <h4 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">{{ $appointment->package->packagename }}</h4>
-                    <div class="flex justify-end">
+                    <div class="flex justify-end gap-3 capitalize">
                         <form action="{{  route('appointment.accept', $appointment->appointment_id) }}" method="POST">
                             @csrf
                             @method("PUT")
                             <input type="hidden" name="status" value="{{$appointment->status}}">
-                            <input type="submit" name="submit" value="Accept" class="inline-flex items-center cursor-pointer px-2 py-2 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"></input>
+                            <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                Accept
+                                <i class="fa-solid fa-check ml-3"></i>
+                            </button>                          
                         </form>
-                        <a href="" class="inline-flex capitalize ml-4 items-center px-2 py-2 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        <form action="{{  route('appointment.cancel', $appointment->appointment_id) }}" method="POST">
+                            @csrf
+                            @method("PUT")
+                            <input type="hidden" name="status" value="{{$appointment->status}}">
+                            {{-- <input type="submit" name="submit" value="Cancel" class="inline-flex cursor-pointer items-center px-2 py-2 text-xs sm:text-sm md:text-base font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"></input> --}}
+                            <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                Cancel
+                                <i class="fa-solid fa-ban ml-3"></i>
+                            </button> 
+                        </form>
+                        {{-- <a href="" class="inline-flex capitalize ml-4 items-center px-2 py-2 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Chat
                             <i class="fa-solid fa-message ml-3"></i>
-                        </a>
+                        </a> --}}
                     </div>
                 </div>
             </div>
         </div>
 
 
+@if(session('alert'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('alert') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@elseif(session('error'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('error') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@endif
     {{-- <h1>{{ $appointment->user->firstname }}</h1>
     <h1>{{ $appointment->location }}</h1> --}}
+
 
 </x-admin-layout>

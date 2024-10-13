@@ -1,120 +1,30 @@
 <x-admin-layout>
     <style>
-        #chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            border: 1px solid #e2e8f0; 
-            background-color: #f7fafc; 
-        }
-
-        #message-list {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin: 10px 0;
-        }
-
-        .message {
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            max-width: 70%;
-            word-wrap: break-word;
-        }
-
-        .sender {
-            align-self: flex-end;
-            background-color: #d1fae5; 
-            text-align: right;
-            margin-right: 20px;
-        }
-
-        .receiver {
-            align-self: flex-start;
-            background-color: #edf2f7;
-            text-align: left;
-            margin-left: 20px;
-            border: 1px solid yellow;
-        }
-
-        #message-input-container {
-            display: flex;
-            padding: 1rem;
-            border-top: 1px solid #e2e8f0; 
-            background-color: #ffffff;
-        }
-
-        #message-input {
-            flex: 1;
-            padding: 0.5rem;
-            border: 1px solid #e2e8f0; 
-            border-radius: 0.375rem;
-        }
-
-        #send-button {
-            margin-left: 0.5rem;
-            padding: 0.5rem 1rem;
-            background-color: #3b82f6;
-            color: white;
-            border-radius: 0.375rem;
-            border: none;
-            cursor: pointer;
-        }
-
-        #send-button:hover {
-            background-color: #2563eb;
-        }
-
-        #container {
-            display: flex;
-            height: 100vh;
-            width: 100%;
-        }
-
-        #sidebar {
-            width: 40%;
-            padding: 1rem;
-            border-right: 1px solid #e2e8f0;
-            overflow-y: auto;
-        }
-
-        #chat-container-wrapper {
-            width: 60%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-list-item {
-        padding: 0.5rem;
-        border-radius: 0.375rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        }
-
-        .user-list-item:hover {
-            background-color: #e2e8f0;
+        .user-list-item.selected {
+            background-color: #e2e8f0; /* Light gray background */
+            border-left: 4px solid #e5c846; /* Add a left border for emphasis */
         }
     </style>
-
-    <div id="container">
+    <div class="flex h-screen w-full">
         <!-- Sidebar -->
-        <div id="sidebar">
+        <div class="w-2/5 p-4 border-r border-gray-200 overflow-y-auto">
             <h3 class="text-lg font-semibold mb-4">Clients</h3>
-            <div id="user-list">
-                
+            <div id="user-list" class="space-y-2">
+                <!-- User list items will be populated here -->
             </div>
         </div>
 
         <!-- Chat Container -->
-        <div id="chat-container-wrapper">
-            <div id="chat-container">
-                <div id="message-list">
+        <div class="w-3/5 flex flex-col">
+            <div class="flex flex-col h-full border border-gray-200 bg-gray-100">
+                <div id="message-list" class="flex-1 overflow-y-auto p-4 space-y-2">
+                    <!-- Messages will be populated here -->
                 </div>
-                <div id="message-input-container">
-                    <input type="text" id="message-input" placeholder="Type a message" class="flex-1 mr-2">
-                    <button id="send-button">Send</button>
+                <div class="flex p-4 border-t border-gray-200 bg-white">
+                    <input type="text" id="message-input" placeholder="Type a message" class="flex-1 p-2 border border-gray-200 rounded-md mr-2">
+                    <button id="send-button" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Send
+                    </button>
                 </div>
             </div>
         </div>
@@ -132,18 +42,32 @@
                     throw new Error('Network response was not ok');
                 }
                 const users = await response.json();
-                console.log(users);
                 const userList = document.getElementById('user-list');
 
                 userList.innerHTML = '';
 
                 users.forEach(user => {
+                    // Concatenate first name and last name, or fallback to name
+                    const displayName = (user.firstname && user.lastname) 
+                        ? `${user.firstname} ${user.lastname}` 
+                        : user.name;
+
                     const userElement = document.createElement('div');
-                    userElement.className = 'user-list-item';
-                    userElement.textContent = user.name;
+                    userElement.className = 'user-list-item capitalize p-2 rounded-md cursor-pointer transition duration-300 hover:bg-gray-200';
+                    userElement.textContent = displayName;  // Use displayName instead of user.name
                     userElement.dataset.userId = user.id;
 
                     userElement.addEventListener('click', () => {
+
+                        // Remove highlight from previously selected user
+                        const previouslySelected = document.querySelector('.user-list-item.selected');
+                        if (previouslySelected) {
+                            previouslySelected.classList.remove('selected');
+                        }
+
+                        // Highlight the currently selected user
+                        userElement.classList.add('selected');
+
                         currentReceiverId = user.id;
                         fetchMessages();
                     });
@@ -165,14 +89,15 @@
                     throw new Error('Network response was not ok');
                 }
                 const messages = await response.json();
-                console.log(messages);
                 const messageList = document.getElementById('message-list');
 
                 messageList.innerHTML = '';
 
                 messages.forEach(msg => {
                     const msgElement = document.createElement('div');
-                    msgElement.className = `message ${msg.sender_id === window.authUserId ? 'sender' : 'receiver'}`;
+                    msgElement.className = `message p-2 rounded-md max-w-max break-words ${
+                        msg.sender_id === window.authUserId ? 'bg-green-200 text-right ml-auto' : 'bg-gray-200 text-left mr-auto border border-yellow-300'
+                    }`;
                     msgElement.textContent = msg.content;
                     messageList.appendChild(msgElement);
                 });
@@ -181,7 +106,6 @@
                 console.error('Error fetching messages:', error);
             }
         }
-
 
         document.addEventListener('DOMContentLoaded', function() {
             const button = document.getElementById('send-button');
@@ -207,5 +131,5 @@
             fetchUserList();
             setInterval(fetchMessages, 2000);
         });
-    </script> 
+    </script>
 </x-admin-layout>

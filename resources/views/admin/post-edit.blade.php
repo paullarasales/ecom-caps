@@ -1,7 +1,7 @@
 <x-admin-layout>
 
     <div class="absolute">
-        <a href="{{route('adminpost')}}">
+        <a href="{{route('viewpost')}}">
             <i class="fa-solid fa-arrow-left float-left ml-5 text-xl"></i>
         </a>
     </div>

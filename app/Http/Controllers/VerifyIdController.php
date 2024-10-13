@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class VerifyIdController extends Controller
 {
@@ -47,6 +48,11 @@ class VerifyIdController extends Controller
         $user = User::find($id);
         return view('admin.edit-verify')->with("user", $user);
     }
+    public function manageredit(string $id)
+    {
+        $user = User::find($id);
+        return view('manager.edit-verify')->with("user", $user);
+    }
 
     /**
      * Update the specified resource in storage.
@@ -58,7 +64,7 @@ class VerifyIdController extends Controller
         // Check if idphoto is null
         if ($user->photo === null) {
             // Do not save the update
-            return redirect("admin/users")->with('alert', 'User ID photo is missing. Update not saved.');
+            return redirect("users")->with('alert', 'User ID photo is missing. Update not saved.');
         }
 
         // If idphoto is not null, proceed with the update
@@ -67,6 +73,23 @@ class VerifyIdController extends Controller
         $user->save();
 
         return redirect("users")->with('alert', 'User Successfully Updated');
+    }
+    public function managerupdate(Request $request, string $id)
+    {
+        $user = User::find($id);
+
+        // Check if idphoto is null
+        if ($user->photo === null) {
+            // Do not save the update
+            return redirect("managerusers")->with('alert', 'User ID photo is missing. Update not saved.');
+        }
+
+        // If idphoto is not null, proceed with the update
+        $user->verifystatus = $request->verifystatus;
+
+        $user->save();
+
+        return redirect("managerusers")->with('alert', 'User Successfully Updated');
     }
 
     /**

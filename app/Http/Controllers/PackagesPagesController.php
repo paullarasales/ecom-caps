@@ -11,15 +11,29 @@ class PackagesPagesController extends Controller
     {
         return view('admin.packages-add');
     }
+    public function manageradd()
+    {
+        return view('manager.packages-add');
+    }
     public function customize()
     {
         return view('admin.packages-customize');
+    }
+    public function managercustomize()
+    {
+        return view('manager.packages-customize');
     }
     public function view()
     {
         // return view('admin.packages-view');
         $package = Package::orderBy('created_at', 'desc')->get();
         return view('admin.packages-view', compact('package'));
+    }
+    public function managerview()
+    {
+        // return view('admin.packages-view');
+        $package = Package::orderBy('created_at', 'desc')->get();
+        return view('manager.packages-view', compact('package'));
     }
     // public function eye()
     // {
