@@ -55,6 +55,66 @@
 
 @endforeach
 
+<div class="py-4 px-4">
+    <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
+        <span class="text-sm font-normal text-gray-900 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+            Showing <span class="font-semibold text-gray-900 ">{{ $package->firstItem() }}</span> to 
+            <span class="font-semibold text-gray-900 ">{{ $package->lastItem() }}</span> of 
+            <span class="font-semibold text-gray-900 ">{{ $package->total() }}</span> results
+        </span>
+
+        <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+            {{-- Previous Page Link --}}
+            @if ($package->onFirstPage())
+                <li>
+                    <span class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                        Previous
+                    </span>
+                </li>
+            @else
+                <li>
+                    <a href="{{ $package->previousPageUrl() }}" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        Previous
+                    </a>
+                </li>
+            @endif
+
+            {{-- Pagination Elements --}}
+            @foreach ($package->getUrlRange(1, $package->lastPage()) as $page => $url)
+                @if ($page == $package->currentPage())
+                    <li>
+                        <span class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 dark:bg-gray-700 dark:text-white">
+                            {{ $page }}
+                        </span>
+                    </li>
+                @else
+                    <li>
+                        <a href="{{ $url }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            {{ $page }}
+                        </a>
+                    </li>
+                @endif
+            @endforeach
+
+            {{-- Next Page Link --}}
+            @if ($package->hasMorePages())
+                <li>
+                    <a href="{{ $package->nextPageUrl() }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        Next
+                    </a>
+                </li>
+            @else
+                <li>
+                    <span class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                        Next
+                    </span>
+                </li>
+            @endif
+        </ul>
+    </nav>
+</div>
+
+
 </div>
 <script>
     function openModal(imageSrc) {

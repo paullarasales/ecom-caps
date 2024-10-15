@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Models\Blockedapp;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -344,6 +345,38 @@ class AppointmentController extends Controller
         // Logic to unblock the date (assuming you have a model for appointments)
         // For example, if you have a `BlockedDate` model that tracks blocked dates:
         BlockedDate::where('blocked_date', $unblockedDate)->delete();
+
+        // Optional: Return a response or redirect with a success message
+        return redirect()->back()->with('alert', 'Date unblocked successfully!');
+    }
+
+    public function appblock(Request $request)
+    {
+        $request->validate([
+            'blocked_app' => 'required|date|unique:blockedapps,blocked_app',
+            'appreason' => 'nullable|string|max:255',
+        ]);
+
+        // Save the blocked date and reason to the database
+        Blockedapp::create([
+            'blocked_app' => $request->blocked_app,
+            'appreason' => $request->appreason,
+        ]);
+
+        return redirect()->back()->with('alert', 'Date blocked successfully!');
+    }
+    public function appunblock(Request $request)
+    {
+        $request->validate([
+            'unblocked_app' => 'required|date',
+        ]);
+
+        // Get the date to unblock
+        $unblockedDate = $request->input('unblocked_app');
+
+        // Logic to unblock the date (assuming you have a model for appointments)
+        // For example, if you have a `BlockedDate` model that tracks blocked dates:
+        Blockedapp::where('blocked_app', $unblockedDate)->delete();
 
         // Optional: Return a response or redirect with a success message
         return redirect()->back()->with('alert', 'Date unblocked successfully!');

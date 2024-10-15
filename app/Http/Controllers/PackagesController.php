@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Custom;
+use App\Models\Appointment;
 
 class PackagesController extends Controller
 {
@@ -68,14 +69,17 @@ class PackagesController extends Controller
     public function custom(Request $request)
     {
         $request->validate([
-            'veggie' => 'required|integer|min:0',
-            'chicken' => 'required|integer|min:0',
-            'pork' => 'required|integer|min:0',
-            'beef' => 'required|integer|min:0',
+            'veggie' => 'integer|min:0',
+            'chicken' => 'integer|min:0',
+            'fish' => 'integer|min:0',
+            'pork' => 'integer|min:0',
+            'beef' => 'integer|min:0',
             'persons' => 'required|integer|min:1',
             'final' => 'required|nullable|numeric',
             'setup' => 'string|in:Yes,No',
             'lootbags' => 'integer|min:0',
+            'foodpack' => 'integer|min:0',
+            'lechonQuantity' => 'integer|min:0',
             
         ]);
 
@@ -90,17 +94,27 @@ class PackagesController extends Controller
             $custom = new Custom();
             $custom->user_id = Auth::id();
             $custom->package_id = $package->package_id;
+
             $custom->veggie = $request->input('veggie');
             $custom->chicken = $request->input('chicken');
+            $custom->fish = $request->input('fish');
             $custom->pork = $request->input('pork');
             $custom->beef = $request->input('beef');
+
+            $custom->foodpack = $request->input('foodpack');
+            $custom->packname = $request->input('packname');
+            $custom->lechonname = $request->input('lechonkg');
+            $custom->lechon = $request->input('lechonQuantity');
+
             $custom->icecream = $request->has('IceCream');
             $custom->frenchfries = $request->has('FrenchFries');
             $custom->mixedballs = $request->has('MixedBalls');
             $custom->hotdogs = $request->has('Hotdogs');
+
             $custom->cake = $request->has('Cake');
             $custom->lootbags = $request->input('Lootbags');
             $custom->setup = $request->input('Setup');
+
             $custom->persons = $request->input('persons');
             $custom->final = $request->input('final');
             $custom->save();
@@ -111,14 +125,17 @@ class PackagesController extends Controller
     public function managercustom(Request $request)
     {
         $request->validate([
-            'veggie' => 'required|integer|min:0',
-            'chicken' => 'required|integer|min:0',
-            'pork' => 'required|integer|min:0',
-            'beef' => 'required|integer|min:0',
+            'veggie' => 'integer|min:0',
+            'chicken' => 'integer|min:0',
+            'fish' => 'integer|min:0',
+            'pork' => 'integer|min:0',
+            'beef' => 'integer|min:0',
             'persons' => 'required|integer|min:1',
             'final' => 'required|nullable|numeric',
             'setup' => 'string|in:Yes,No',
             'lootbags' => 'integer|min:0',
+            'foodpack' => 'integer|min:0',
+            'lechonQuantity' => 'integer|min:0',
             
         ]);
 
@@ -137,13 +154,21 @@ class PackagesController extends Controller
             $custom->chicken = $request->input('chicken');
             $custom->pork = $request->input('pork');
             $custom->beef = $request->input('beef');
+
+            $custom->foodpack = $request->input('foodpack');
+            $custom->packname = $request->input('packname');
+            $custom->lechonname = $request->input('lechonkg');
+            $custom->lechon = $request->input('lechonQuantity');
+
             $custom->icecream = $request->has('IceCream');
             $custom->frenchfries = $request->has('FrenchFries');
             $custom->mixedballs = $request->has('MixedBalls');
             $custom->hotdogs = $request->has('Hotdogs');
+
             $custom->cake = $request->has('Cake');
             $custom->lootbags = $request->input('Lootbags');
             $custom->setup = $request->input('Setup');
+            
             $custom->persons = $request->input('persons');
             $custom->final = $request->input('final');
             $custom->save();
@@ -276,6 +301,14 @@ class PackagesController extends Controller
     {
         $package = Package::findOrFail($package_id);
 
+        // Check if the package is tied to any existing appointment
+        $appointment = Appointment::where('package_id', $package->package_id)->first();
+
+        // If an appointment is tied to this package, prevent deletion
+        if ($appointment) {
+            return redirect()->route('viewpackage')->with('alert', 'Cannot delete package as it is tied to an existing appointment.');
+        }
+
         // Check if there is a corresponding custom entry
         $custom = Custom::where('package_id', $package->package_id)->first();
 
@@ -294,9 +327,18 @@ class PackagesController extends Controller
 
         return redirect()->route('viewpackage')->with('alert', 'Package deleted successfully!');
     }
+
     public function managerdestroy(string $package_id)
     {
         $package = Package::findOrFail($package_id);
+
+        // Check if the package is tied to any existing appointment
+        $appointment = Appointment::where('package_id', $package->package_id)->first();
+
+        // If an appointment is tied to this package, prevent deletion
+        if ($appointment) {
+            return redirect()->route('viewpackage')->with('alert', 'Cannot delete package as it is tied to an existing appointment.');
+        }
 
         // Check if there is a corresponding custom entry
         $custom = Custom::where('package_id', $package->package_id)->first();

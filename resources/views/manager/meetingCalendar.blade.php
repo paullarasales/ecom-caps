@@ -27,6 +27,14 @@
     }
 }
 
+.fc-event-title {
+    color: gray;
+}
+
+.fc-event.blocked-event {
+    color: white;
+}
+
     </style>
 
     <div class="flex ml-3">
@@ -48,30 +56,89 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-    const calendarEl = document.getElementById('calendar');
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: '{{ route("managermeetingCalendar") }}',  // Use the correct route name
-        eventClick: function(info) {
-            // Update modal content with event information
-            document.getElementById('eventTitle').textContent = 'Meeting for: ' + info.event.title;
-            document.getElementById('modalContent').textContent = 'Client : ' + info.event.extendedProps.info;
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: '{{ route("managermeetingCalendar") }}',  // Use the correct route name
+                eventClick: function(info) {
+                    // Update modal content
+                    document.getElementById('eventTitle').textContent = 'Event: ' + info.event.title;
+    
+                    if (info.event.classNames.includes('blocked-event')) {
+                        document.getElementById('modalText').textContent = 'This date is blocked: ' + info.event.title;
+                        document.getElementById('blockDateForm').classList.add('hidden'); // Hide the blocking form
+                        document.getElementById('unblockDateForm').classList.remove('hidden'); // Show unblock form
+                        document.getElementById('unblocked_date').value = info.event.startStr; // Set the hidden input for unblocking
+                    } else {
+                        // Normal event behavior
+                        document.getElementById('modalText').textContent = 'Details: ' + info.event.title;
 
-            // Show the modal
-            document.getElementById('eventModal').classList.remove('hidden');
+                        // Hide the block form if the event is scheduled
+                        document.getElementById('blockDateForm').classList.add('hidden'); // Hide the form for blocking
+                        document.getElementById('unblockDateForm').classList.add('hidden'); // Ensure unblock form is hidden as well
+                    }
+    
+                    // Show the modal
+                    document.getElementById('eventModal').classList.remove('hidden');
+                    
+                    // Prevent browser navigation
+                    info.jsEvent.preventDefault();
+                },
+                dateClick: function(info) {
+                    // Format the clicked date for display
+                    const formattedDate = new Intl.DateTimeFormat('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }).format(new Date(info.dateStr));
 
-            // Prevent browser navigation
-            info.jsEvent.preventDefault();
-        }
-        
-    });
-    calendar.render();
+                    // Get all events on the clicked date
+                    const eventsOnDate = calendar.getEvents().filter(event => {
+                        // We need to compare only the date part, not the time
+                        const eventDate = event.startStr.split('T')[0];  // Extract just the date portion
+                        return eventDate === info.dateStr;  // Compare with clicked date
+                    });
 
-    // Close the modal
-    document.getElementById('closeButton').addEventListener('click', function() {
-        document.getElementById('eventModal').classList.add('hidden');
-    });
-});
+                    // Check if the date has any events
+                    if (eventsOnDate.length > 0) {
+                        // If there are events, check if the date is blocked
+                        const isBlockedDate = eventsOnDate.some(event => event.classNames.includes('blocked-event'));
+
+                        if (isBlockedDate) {
+                            // Date is blocked, show the option to unblock
+                            document.getElementById('eventTitle').textContent = 'Blocked Date: ' + formattedDate;
+                            document.getElementById('modalText').textContent = 'This date is blocked. You can unblock it.';
+                            document.getElementById('blockDateForm').classList.add('hidden'); // Hide the blocking form
+                            document.getElementById('unblockDateForm').classList.remove('hidden'); // Show unblock form
+                            document.getElementById('unblocked_date').value = info.dateStr; // Set the hidden input for unblocking
+                        } else {
+                            // Date has events but is not blocked, show the number of events
+                            document.getElementById('eventTitle').textContent = 'Events on ' + formattedDate;
+                            document.getElementById('modalText').textContent = 'There are ' + eventsOnDate.length + ' meeting(s) on this date. You cannot block this date.';
+                            document.getElementById('blockDateForm').classList.add('hidden'); // Hide the block form
+                            document.getElementById('unblockDateForm').classList.add('hidden'); // Also hide the unblock form
+                        }
+                    } else {
+                        // No events on this date, allow the user to block it
+                        document.getElementById('eventTitle').textContent = 'Vacant Date: ' + formattedDate;
+                        document.getElementById('modalText').textContent = 'This date is vacant. You can block it.';
+                        document.getElementById('blocked_date').value = info.dateStr; // Set the hidden input for blocking
+                        document.getElementById('blockDateForm').classList.remove('hidden'); // Show the block form
+                        document.getElementById('unblockDateForm').classList.add('hidden'); // Hide the unblock form
+                    }
+
+                    // Show the modal for the clicked date
+                    document.getElementById('eventModal').classList.remove('hidden');
+                }
+                
+            });
+            calendar.render();
+
+            // Close the modal
+            document.getElementById('closeButton').addEventListener('click', function() {
+                document.getElementById('eventModal').classList.add('hidden');
+            });
+        });
     </script>
     
     <div class="row jsutify-content-center">
@@ -92,17 +159,33 @@
     <!-- Modal Background -->
     <div id="eventModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 hidden flex items-center justify-center">
         <!-- Modal Container -->
-        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg mx-auto">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-semibold mr-4" id="eventTitle">Event Details</h3>
+                <h3 class="text-xl font-semibold" id="eventTitle">Event Details</h3>
                 <button id="closeButton" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Close</button>
-
             </div>
-            <div id="modalContent" class="text-gray-700 font-bold">
-                <!-- Event details will be inserted here -->
-            </div>
-            <div class="flex justify-end mt-4">
-                {{-- <button id="closeButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Close</button> --}}
+            
+            <!-- Modal Content -->
+            <div id="modalContent" class="text-gray-700">
+                <p id="modalText">Details will appear here.</p>
+    
+                <!-- Form for blocking a date -->
+                <form id="blockDateForm" action="{{ route('manager.appblock') }}" method="POST" class="hidden mt-4">
+                    @csrf
+                    <input type="hidden" name="blocked_app" id="blocked_date" value="">
+                    
+                    <label for="reason" class="block text-gray-700">Reason for blocking:</label>
+                    <input type="text" name="appreason" id="reason" class="border rounded p-2 w-full" required>
+                    
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mt-2">Block Date</button>
+                </form>
+    
+                <!-- Form for unblocking a date -->
+                <form id="unblockDateForm" action="{{ route('manager.appunblock') }}" method="POST" class="hidden mt-4">
+                    @csrf
+                    <input type="hidden" name="unblocked_app" id="unblocked_date" value="">
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-2">Unblock Date</button>
+                </form>
             </div>
         </div>
     </div>

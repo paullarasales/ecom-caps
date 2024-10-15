@@ -293,6 +293,8 @@ Route::put('/appointment/{appointment_id}/save', [AppointmentController::class, 
 //ADMIN
 Route::post('/admin/date/block', [AppointmentController::class, 'block'])->middleware(['auth', 'verified','admin'])->name('admin.block');
 Route::post('/admin/date/unblock', [AppointmentController::class, 'unblock'])->middleware(['auth', 'verified','admin'])->name('admin.unblock');
+Route::post('/admin/app/date/block', [AppointmentController::class, 'appblock'])->middleware(['auth', 'verified','admin'])->name('admin.appblock');
+Route::post('/admin/app/date/unblock', [AppointmentController::class, 'appunblock'])->middleware(['auth', 'verified','admin'])->name('admin.appunblock');
 
 //OWNER
 Route::post('/owner/date/block', [OwnerAppointmentsController::class, 'block'])->middleware(['auth', 'verified','owner'])->name('owner.block');
@@ -301,6 +303,8 @@ Route::post('/owner/date/unblock', [OwnerAppointmentsController::class, 'unblock
 //MANAGER
 Route::post('/manager/date/block', [ManagerAppointmensController::class, 'block'])->middleware(['auth', 'verified','manager'])->name('manager.block');
 Route::post('/manager/date/unblock', [ManagerAppointmensController::class, 'unblock'])->middleware(['auth', 'verified','manager'])->name('manager.unblock');
+Route::post('/manager/app/date/block', [AppointmentController::class, 'appblock'])->middleware(['auth', 'verified','manager'])->name('manager.appblock');
+Route::post('/manager/app/date/unblock', [AppointmentController::class, 'appunblock'])->middleware(['auth', 'verified','manager'])->name('manager.appunblock');
 
 //DATE BLOCKING UNBLOCKING //DATE BLOCKING UNBLOCKING //DATE BLOCKING UNBLOCKING
 

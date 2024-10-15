@@ -53,49 +53,7 @@
 
     </div>
 
-    {{-- <div>
-        <form action="" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PATCH')
-        <div class=" p-6 flex items-center justify-center">
-            <div class="container max-w-screen-lg mx-auto">
-                <div>
-                    <div class="bg-white rounded shadow-lg shadow-yellow-100 p-4 px-4 md:p-8 mb-6">
-                        <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                                <div class="text-gray-600">
-                                    <p class="font-medium text-lg">Personal Details</p>
-                                    <p>Please fill out all the fields.</p>
-                                </div>
-        
-                            <div class="lg:col-span-2">
-                                <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-                                    <div class="md:col-span-3">
-                                        <label for="firstname">First Name</label>
-                                        <input type="text" name="firstname" id="firstname" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
-                                    </div>
-        
-                                    <div class="md:col-span-2">
-                                        <label for="lastname">Last Name</label>
-                                        <input type="text" name="lastname" id="lastname" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
-                                    </div>
-        
-                                    
     
-                                    
-        
-                                    <div class="md:col-span-5 text-right">
-                                        <input type="submit" name="submit" value="Submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-                                    </div>
-        
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </form>
-    </div> --}}
     
 
 

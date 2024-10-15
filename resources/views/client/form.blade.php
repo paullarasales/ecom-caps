@@ -96,7 +96,7 @@
                                     var formattedDate = selectedDate.toISOString().split('T')[0];
                             
                                     if (blockedDates.includes(formattedDate)) {
-                                        showModal('The selected date is blocked. Please choose another date.');
+                                        showModal('The selected event date is blocked. Please choose another date.');
                                         this.value = ''; // Clear the input
                                     }
                                 });
@@ -246,12 +246,12 @@
                 
                             <div class="md:col-span-3">
                                 <label for="appointment_date">Meeting Date</label>
-                                <input type="date" name="appointment_date" id="appointment_date" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('appointment_date') }}" />
+                                <input disabled type="date" name="appointment_date" id="appointment_date" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('appointment_date') }}" />
                             </div>
                 
                             <div class="md:col-span-2">
                                 <label for="appointment_time">Meeting Time</label>
-                                <select name="appointment_time" id="appointment_time" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                                <select disabled name="appointment_time" id="appointment_time" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
                                     <!-- Options will be populated by JavaScript -->
                                     <option disabled selected value="">Select appointment time</option>
                                 </select>
@@ -263,13 +263,30 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Modal Structure -->
+                <div id="datemodal" class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                    <div class="bg-white rounded-lg p-6 w-11/12 max-w-md">
+                        <div class="flex justify-between">
+                            <h2 class="text-lg font-bold mb-4">Date Blocked</h2>
+                            <button id="closeModal" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Close</button>
+                        </div>
+                        <p id="modalMessage">The selected date is blocked. Please choose another date.</p>
+                    </div>
+                </div>
+                
                 
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
                         var dateInput = document.getElementById('appointment_date');
                         var timeSelect = document.getElementById('appointment_time');
+                        var eventDateInput = document.getElementById('edate'); // Reference to event date
+                        var blockedApps = @json($blockedApps); // Convert PHP array to JavaScript array
+                        var blockedDates = @json($blockedDates); // Convert PHP array to JavaScript array
+                        var modal = document.getElementById('datemodal');
+                        var closeModalButton = document.getElementById('closeModal');
                 
-                        // Populate time options for 30-minute intervals between 9 AM and 6 PM
+                        // Existing function to populate time options
                         function populateTimes() {
                             var startTime = new Date();
                             startTime.setHours(9, 0); // 9 AM
@@ -284,7 +301,6 @@
                                 var timeString = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
                                 var displayTime = hours + ':' + (minutes === 0 ? '00' : '30') + (hours < 12 ? ' AM' : ' PM');
                 
-                                // Set the selected attribute if the old value matches
                                 var selected = (oldTime === timeString) ? 'selected' : '';
                                 options += `<option value="${timeString}" ${selected}>${displayTime}</option>`;
                                 startTime.setMinutes(startTime.getMinutes() + 30);
@@ -300,10 +316,53 @@
                             dateInput.setAttribute('min', minDateString);
                         }
                 
+                        // Function to update meeting date and time input states
+                        function updateMeetingDetailsState() {
+                            if (eventDateInput.value) {
+                                dateInput.disabled = false; // Enable meeting date input
+                                timeSelect.disabled = false; // Enable meeting time input
+                            } else {
+                                dateInput.disabled = true; // Disable meeting date input
+                                timeSelect.disabled = true; // Disable meeting time input
+                                dateInput.value = ''; // Clear the meeting date input
+                                timeSelect.selectedIndex = 0; // Reset the time select
+                            }
+                        }
+                
+                        // Check if the selected date is blocked and show modal if it is
+                        dateInput.addEventListener('change', function () {
+                            var selectedDate = new Date(this.value);
+                            var formattedDate = selectedDate.toISOString().split('T')[0];
+                
+                            if (blockedDates.includes(formattedDate) || blockedApps.includes(formattedDate)) {
+                                showModal('The selected meeting date is blocked. Please choose another date.');
+                                this.value = ''; // Clear the input
+                            }
+                        });
+                
+                        // Function to show the modal
+                        function showModal(message) {
+                            document.getElementById('modalMessage').innerText = message;
+                            modal.classList.remove('hidden'); // Show the modal
+                        }
+                
+                        // Close modal event
+                        closeModalButton.addEventListener('click', function (event) {
+                            event.preventDefault();
+                            modal.classList.add('hidden'); // Hide the modal
+                        });
+                
+                        // Event listener for event date input change
+                        eventDateInput.addEventListener('change', updateMeetingDetailsState);
+                        
+                        // Initial call to set the correct state based on current value
+                        updateMeetingDetailsState();
+                
                         populateTimes();
                         setMinDate();
                     });
                 </script>
+                
 
 <script>
     document.getElementById('edate').addEventListener('change', function() {

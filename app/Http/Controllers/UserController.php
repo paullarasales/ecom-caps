@@ -9,6 +9,7 @@ use App\Models\Post;
 use App\Models\Package;
 use App\Models\Appointment;
 use App\Models\Blockeddate;
+use App\Models\Blockedapp;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 
@@ -135,8 +136,9 @@ class UserController extends Controller
                    ->orderBy('created_at', 'desc')
                    ->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
+        $blockedApps = Blockedapp::pluck('blocked_app')->toArray(); 
 
-        return view('client.book-form', compact('packages', 'blockedDates'));
+        return view('client.book-form', compact('packages', 'blockedDates', 'blockedApps'));
         // return view('client.book-form');
     }
     public function form()

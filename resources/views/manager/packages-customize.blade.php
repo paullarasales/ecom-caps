@@ -66,19 +66,23 @@
                         
                         <div class="lg:col-span-2">
                             <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-6">
-                                <div class="md:col-span-3">
+                                <div class="md:col-span-2">
                                     <label for="veggie">Veggie</label>
                                     <input type="number" name="veggie" id="veggie" value="0" min="0" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" />
                                 </div>
-                                <div class="md:col-span-3">
-                                    <label for="chicken">Chicken/Fish</label>
+                                <div class="md:col-span-2">
+                                    <label for="chicken">Chicken</label>
                                     <input type="number" name="chicken" id="chicken" value="0" min="0" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" />
                                 </div>
-                                <div class="md:col-span-3">
+                                <div class="md:col-span-2">
+                                    <label for="fish">Fish</label>
+                                    <input type="number" name="fish" id="fish" value="0" min="0" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" />
+                                </div>
+                                <div class="md:col-span-2">
                                     <label for="pork">Pork</label>
                                     <input type="number" name="pork" id="pork" value="0" min="0" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" />
                                 </div>
-                                <div class="md:col-span-3">
+                                <div class="md:col-span-2">
                                     <label for="beef">Beef</label>
                                     <input type="number" name="beef" id="beef" value="0" min="0" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" />
                                 </div>
@@ -122,6 +126,37 @@
                             </div>
                         <div class="lg:col-span-2">
                             <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+
+                                <div class="md:col-span-3">
+                                    <label for="foodPack">Select Food Pack</label>
+                                    <select name="packname" id="foodPack" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                                        <option value="" disabled selected></option>
+                                        <option id="Pack1" value="FC R D">Fried Chicken & Rice & Drink - 95</option>
+                                        <option id="Pack2" value="FC S D">Fried Chicken & Spagehtti & Drink - 105</option>
+                                        <option id="Pack3" value="S D">Spaghetti & Drink - 70</option>
+                                        <!-- Add more options as needed -->
+                                    </select>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="foodPackQuantity">Quantity</label>
+                                    <input type="number" name="foodpack" id="foodPackQuantity" value="0" min="0" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" />
+                                </div>
+
+                                <div class="md:col-span-3">
+                                    <label for="lechonkg">Lechon</label>
+                                    <select name="lechonkg" id="lechonkg" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                                        <option value="" disabled selected></option>
+                                        <option id="lechon1" value="25 kg">25 kg - 15000</option>
+                                        <option id="lechon2" value="30 kg">30 kg - 18000</option>
+                                        <option id="lechon3" value="45 kg">45 kg - 25000</option>
+                                        <!-- Add more options as needed -->
+                                    </select>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="lechonQuantity">Lechon</label>
+                                    <input type="number" name="lechonQuantity" id="lechonQuantity" value="0" min="0"  class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" />
+                                </div>
+                                
                                 <div class="md:col-span-1">
                                     <label for="Cake">Cake</label>
                                     <input type="checkbox" name="Cake" id="Cake"  class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" />
@@ -202,6 +237,7 @@
         const baseBeefPrice = 9000;
         const basePorkPrice = 8000;
         const baseChickenPrice = 8000;
+        const baseFishPrice = 8000;
     
         // Food Cart prices (fixed)
         const IceCreamPrice = 3500;
@@ -212,7 +248,7 @@
         // Add Ons prices (fixed)
         const CakePrice = 5000;
         const LootbagsPrice = 20;
-        
+    
         // Setup price
         const SetupPrice = 10000;
     
@@ -221,105 +257,135 @@
         const discountedBeefPrice = 8750;
         const discountedPorkPrice = 7750;
         const discountedChickenPrice = 7750;
+        const discountedFishPrice = 7750;
     
-        // Food Cart discount
-        const foodCartDiscount = 1000;
+        // Food Pack prices
+        const foodPackPrices = {
+            Pack1: 95, // Price for Food Pack 1
+            Pack2: 105, // Price for Food Pack 2
+            Pack3: 70, // Price for Food Pack 3
+        };
+
+        const lechonPrices = {
+            lechon1: 15000, // Price for 25 kg Lechon
+            lechon2: 18000, // Price for 30 kg Lechon
+            lechon3: 25000, // Price for 45 kg Lechon
+        };
     
         // Get references to input fields
         const veggieInput = document.getElementById('veggie');
         const beefInput = document.getElementById('beef');
         const porkInput = document.getElementById('pork');
         const chickenInput = document.getElementById('chicken');
-        const personsInput = document.getElementById('persons');
+        const fishInput = document.getElementById('fish');
+        const iceCreamInput = document.getElementById('IceCream');
+        const mixedBallsInput = document.getElementById('MixedBalls');
+        const frenchFriesInput = document.getElementById('FrenchFries');
+        const hotdogsInput = document.getElementById('Hotdogs');
+        const cakeInput = document.getElementById('Cake');
+        const lootbagsInput = document.getElementById('Lootbags');
         const setupInput = document.getElementById('Setup');
+        const personsInput = document.getElementById('persons');
+        const foodPackSelect = document.getElementById('foodPack');
+        const foodPackQuantityInput = document.getElementById('foodPackQuantity');
+        const lechonSelect = document.getElementById('lechonkg');
+        const lechonQuantityInput = document.getElementById('lechonQuantity');
+        const totalPriceElement = document.getElementById('totalPrice');
     
-        const IceCreamInput = document.getElementById('IceCream');
-        const MixedBallsInput = document.getElementById('MixedBalls');
-        const FrenchFriesInput = document.getElementById('FrenchFries');
-        const HotdogsInput = document.getElementById('Hotdogs');
-    
-        const CakeInput = document.getElementById('Cake');
-        const LootbagsInput = document.getElementById('Lootbags');
-    
-        const totalPriceDisplay = document.getElementById('totalPrice');
-    
-        // Function to calculate total price
+        // Function to calculate the total price
         function calculateTotal() {
-            const veggieQuantity = parseInt(veggieInput.value) || 0;
-            const beefQuantity = parseInt(beefInput.value) || 0;
-            const porkQuantity = parseInt(porkInput.value) || 0;
-            const chickenQuantity = parseInt(chickenInput.value) || 0;
+            let total = 0;
     
-            // Food Cart add-ons (check if checked or get the value)
-            const IceCreamChecked = IceCreamInput.checked;
-            const MixedBallsChecked = MixedBallsInput.checked;
-            const FrenchFriesChecked = FrenchFriesInput.checked;
-            const HotdogsChecked = HotdogsInput.checked;
+            // Food prices based on input values
+            const veggieCount = parseInt(veggieInput.value) || 0;
+            total += veggieCount > 1 ? discountedVeggiePrice * veggieCount : baseVeggiePrice * veggieCount;
     
-            const IceCreamTotal = IceCreamChecked ? IceCreamPrice : 0;
-            const MixedBallsTotal = MixedBallsChecked ? MixedBallsPrice : 0;
-            const FrenchFriesTotal = FrenchFriesChecked ? FrenchFriesPrice : 0;
-            const HotdogsTotal = HotdogsChecked ? HotdogsPrice : 0;
+            const beefCount = parseInt(beefInput.value) || 0;
+            total += beefCount > 1 ? discountedBeefPrice * beefCount : baseBeefPrice * beefCount;
     
-            // Count the number of checked food cart items
-            const checkedFoodCartItems = [IceCreamChecked, MixedBallsChecked, FrenchFriesChecked, HotdogsChecked].filter(checked => checked).length;
+            const porkCount = parseInt(porkInput.value) || 0;
+            total += porkCount > 1 ? discountedPorkPrice * porkCount : basePorkPrice * porkCount;
+
+            const fishCount = parseInt(fishInput.value) || 0;
+            total += fishCount > 1 ? discountedFishPrice * fishCount : baseFishPrice * fishCount;
     
-            // Apply discount if three or more items are selected
-            let foodCartTotal = IceCreamTotal + MixedBallsTotal + FrenchFriesTotal + HotdogsTotal;
-            if (checkedFoodCartItems >= 3) {
-                foodCartTotal -= foodCartDiscount;
+            const chickenCount = parseInt(chickenInput.value) || 0;
+            total += chickenCount > 1 ? discountedChickenPrice * chickenCount : baseChickenPrice * chickenCount;
+    
+            // Food Pack calculation
+            const selectedFoodPackId = foodPackSelect.selectedOptions[0].id; // Get the selected food pack ID
+            const foodPackQuantity = parseInt(foodPackQuantityInput.value) || 0;
+            if (foodPackPrices[selectedFoodPackId]) {
+                total += foodPackPrices[selectedFoodPackId] * foodPackQuantity;
+            }
+
+            const selectedLechonId = lechonSelect.selectedOptions[0]?.id; // Get the selected Lechon ID
+            const lechonQuantity = parseInt(lechonQuantityInput.value) || 0; // Get the quantity from input
+            if (lechonQuantity > 0 && lechonPrices[selectedLechonId]) {
+                total += lechonPrices[selectedLechonId] * lechonQuantity; // Add lechon price based on quantity
             }
     
-            // Get the quantity for Add Ons
-            const CakeChecked = CakeInput.checked;
-            const CakeTotal = CakeChecked ? CakePrice : 0;
+            // Food Cart items calculation
+            let foodCartTotal = 0;
+            let foodCartCount = 0; // Count of selected food cart items
     
-            const LootbagsQuantity = parseInt(LootbagsInput.value) || 0;
-            const LootbagsTotal = LootbagsQuantity * LootbagsPrice;
+            if (iceCreamInput.checked) {
+                foodCartTotal += IceCreamPrice;
+                foodCartCount++;
+            }
+            if (mixedBallsInput.checked) {
+                foodCartTotal += MixedBallsPrice;
+                foodCartCount++;
+            }
+            if (frenchFriesInput.checked) {
+                foodCartTotal += FrenchFriesPrice;
+                foodCartCount++;
+            }
+            if (hotdogsInput.checked) {
+                foodCartTotal += HotdogsPrice;
+                foodCartCount++;
+            }
     
-            // Get number of persons (default 100)
-            const numberOfPersons = parseInt(personsInput.value) || 100;
+            // Apply discount if three or more food cart items are selected
+            if (foodCartCount >= 3) {
+                foodCartTotal -= 1000; // Discount of 1000 for 3 or more items
+            }
     
-            // Determine prices based on quantity
-            const veggiePrice = veggieQuantity > 1 ? discountedVeggiePrice : baseVeggiePrice;
-            const beefPrice = beefQuantity > 1 ? discountedBeefPrice : baseBeefPrice;
-            const porkPrice = porkQuantity > 1 ? discountedPorkPrice : basePorkPrice;
-            const chickenPrice = chickenQuantity > 1 ? discountedChickenPrice : baseChickenPrice;
+            total += foodCartTotal; // Add food cart total to the overall total
     
-            // Calculate total for each dish
-            const veggieTotal = veggieQuantity * veggiePrice;
-            const beefTotal = beefQuantity * beefPrice;
-            const porkTotal = porkQuantity * porkPrice;
-            const chickenTotal = chickenQuantity * chickenPrice;
+            // Add Ons
+            if (cakeInput.checked) total += CakePrice;
+            total += LootbagsPrice * (parseInt(lootbagsInput.value) || 0);
+            if (setupInput.value === "Yes") total += SetupPrice;
     
-            // Calculate main food total for the selected number of persons
-            const mainFoodTotal = (veggieTotal + beefTotal + porkTotal + chickenTotal) * (numberOfPersons / 100);
+            // Calculate total based on number of persons
+            const persons = parseInt(personsInput.value) || 0;
+            total *= (persons / 100); // Adjust total based on the number of persons
     
-            // Determine setup cost
-            const setupTotal = setupInput.value === "Yes" ? SetupPrice : 0;
-    
-            // Calculate final total by adding the food cart add-ons (with discount if applicable), Add Ons, and setup fee to the main food total
-            const totalPrice = mainFoodTotal + foodCartTotal + CakeTotal + LootbagsTotal + setupTotal;
-    
-            // Update the total price display
-            totalPriceDisplay.textContent = `₱ ${totalPrice.toFixed(2)}`;
+            // Display the total price
+            totalPriceElement.textContent = `₱ ${total.toFixed(2)}`;
         }
     
-        // Add event listeners to inputs
+        // Event listeners for input changes
         veggieInput.addEventListener('input', calculateTotal);
         beefInput.addEventListener('input', calculateTotal);
         porkInput.addEventListener('input', calculateTotal);
         chickenInput.addEventListener('input', calculateTotal);
-        personsInput.addEventListener('input', calculateTotal);
+        fishInput.addEventListener('input', calculateTotal);
+        foodPackSelect.addEventListener('change', calculateTotal);
+        foodPackQuantityInput.addEventListener('input', calculateTotal);
+        lechonSelect.addEventListener('change', calculateTotal);
+        lechonQuantityInput.addEventListener('input', calculateTotal);
+        iceCreamInput.addEventListener('change', calculateTotal);
+        mixedBallsInput.addEventListener('change', calculateTotal);
+        frenchFriesInput.addEventListener('change', calculateTotal);
+        hotdogsInput.addEventListener('change', calculateTotal);
+        cakeInput.addEventListener('change', calculateTotal);
+        lootbagsInput.addEventListener('input', calculateTotal);
         setupInput.addEventListener('change', calculateTotal);
-        IceCreamInput.addEventListener('change', calculateTotal);
-        MixedBallsInput.addEventListener('change', calculateTotal);
-        FrenchFriesInput.addEventListener('change', calculateTotal);
-        HotdogsInput.addEventListener('change', calculateTotal);
-        CakeInput.addEventListener('change', calculateTotal);
-        LootbagsInput.addEventListener('input', calculateTotal);
+        personsInput.addEventListener('input', calculateTotal);
     
-        // Perform initial calculation on page load
+        // Initial calculation on page load
         calculateTotal();
     </script>
     

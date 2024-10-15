@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\User;
 use App\Models\Package;
 use App\Models\Blockeddate;
+use App\Models\Blockedapp;
 
 class ManagerAppointmentsPagesController extends Controller
 {
@@ -98,7 +99,23 @@ class ManagerAppointmentsPagesController extends Controller
         ];
     });
 
-    return response()->json($events);
+    $blockedDates = Blockedapp::all()->map(function ($blocked) {
+        return [
+            'id' => $blocked->blockedapp_id,
+            'title' => 'Blocked: ' . ($blocked->appreason ? $blocked->appreason : 'Unavailable'),
+            'start' => $blocked->blocked_app,
+            'display' => 'background',  // Set as a background event
+            'backgroundColor' => '#1E201E', // Grey fill for blocked dates
+            'borderColor' => '#6c757d',  // Optional: No border color (same as fill)
+            'allDay' => true,  // Blocked dates are generally full-day events
+            'classNames' => ['blocked-event'], 
+        ];
+    });
+
+    // Merge both appointments and blocked dates into one collection
+    $mergedEvents = $events->merge($blockedDates);
+
+    return response()->json($mergedEvents);
     }
     public function meetingCalendarView() 
     {

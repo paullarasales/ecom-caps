@@ -26,13 +26,13 @@ class PackagesPagesController extends Controller
     public function view()
     {
         // return view('admin.packages-view');
-        $package = Package::orderBy('created_at', 'desc')->get();
+        $package = Package::orderBy('created_at', 'desc')->paginate(10);
         return view('admin.packages-view', compact('package'));
     }
     public function managerview()
     {
         // return view('admin.packages-view');
-        $package = Package::orderBy('created_at', 'desc')->get();
+        $package = Package::orderBy('created_at', 'desc')->paginate(10);
         return view('manager.packages-view', compact('package'));
     }
     // public function eye()
