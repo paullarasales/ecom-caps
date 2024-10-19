@@ -136,6 +136,14 @@
                         
                         <!-- User Dropdown -->
                         <div class="absolute inset-y-0 right-0 flex items-center">
+                            <div class="text-sm my-3 mx-4">
+                                <a href="{{route('manager.notifications')}}" class="bg-yellow-200 rounded-3xl py-3 px-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t relative">
+                                    <i class="fa-solid fa-bell"></i>
+                                    <span class="absolute -top-1 -right-1 inline-block w-5 h-5 text-center text-white bg-red-500 rounded-full text-xs font-bold notification-badge {{ $unreadCount > 0 ? '' : 'hidden' }}">
+                                        {{ $unreadCount }}
+                                    </span>
+                                </a>
+                            </div> 
                             <div x-data="{ open: false }" class="relative flex items-center">
                                 <!-- Profile Dropdown -->
                                 <div x-data="{ open: false }" class="relative flex items-center">
@@ -152,7 +160,7 @@
                                     <!-- Dropdown Menu -->
                                     <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                                         <div class="py-1">
-                                            <x-dropdown-link :href="route('profile')">
+                                            <x-dropdown-link :href="route('profile.edit')">
                                                 {{ __('Edit Profile') }}
                                             </x-dropdown-link>
                                             <form method="POST" action="{{ route('logout') }}">
@@ -169,6 +177,22 @@
                     </div>
                 </div>
             </nav>
+
+            <script>
+                // Polling for unread appointment count
+                setInterval(function() {
+                    fetch('{{ route('fetch.manager.unread.count') }}')
+                        .then(response => response.json())
+                        .then(data => {
+                            const notificationBadge = document.querySelector('.notification-badge');
+                            if (notificationBadge) {
+                                notificationBadge.textContent = data.count > 0 ? data.count : '';
+                                notificationBadge.classList.toggle('hidden', data.count === 0);
+                            }
+                        })
+                        .catch(error => console.error('Error fetching unread count:', error));
+                }, 5000); // Check every 5 seconds
+            </script>
 
             <!-- Main Content Area -->
             <div class="flex-1 p-4">

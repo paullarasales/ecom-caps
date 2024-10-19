@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Models\Package;
 use App\Models\Blockeddate;
+use Illuminate\Http\JsonResponse;
 
 class AppointmentController extends Controller
 {
@@ -196,6 +197,7 @@ class AppointmentController extends Controller
 
         // Update appointment status to "accepted"
         $appointment->status = 'booked';
+        $appointment->isread = "unread";
         $appointment->save();
 
         // Redirect back or to a specific route
@@ -228,6 +230,7 @@ class AppointmentController extends Controller
 
         // Update appointment status to "accepted"
         $appointment->status = 'booked';
+        $appointment->isread = "unread";
         $appointment->save();
 
         // Redirect back or to a specific route
@@ -245,6 +248,7 @@ class AppointmentController extends Controller
         if ($edate->isToday()) {
             // Update appointment status to "done"
             $appointment->status = 'done';
+            $appointment->isread = "unread";
             $appointment->save();
     
             // Redirect back or to a specific route
@@ -413,4 +417,101 @@ class AppointmentController extends Controller
     {
         //
     }
+
+
+    public function fetchUnreadCount()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            // Count unread appointments
+            $unreadAppointmentsCount = $user->appointment()
+                ->where('isread', 'unread')
+                ->count();
+
+            // Check `verifyisread` and `submitisread` fields for the authenticated user
+            $unreadVerifyCount = ($user->verifyisread === 'unread') ? 1 : 0;
+            $unreadSubmitCount = ($user->submitisread === 'unread') ? 1 : 0;
+
+            // Total unread count
+            $unreadCount = $unreadAppointmentsCount + $unreadVerifyCount + $unreadSubmitCount;
+
+            return response()->json(['count' => $unreadCount]);
+        }
+
+        return response()->json(['count' => 0]);
+    }
+
+    public function fetchAdminUnreadCount() 
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            // Check if the user's type is 'admin'
+            if ($user->usertype === 'admin') {
+
+                $unreadAppointmentsCount = \App\Models\Appointment::where('isadminread', 'unread')->count();
+
+                // Count rows in the users table where `submitisadminread` is "unread" and `verifystatus` is "unverified"
+                $unreadAdminCount = User::where('submitisadminread', 'unread')
+                    ->where('usertype', 'user')
+                    ->where('verifystatus', 'unverified')
+                    ->count();
+
+                // Set unread count for admin
+                $unreadCount = $unreadAppointmentsCount + $unreadAdminCount;
+
+                return response()->json(['count' => $unreadCount]);
+            }
+
+            return response()->json(['count' => 0]);
+        }
+    }
+
+    public function fetchManagerUnreadCount() 
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            // Check if the user's type is 'admin'
+            if ($user->usertype === 'manager') {
+
+                // Count all appointments where `ismanagerread` is "unread"
+                $unreadAppointmentsCount = \App\Models\Appointment::where('ismanagerread', 'unread')->count();
+
+                // Count rows in the users table where `submitisadminread` is "unread" and `verifystatus` is "unverified"
+                $unreadAdminCount = User::where('submitismanagerread', 'unread')
+                    ->where('usertype', 'user')
+                    ->where('verifystatus', 'unverified')
+                    ->count();
+
+                // Set unread count for admin
+                $unreadCount = $unreadAppointmentsCount + $unreadAdminCount;
+
+                return response()->json(['count' => $unreadCount]);
+            }
+
+            return response()->json(['count' => 0]);
+        }
+    }
+
+    public function fetchUserUnreadMessageCount()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            // Check if the user's type is "user"
+            if ($user->usertype === 'user') {
+                // Count unread messages where receiver_id is the authenticated user's ID and receiverisread is "unread"
+                $unreadChatCount = \App\Models\Message::where('receiver_id', $user->id)
+                    ->where('receiverisread', 'unread')
+                    ->count();
+
+                return response()->json(['count' => $unreadChatCount]);
+            }
+            return response()->json(['count' => 0]);
+        }
+        return response()->json(['count' => 0]);
+    }
+
 }

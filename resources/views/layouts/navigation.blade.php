@@ -42,6 +42,7 @@
                     </x-nav-link>
                 </div>
             </div>
+            
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -49,10 +50,22 @@
                     <a href="{{ route('book-form') }}" class="bg-yellow-200 rounded-3xl py-3 px-8 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t">Book Now</a>
                 </div>
                 <div class="text-sm my-3 mx-4">
-                    <a href="{{route('chat')}}" class="bg-yellow-200 rounded-3xl py-3 px-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t">
+                    <a href="{{ route('notifications') }}" class="bg-yellow-200 rounded-3xl py-3 px-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t relative">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="absolute -top-1 -right-1 inline-block w-5 h-5 text-center text-white bg-red-500 rounded-full text-xs font-bold notification-badge {{ $unreadCount > 0 ? '' : 'hidden' }}">
+                            {{ $unreadCount }}
+                        </span>
+                    </a>
+                </div>                
+                <div class="text-sm my-3 mx-4">
+                    <a href="{{ route('chat') }}" class="bg-yellow-200 rounded-3xl py-3 px-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t relative">
                         <i class="fa-solid fa-message"></i>
+                        <span class="absolute -top-1 -right-1 inline-block w-5 h-5 text-center text-white bg-red-500 rounded-full text-xs font-bold messagenotification-badge {{ $unreadChatCount > 0 ? '' : 'hidden' }}">
+                            {{ $unreadChatCount }}
+                        </span>
                     </a>
                 </div>
+                
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
@@ -87,6 +100,22 @@
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
+                <div class="text-sm my-3 relative">
+                    <a href="{{route('notifications')}}" class="bg-yellow-200 rounded-3xl py-3 px-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="absolute -top-3 -right-1 inline-block w-5 h-5 text-center text-white bg-red-500 rounded-full text-xs font-bold notification-badge {{ $unreadCount > 0 ? '' : 'hidden' }}">
+                            {{ $unreadCount }}
+                        </span>
+                    </a>
+                </div>
+                <div class="text-sm my-3 mx-4 relative">
+                    <a href="{{ route('chat') }}" class="bg-yellow-200 rounded-3xl py-3 px-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t relative">
+                        <i class="fa-solid fa-message"></i>
+                        <span class="absolute -top-0 -right-1 inline-block w-5 h-5 text-center text-white bg-red-500 rounded-full text-xs font-bold messagenotification-badge {{ $unreadChatCount > 0 ? '' : 'hidden' }}">
+                            {{ $unreadChatCount }}
+                        </span>
+                    </a>
+                </div>
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -155,4 +184,54 @@
             </div>
         </div>
     </div>
+
+
+    <script>
+        // Polling for unread appointment count
+        setInterval(function() {
+            fetch('{{ route('fetch.unread.count') }}')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationBadge = document.querySelector('.notification-badge');
+                    if (notificationBadge) {
+                        notificationBadge.textContent = data.count > 0 ? data.count : '';
+                        notificationBadge.classList.toggle('hidden', data.count === 0);
+                    }
+                })
+                .catch(error => console.error('Error fetching unread count:', error));
+        }, 5000); // Check every 5 seconds
+    </script>
+
+    {{-- <script>
+        // Polling for unread appointment count
+        setInterval(function() {
+            fetch('{{ route('fetch.unread.count') }}')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationBadge = document.querySelector('.resnotification-badge');
+                    if (notificationBadge) {
+                        notificationBadge.textContent = data.count > 0 ? data.count : '';
+                        notificationBadge.classList.toggle('hidden', data.count === 0);
+                    }
+                })
+                .catch(error => console.error('Error fetching unread count:', error));
+        }, 5000); // Check every 5 seconds
+    </script> --}}
+
+    <script>
+        // Polling for unread appointment count
+        setInterval(function() {
+            fetch('{{ route('fetch.user.unread.message.count') }}')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationBadge = document.querySelector('.messagenotification-badge');
+                    if (notificationBadge) {
+                        notificationBadge.textContent = data.count > 0 ? data.count : '';
+                        notificationBadge.classList.toggle('hidden', data.count === 0);
+                    }
+                })
+                .catch(error => console.error('Error fetching unread count:', error));
+        }, 5000); // Check every 5 seconds
+    </script>
+
 </nav>

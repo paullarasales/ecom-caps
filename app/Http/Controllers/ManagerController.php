@@ -194,4 +194,41 @@ class ManagerController extends Controller
     {
         return view('manager.chat');
     }
+
+    public function notifications()
+    {
+        $users = User::where('usertype', 'user')
+        ->where('verifystatus', 'unverified')
+        ->whereNotNull('firstname')
+        ->whereNotNull('lastname')
+        ->whereNotNull('birthday')
+        ->whereNotNull('phone')
+        ->whereNotNull('address')
+        ->whereNotNull('city')
+        ->whereNotNull('photo')
+        ->where('firstname', '!=', '') // Check for non-empty string
+        ->where('lastname', '!=', '') // Check for non-empty string
+        ->where('birthday', '!=', '') // Check for non-empty string
+        ->where('phone', '!=', '') // Check for non-empty string
+        ->where('address', '!=', '') // Check for non-empty string
+        ->where('city', '!=', '') // Check for non-empty string
+        ->where('photo', '!=', '') // Check for non-empty string
+        ->get();
+
+        // Fetch unread appointments for each user
+        $unreadAppointments = Appointment::where('ismanagerread', 'unread')
+        ->with('user') // Assuming you have a relationship defined in the Appointment model
+        ->where('status', 'pending')
+        ->get();
+
+        User::where('usertype', 'user')
+            ->where('verifystatus', 'unverified')
+            ->where('submitismanagerread', 'unread')
+            ->update(['submitismanagerread' => 'read']);
+        
+        Appointment::where('ismanagerread', 'unread')
+        ->update(['ismanagerread' => 'read']);
+
+        return view('manager.notifications', compact('users', 'unreadAppointments'));
+    }
 }

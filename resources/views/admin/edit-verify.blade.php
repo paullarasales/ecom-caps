@@ -23,6 +23,8 @@
 
                 <label class="text-gray-300 mt-2" for="">ID Verification</label>
 
+                <h1 class="text-gray-300 my-2 text-xl capitalize">{{ $user->firstname ?? 'N/A' }} {{$user->lastname}}</h1>
+
                 <select name="verifystatus" id="verifystatus" class="text-gray-300 rounded-md h-12 w-full mb-1 dark:bg-gray-800 focus:border-yellow-500 focus:ring-yellow-500">
                     <option value="unverified" {{ $user->verifystatus === 'unverified' ? 'selected' : '' }}>Unverified</option>
                     <option value="verified" {{ $user->verifystatus === 'verified' ? 'selected' : '' }}>Verified</option>

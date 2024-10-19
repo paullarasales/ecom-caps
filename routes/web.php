@@ -93,6 +93,13 @@ Route::put('/admin/reviews/approved/to/pending/{review_id}', [ReviewController::
 //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS 
 
 
+//NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS 
+Route::get('/fetch-admin-unread-count', [AppointmentController::class, 'fetchAdminUnreadCount'])->middleware(['auth', 'verified','admin'])->name('fetch.admin.unread.count');
+Route::get('/admin/notifications', [AdminController::class, 'notifications'])->middleware(['auth', 'verified','admin'])->name('admin.notifications');
+
+//NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS 
+
+
 //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES 
 Route::resource('package', PackagesController::class);
 
@@ -337,6 +344,16 @@ Route::get('/manager/meetingCalendar/data', [ManagerAppointmentsPagesController:
 //MANAGER CALENDAR //MANAGER CALENDAR //MANAGER CALENDAR //MANAGER CALENDAR 
 
 
+
+//MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS 
+Route::get('/manager/notifications', [ManagerController::class, 'notifications'])->middleware(['auth', 'verified','manager'])->name('manager.notifications');
+Route::get('/fetch-manager-unread-count', [AppointmentController::class, 'fetchManagerUnreadCount'])->middleware(['auth', 'verified','manager'])->name('fetch.manager.unread.count');
+
+//MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS 
+
+
+
+
 //MANAGER APPOINTMENTS //MANAGER APPOINTMENTS //MANAGER APPOINTMENTS //MANAGER APPOINTMENTS 
 Route::get('/manager/direct', [ManagerAppointmentsPagesController::class, 'direct'])->middleware(['auth', 'verified','manager'])->name('managerdirect');
 Route::post('/manager/direct/save', [ManagerAppointmensController::class, 'directsave'])->middleware(['auth', 'verified','manager'])->name('managerdirectsave');
@@ -370,6 +387,15 @@ Route::get('/ownerchat', [OwnerController::class, 'ownerchat'])->middleware(['au
 //CLIENT
 Route::get('/dashboard', [UserController::class, 'dashboard'])->middleware(['auth', 'verified','user'])->name('dashboard');
 Route::get('/chat', [UserController::class, 'chat'])->middleware(['auth', 'verified','user'])->name('chat');
+
+Route::get('/fetch-unread-messages-count', [AppointmentController::class, 'fetchUserUnreadMessageCount'])->middleware(['auth', 'verified','user'])->name('fetch.user.unread.message.count');
+
+
+
+Route::get('/notifications', [UserController::class, 'notifications'])->middleware(['auth', 'verified','user'])->name('notifications');
+Route::get('/fetch-unread-count', [AppointmentController::class, 'fetchUnreadCount'])->middleware(['auth', 'verified','user'])->name('fetch.unread.count');
+
+
 Route::get('/aboutus', [UserController::class, 'aboutus'])->middleware(['auth', 'verified','user'])->name('aboutus');
 Route::get('/faqs', [UserController::class, 'faqs'])->middleware(['auth', 'verified','user'])->name('faqs');
 Route::get('/reviews', [UserController::class, 'reviews'])->middleware(['auth', 'verified','user'])->name('reviews');
@@ -412,6 +438,9 @@ Route::put('/verify/{id}', [VerifyIdController::class, 'update'])
 Route::put('/manager/verify/{id}', [VerifyIdController::class, 'managerupdate'])
     ->middleware(['auth', 'verified','manager'])
     ->name('managerverify.update');
+
+
+Route::get('/unread-message-count', [ChatController::class, 'fetchUnreadMessageCount'])->name('fetchUnreadMessageCount');
 
 
 require __DIR__.'/auth.php';

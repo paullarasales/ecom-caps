@@ -10,6 +10,7 @@ use App\Models\Package;
 use App\Models\Appointment;
 use App\Models\Blockeddate;
 use App\Models\Blockedapp;
+use App\Models\Message;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 
@@ -72,7 +73,9 @@ class UserController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('client.reviews', compact('reviews'));
+        $averageRating = $reviews->avg('rating');
+
+        return view('client.reviews', compact('reviews', 'averageRating'));
     }
     public function makereviews(string $appointment)
     {
@@ -128,7 +131,46 @@ class UserController extends Controller
     }
     public function chat()
     {
+        Message::where('receiver_id', auth()->id())
+        ->where('receiverisread', 'unread')
+        ->update(['receiverisread' => 'read']);
+
+        // Return the chat view
         return view('client.chat');
+
+        // return view('client.chat');
+    }
+    public function notifications()
+    {
+        $user = Auth::user();
+
+        // Check if user has all personal details
+        $hasPersonalDetails = $user->firstname && $user->lastname && $user->birthday && 
+                            $user->phone && $user->address && $user->city && $user->photo;
+
+        $isVerified = $user->verifystatus === 'verified';
+
+        $appointments = $user->appointment()
+                            ->with('review')
+                            ->orderBy('created_at', 'desc')
+                            ->get();
+                            
+        $user->appointment()->where('isread', 'unread')->update(['isread' => 'read']);
+
+        // Update `verifyisread` if it's 'unread'
+        if ($user->verifyisread === 'unread') {
+            $user->verifyisread = 'read';
+        }
+
+        // Update `submitisread` if it's 'unread'
+        if ($user->submitisread === 'unread') {
+            $user->submitisread = 'read';
+        }
+
+        // Save the updated user data
+        $user->save();
+
+        return view('client.notifications', compact('hasPersonalDetails', 'isVerified', 'appointments'));
     }
     public function book()
     {

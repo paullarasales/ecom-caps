@@ -92,8 +92,8 @@ class AppointmentsPagesController extends Controller
 
         return [
             'id' => $event->appointment_id,
-            'title' => $event->type,
-            'info' => $event->user->firstname . '  ' . $event->user->lastname ,
+            'title' => $event->user->firstname . '  ' . $event->user->lastname,
+            'info' => $event->type,
             'start' => $event->appointment_datetime,
             'color' => $color,  // Include the color in the event data
         ];
@@ -152,16 +152,24 @@ class AppointmentsPagesController extends Controller
 
     //PENDING
     public function pending()
-    {
-        
-        $appointments = Appointment::with('user')
-        ->where('status', 'pending')
-        ->paginate(10);
-        
-        return view('admin.pending', compact('appointments'));
+{
+    $search = request('search');
 
-        // return view('admin.pending');
-    }
+    $appointments = Appointment::with('user')
+        ->where('status', 'pending')
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($q) use ($search) {
+                    $q->where('firstname', 'like', "%{$search}%")
+                      ->orWhere('lastname', 'like', "%{$search}%");
+                })
+                ->orWhere('reference', 'like', "%{$search}%");
+            });
+        })
+        ->paginate(10);
+    
+    return view('admin.pending', compact('appointments', 'search'));
+}
     public function pendingView(string $app)
     {
         $appointment = Appointment::with(['user', 'package'])

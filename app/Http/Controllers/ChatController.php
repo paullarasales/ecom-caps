@@ -120,45 +120,45 @@ class ChatController extends Controller
 
     // Get messages for all managers
     public function getMessagesForManagers(Request $request)
-{
-    $receiverId = $request->input('receiver_id');
-    $currentUserId = auth()->id();
-    $receiverType = User::find($receiverId)->usertype;
+    {
+        $receiverId = $request->input('receiver_id');
+        $currentUserId = auth()->id();
+        $receiverType = User::find($receiverId)->usertype;
 
-    if ($receiverType === 'user') {
-        // User is of type 'user', fetch messages with all managers.
-        $messages = Message::where(function ($query) use ($currentUserId, $receiverId) {
-                $query->where('sender_id', $currentUserId)
-                      ->where('receiver_id', $receiverId);
-            })
-            ->orWhere(function ($query) use ($currentUserId, $receiverId) {
-                $query->where('sender_id', $receiverId)
-                      ->where('receiver_id', $currentUserId);
-            })
-            ->orWhere(function ($query) use ($receiverId) {
-                $query->where('receiver_id', $receiverId)
-                      ->whereHas('sender', function ($q) {
-                          $q->where('usertype', 'manager');
-                      });
-            })
-            ->with('sender')
-            ->get();
-    } else {
-        // Receiver is admin or owner, fetch messages privately between manager and admin/owner.
-        $messages = Message::where(function ($query) use ($currentUserId, $receiverId) {
-                $query->where('sender_id', $currentUserId)
-                      ->where('receiver_id', $receiverId);
-            })
-            ->orWhere(function ($query) use ($currentUserId, $receiverId) {
-                $query->where('sender_id', $receiverId)
-                      ->where('receiver_id', $currentUserId);
-            })
-            ->with('sender')
-            ->get();
+        if ($receiverType === 'user') {
+            // User is of type 'user', fetch messages with all managers.
+            $messages = Message::where(function ($query) use ($currentUserId, $receiverId) {
+                    $query->where('sender_id', $currentUserId)
+                        ->where('receiver_id', $receiverId);
+                })
+                ->orWhere(function ($query) use ($currentUserId, $receiverId) {
+                    $query->where('sender_id', $receiverId)
+                        ->where('receiver_id', $currentUserId);
+                })
+                ->orWhere(function ($query) use ($receiverId) {
+                    $query->where('receiver_id', $receiverId)
+                        ->whereHas('sender', function ($q) {
+                            $q->where('usertype', 'manager');
+                        });
+                })
+                ->with('sender')
+                ->get();
+        } else {
+            // Receiver is admin or owner, fetch messages privately between manager and admin/owner.
+            $messages = Message::where(function ($query) use ($currentUserId, $receiverId) {
+                    $query->where('sender_id', $currentUserId)
+                        ->where('receiver_id', $receiverId);
+                })
+                ->orWhere(function ($query) use ($currentUserId, $receiverId) {
+                    $query->where('sender_id', $receiverId)
+                        ->where('receiver_id', $currentUserId);
+                })
+                ->with('sender')
+                ->get();
+        }
+
+        return response()->json($messages);
     }
-
-    return response()->json($messages);
-}
 
 
 

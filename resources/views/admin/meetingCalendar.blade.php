@@ -64,7 +64,7 @@
                 events: '{{ route("meetingCalendar") }}',  // Use the correct route name
                 eventClick: function(info) {
                     // Update modal content
-                    document.getElementById('eventTitle').textContent = 'Event: ' + info.event.title;
+                    document.getElementById('eventTitle').textContent = 'Meeting: ' + info.event.title;
     
                     if (info.event.classNames.includes('blocked-event')) {
                         document.getElementById('modalText').textContent = 'This date is blocked: ' + info.event.title;
