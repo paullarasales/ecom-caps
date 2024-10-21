@@ -24,8 +24,8 @@
                                 <!-- Messages will be populated here -->
                             </div>
                             <div class="flex p-4 border-t border-gray-200 bg-white">
-                                <input type="text" id="message-input" placeholder="Type a message" class="flex-1 p-2 border border-gray-200 rounded-md mr-2">
-                                <button id="send-button" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                <input type="text" id="message-input" placeholder="Type a message" class="flex-1 p-2 border border-gray-200 rounded-md mr-2 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                                <button id="send-button" class="ml-2 px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
                                     Send
                                 </button>
                             </div>
@@ -43,54 +43,101 @@
         window.authUserType = @json(auth()->user()->usertype);
         let currentReceiverId = null;
 
+        let messagesCache = {}; // Cache for messages
+
         async function fetchUserList() {
-    try {
-        const response = await fetch('/get-users'); // Fetch users, admins, managers, and owners
-        if (!response.ok) {
-            console.error('Error fetching user list:', response.statusText);
-            return;
-        }
+            try {
+                const response = await fetch('/get-users'); // Fetch users, admins, managers, and owners
+                if (!response.ok) {
+                    console.error('Error fetching user list:', response.statusText);
+                    return;
+                }
 
-        const users = await response.json();
-        const userList = document.getElementById('user-list');
-        userList.innerHTML = '';
+                const users = await response.json();
+                const userList = document.getElementById('user-list');
+                userList.innerHTML = '';
 
-        // Filter out users with usertype 'user' and then iterate through the rest
-        users
-            .filter(user => user.usertype !== 'user') // Exclude users with usertype 'user'
-            .forEach(user => {
-                const userElement = document.createElement('div');
-                userElement.className = 'user-list-item capitalize p-2 rounded-md cursor-pointer transition duration-300 ease-in-out hover:bg-gray-200';
-                userElement.textContent = user.name;
-                userElement.dataset.userId = user.id;
+                // Fetch unread message counts for all users
+                const unreadCountsResponse = await fetch('/get-unread-message-counts');
+                const unreadCounts = await unreadCountsResponse.json();
+                const unreadCountsMap = Object.fromEntries(unreadCounts.map(item => [item.sender_id, item.message_count]));
 
-                userElement.addEventListener('click', () => {
+                users
+                    .filter(user => user.usertype !== 'user') // Exclude users with usertype 'user'
+                    .forEach(user => {
+                        const userElement = document.createElement('div');
+                        userElement.className = 'relative user-list-item capitalize p-2 rounded-md cursor-pointer transition duration-300 ease-in-out hover:bg-gray-200';
+                        userElement.textContent = user.name;
+                        userElement.dataset.userId = user.id;
 
-                    // Remove highlight from previously selected user
-                    const previouslySelected = document.querySelector('.user-list-item.selected');
-                        if (previouslySelected) {
-                            previouslySelected.classList.remove('selected');
+                        // Create the unread count badge
+                        const unreadCount = unreadCountsMap[user.id] || 0;
+                        if (unreadCount > 0) {
+                            const badge = document.createElement('span');
+                            badge.className = 'absolute top-2 right-3 inline-block w-5 h-5 text-center text-white bg-red-500 rounded-full text-xs font-bold';
+                            badge.textContent = unreadCount; // Set the unread count
+                            userElement.appendChild(badge);
                         }
 
-                        // Highlight the currently selected user
-                        userElement.classList.add('selected');
-                        
-                    currentReceiverId = user.id;
-                    fetchMessages();
+                        userElement.addEventListener('click', async () => {
+                            // Remove highlight from previously selected user
+                            const previouslySelected = document.querySelector('.user-list-item.selected');
+                            if (previouslySelected) {
+                                previouslySelected.classList.remove('selected');
+                            }
+
+                            // Highlight the currently selected user
+                            userElement.classList.add('selected');
+                            
+                            currentReceiverId = user.id;
+
+                            // Fetch messages for the selected user
+                            await fetchMessages();
+
+                            // Mark messages as read for the selected user
+                            await markMessagesAsRead(user.id);  // Pass the user's ID here
+                        });
+
+                        userList.appendChild(userElement);
+                    });
+            } catch (error) {
+                console.error('Error fetching user list:', error);
+            }
+        }
+
+        // Function to mark messages as read
+        async function markMessagesAsRead(senderId) {
+            try {
+                const response = await fetch(`/mark-messages-as-read/${senderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ receiverId: window.authUserId })  // Send receiver's ID as well
                 });
 
-                userList.appendChild(userElement);
-            });
-    } catch (error) {
-        console.error('Error fetching user list:', error);
-    }
-}
+                if (!response.ok) {
+                    throw new Error('Failed to mark messages as read');
+                }
 
+                // Optionally refresh unread counts after marking as read
+                await fetchUserList();
+            } catch (error) {
+                console.error('Error marking messages as read:', error);
+            }
+        }
 
         async function fetchMessages() {
             if (!currentReceiverId) {
                 console.error('No receiver selected.');
                 return;
+            }
+
+            // Check if messages are already cached
+            if (messagesCache[currentReceiverId]) {
+                displayMessages(messagesCache[currentReceiverId]);
+                return; // Skip fetching from server if we have cached messages
             }
 
             try {
@@ -118,6 +165,22 @@
             }
         }
 
+        function displayMessages(messages) {
+    const messageList = document.getElementById('message-list');
+    messageList.innerHTML = '';
+
+    messages.forEach(msg => {
+        const msgElement = document.createElement('div');
+        msgElement.className = `message p-2 rounded-md max-w-max break-words ${
+            msg.sender_id === window.authUserId ? 'bg-green-200 text-right ml-auto' : 'bg-gray-200 text-left mr-auto border border-yellow-300'
+        }`;
+        msgElement.textContent = msg.content;
+        messageList.appendChild(msgElement);
+    });
+
+    messageList.scrollTop = messageList.scrollHeight;
+}
+
         document.addEventListener('DOMContentLoaded', function() {
             const button = document.getElementById('send-button');
 
@@ -140,7 +203,7 @@
             });
 
             fetchUserList();
-            setInterval(fetchMessages, 2000);
+            setInterval(fetchMessages, 2000); // Update messages every 2 seconds
         });
     </script>
 </x-owner-layout>

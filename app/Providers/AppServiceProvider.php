@@ -75,6 +75,17 @@ class AppServiceProvider extends ServiceProvider
                     // Set unread count for admin
                     $unreadCount = $unreadAppointmentsCount + $unreadAdminCount;
                 }
+
+                // Check if the user's type is 'manager'
+                elseif ($user->usertype === 'owner') {
+
+                    // Count all appointments where `ismanagerread` is "unread"
+                    $unreadAppointmentsCount = \App\Models\Appointment::where('isownerread', 'unread')->count();
+
+
+                    // Set unread count for admin
+                    $unreadCount = $unreadAppointmentsCount;
+                }
             }
         
             $view->with('unreadCount', $unreadCount);
@@ -92,6 +103,27 @@ class AppServiceProvider extends ServiceProvider
                     // Count unread messages where receiver_id is the authenticated user's ID and receiverisread is "unread"
                     $unreadChatCount = \App\Models\Message::where('receiver_id', $user->id)
                         ->where('receiverisread', 'unread')
+                        ->count();
+                }
+
+                elseif ($user->usertype === 'admin') {
+                    // Count unread messages where receiver_id is the authenticated user's ID and receiverisread is "unread"
+                    $unreadChatCount = \App\Models\Message::where('receiver_id', $user->id)
+                        ->where('isopened', 'unread')
+                        ->count();
+                }
+
+                elseif ($user->usertype === 'manager') {
+                    // Count unread messages where receiver_id is the authenticated user's ID and receiverisread is "unread"
+                    $unreadChatCount = \App\Models\Message::where('receiver_id', $user->id)
+                        ->where('isopened', 'unread')
+                        ->count();
+                }
+
+                elseif ($user->usertype === 'owner') {
+                    // Count unread messages where receiver_id is the authenticated user's ID and receiverisread is "unread"
+                    $unreadChatCount = \App\Models\Message::where('receiver_id', $user->id)
+                        ->where('isopened', 'unread')
                         ->count();
                 }
             }

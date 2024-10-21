@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Faqs;
 use App\Models\Appointment;
+use App\Models\Message;
 use App\Models\Package;
 use App\Models\Post;
 use Carbon\Carbon;
@@ -172,6 +173,24 @@ class OwnerController extends Controller
     }
     public function ownerchat()
     {
+        Message::where('receiver_id', Auth::id())
+        ->where('isopened', 'unread')
+        ->update(['isopened' => 'read']);
+
         return view('owner.chat');
+    }
+
+    public function notifications()
+    {
+        // Fetch unread appointments for each user
+        $unreadAppointments = Appointment::where('ismanagerread', 'unread')
+        ->with('user') // Assuming you have a relationship defined in the Appointment model
+        ->where('status', 'pending')
+        ->get();
+
+        Appointment::where('isownerread', 'unread')
+        ->update(['isownerread' => 'read']);
+
+        return view('owner.notifications', compact('unreadAppointments'));
     }
 }

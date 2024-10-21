@@ -494,6 +494,28 @@ class AppointmentController extends Controller
             return response()->json(['count' => 0]);
         }
     }
+    
+    public function fetchOwnerUnreadCount() 
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            // Check if the user's type is 'admin'
+            if ($user->usertype === 'owner') {
+
+                // Count all appointments where `ismanagerread` is "unread"
+                $unreadAppointmentsCount = \App\Models\Appointment::where('isownerread', 'unread')->count();
+
+
+                // Set unread count for admin
+                $unreadCount = $unreadAppointmentsCount;
+
+                return response()->json(['count' => $unreadCount]);
+            }
+
+            return response()->json(['count' => 0]);
+        }
+    }
 
     public function fetchUserUnreadMessageCount()
     {
@@ -505,6 +527,63 @@ class AppointmentController extends Controller
                 // Count unread messages where receiver_id is the authenticated user's ID and receiverisread is "unread"
                 $unreadChatCount = \App\Models\Message::where('receiver_id', $user->id)
                     ->where('receiverisread', 'unread')
+                    ->count();
+
+                return response()->json(['count' => $unreadChatCount]);
+            }
+            return response()->json(['count' => 0]);
+        }
+        return response()->json(['count' => 0]);
+    }
+
+    public function fetchAdminUnopenedMessageCount()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            // Check if the user's type is "user"
+            if ($user->usertype === 'admin') {
+                // Count unread messages where receiver_id is the authenticated user's ID and receiverisread is "unread"
+                $unreadChatCount = \App\Models\Message::where('receiver_id', $user->id)
+                    ->where('isopened', 'unread')
+                    ->count();
+
+                return response()->json(['count' => $unreadChatCount]);
+            }
+            return response()->json(['count' => 0]);
+        }
+        return response()->json(['count' => 0]);
+    }
+
+    public function fetchManagerUnopenedMessageCount()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            // Check if the user's type is "user"
+            if ($user->usertype === 'manager') {
+                // Count unread messages where receiver_id is the authenticated user's ID and receiverisread is "unread"
+                $unreadChatCount = \App\Models\Message::where('receiver_id', $user->id)
+                    ->where('isopened', 'unread')
+                    ->count();
+
+                return response()->json(['count' => $unreadChatCount]);
+            }
+            return response()->json(['count' => 0]);
+        }
+        return response()->json(['count' => 0]);
+    }
+
+    public function fetchOwnerUnopenedMessageCount()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            // Check if the user's type is "user"
+            if ($user->usertype === 'owner') {
+                // Count unread messages where receiver_id is the authenticated user's ID and receiverisread is "unread"
+                $unreadChatCount = \App\Models\Message::where('receiver_id', $user->id)
+                    ->where('isopened', 'unread')
                     ->count();
 
                 return response()->json(['count' => $unreadChatCount]);

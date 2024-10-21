@@ -11,11 +11,16 @@ use App\Models\Package;
 use App\Models\Post;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB; 
+use App\Models\Message;
 
 class AdminController extends Controller
 {
     public function chat()
     {
+        Message::where('receiver_id', Auth::id())
+        ->where('isopened', 'unread')
+        ->update(['isopened' => 'read']);
+
         $users = User::all();
         return view('admin.chat', compact('users'));
     }

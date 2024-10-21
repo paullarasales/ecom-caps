@@ -67,10 +67,13 @@
                         {{ __('Dashboard') }}
                     </x-side-nav-link>
                 </div>
-                <div class="{{ request()->routeIs('ownerchat') ? 'bg-gray-200' : '' }} flex items-center gap-2 rounded-sm h-12">
+                <div class="{{ request()->routeIs('ownerchat') ? 'bg-gray-200' : '' }} flex items-center gap-2 rounded-sm h-12 relative">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ request()->routeIs('ownerchat') ? '#FFB200' : '#000000'}}" class="ml-4 sm:ml-10 w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
                     </svg>
+                    <span class="absolute top-4 right-3 inline-block w-5 h-5 text-center text-white bg-red-500 rounded-full text-xs font-bold messagenotification-badge {{ $unreadChatCount > 0 ? '' : 'hidden' }}">
+                        {{ $unreadChatCount }}
+                    </span>
 
                     <x-side-nav-link href="{{ route('ownerchat') }}" :active="request()->routeIs('ownerchat')" class="text-xl text-black font-medium mt-1 flex items-center w-full">
                         {{ __('Chat') }}
@@ -110,6 +113,14 @@
                         
                         <!-- User Dropdown -->
                         <div class="absolute inset-y-0 right-0 flex items-center">
+                            <div class="text-sm my-3 mx-4">
+                                <a href="{{route('owner.notifications')}}" class="bg-yellow-200 rounded-3xl py-3 px-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t relative">
+                                    <i class="fa-solid fa-bell"></i>
+                                    <span class="absolute -top-1 -right-1 inline-block w-5 h-5 text-center text-white bg-red-500 rounded-full text-xs font-bold notification-badge {{ $unreadCount > 0 ? '' : 'hidden' }}">
+                                        {{ $unreadCount }}
+                                    </span>
+                                </a>
+                            </div> 
                             <div x-data="{ open: false }" class="relative">
                                 <!-- Profile Dropdown Button -->
                                 <button @click="open = !open" class="relative inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-lg rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150" aria-haspopup="true" aria-expanded="open" style="z-index: 10;">
@@ -141,6 +152,38 @@
                     </div>
                 </div>
             </nav>
+
+            <script>
+                // Polling for unread appointment count
+                setInterval(function() {
+                    fetch('{{ route('fetch.owner.unread.count') }}')
+                        .then(response => response.json())
+                        .then(data => {
+                            const notificationBadge = document.querySelector('.notification-badge');
+                            if (notificationBadge) {
+                                notificationBadge.textContent = data.count > 0 ? data.count : '';
+                                notificationBadge.classList.toggle('hidden', data.count === 0);
+                            }
+                        })
+                        .catch(error => console.error('Error fetching unread count:', error));
+                }, 5000); // Check every 5 seconds
+            </script>
+
+            <script>
+                // Polling for unread appointment count
+                setInterval(function() {
+                    fetch('{{ route('fetch.owner.unopened.message.count') }}')
+                        .then(response => response.json())
+                        .then(data => {
+                            const notificationBadge = document.querySelector('.messagenotification-badge');
+                            if (notificationBadge) {
+                                notificationBadge.textContent = data.count > 0 ? data.count : '';
+                                notificationBadge.classList.toggle('hidden', data.count === 0);
+                            }
+                        })
+                        .catch(error => console.error('Error fetching unread count:', error));
+                }, 5000); // Check every 5 seconds
+            </script>
 
             <!-- Main Content Area -->
             <div class="flex-1 p-4">

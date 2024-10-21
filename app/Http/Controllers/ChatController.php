@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 class ChatController extends Controller
 {
@@ -159,6 +163,45 @@ class ChatController extends Controller
 
         return response()->json($messages);
     }
+
+
+
+
+    public function fetchUserUnreadMessageCounts()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            // Group unread messages by sender_id and count them for each sender
+            $unreadChatCounts = \App\Models\Message::select('sender_id', DB::raw('count(*) as message_count'))
+                ->where('receiver_id', $user->id)
+                ->where('receiverisread', 'unread')
+                ->groupBy('sender_id')
+                ->get();
+
+            return response()->json($unreadChatCounts);
+        }
+
+        return response()->json([]);
+    }
+
+    public function markAsRead($senderId)
+    {
+        $authUserId = auth()->id(); // Get the authenticated user's ID
+
+        // Update messages where the authenticated user is the receiver and the selected user is the sender
+        \App\Models\Message::where('receiver_id', $authUserId)
+            ->where('sender_id', $senderId)
+            ->where('receiverisread', 'unread')
+            ->update(['receiverisread' => 'read']);
+
+        return response()->json(['success' => true]);
+    }
+
+
+
+
+
 
 
 

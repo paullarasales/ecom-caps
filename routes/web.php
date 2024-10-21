@@ -48,13 +48,17 @@ Route::get('/get-messages-for-managers', [ChatController::class, 'getMessagesFor
 Route::get('/get-managers', [ChatController::class, 'getManagers']);
 Route::post('/send-message-to-user', [ChatController::class, 'sendMessageToUser']);
 Route::get('/get-messages-for-user', [ChatController::class, 'getMessagesForUser']);
+Route::get('/get-unread-message-counts', [ChatController::class, 'fetchUserUnreadMessageCounts']);
+Route::post('/mark-messages-as-read/{senderId}', [ChatController::class, 'markAsRead'])->name('messages.markAsRead');
+
+
 
 
 
 
 
 //ADMIN
-Route::get('/admin/dashboard', [AdminController::class, 'chat'])->middleware(['auth', 'verified','admin'])->name('admin.chat');
+Route::get('/admin/chat', [AdminController::class, 'chat'])->middleware(['auth', 'verified','admin'])->name('admin.chat');
 Route::get('/others', [AdminController::class, 'others'])->middleware(['auth', 'verified','admin'])->name('others');
 Route::get('/admindashboard', [AdminController::class, 'admindashboard'])->middleware(['auth', 'verified','admin'])->name('admindashboard');
 Route::get('/appointments', [AdminController::class, 'appointments'])->middleware(['auth', 'verified','admin'])->name('adminappointments');
@@ -96,6 +100,7 @@ Route::put('/admin/reviews/approved/to/pending/{review_id}', [ReviewController::
 //NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS 
 Route::get('/fetch-admin-unread-count', [AppointmentController::class, 'fetchAdminUnreadCount'])->middleware(['auth', 'verified','admin'])->name('fetch.admin.unread.count');
 Route::get('/admin/notifications', [AdminController::class, 'notifications'])->middleware(['auth', 'verified','admin'])->name('admin.notifications');
+Route::get('/fetch-unopened-messages-count', [AppointmentController::class, 'fetchAdminUnopenedMessageCount'])->middleware(['auth', 'verified','admin'])->name('fetch.admin.unopened.message.count');
 
 //NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS //NOTIFICATIONS 
 
@@ -348,6 +353,7 @@ Route::get('/manager/meetingCalendar/data', [ManagerAppointmentsPagesController:
 //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS 
 Route::get('/manager/notifications', [ManagerController::class, 'notifications'])->middleware(['auth', 'verified','manager'])->name('manager.notifications');
 Route::get('/fetch-manager-unread-count', [AppointmentController::class, 'fetchManagerUnreadCount'])->middleware(['auth', 'verified','manager'])->name('fetch.manager.unread.count');
+Route::get('/fetch-manager-unopened-messages-count', [AppointmentController::class, 'fetchManagerUnopenedMessageCount'])->middleware(['auth', 'verified','manager'])->name('fetch.manager.unopened.message.count');
 
 //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS 
 
@@ -384,16 +390,25 @@ Route::get('/ownerchat', [OwnerController::class, 'ownerchat'])->middleware(['au
 
 
 
+//OWNER NOTIFICATIONS //OWNER NOTIFICATIONS //OWNER NOTIFICATIONS //OWNER NOTIFICATIONS 
+Route::get('/fetch-owner-unopened-messages-count', [AppointmentController::class, 'fetchOwnerUnopenedMessageCount'])->middleware(['auth', 'verified','owner'])->name('fetch.owner.unopened.message.count');
+Route::get('/fetch-owner-unread-count', [AppointmentController::class, 'fetchOwnerUnreadCount'])->middleware(['auth', 'verified','owner'])->name('fetch.owner.unread.count');
+Route::get('/owner/notifications', [OwnerController::class, 'notifications'])->middleware(['auth', 'verified','owner'])->name('owner.notifications');
+
+//OWNER NOTIFICATIONS //OWNER NOTIFICATIONS //OWNER NOTIFICATIONS //OWNER NOTIFICATIONS 
+
+
+
 //CLIENT
 Route::get('/dashboard', [UserController::class, 'dashboard'])->middleware(['auth', 'verified','user'])->name('dashboard');
 Route::get('/chat', [UserController::class, 'chat'])->middleware(['auth', 'verified','user'])->name('chat');
 
+
+
 Route::get('/fetch-unread-messages-count', [AppointmentController::class, 'fetchUserUnreadMessageCount'])->middleware(['auth', 'verified','user'])->name('fetch.user.unread.message.count');
-
-
-
 Route::get('/notifications', [UserController::class, 'notifications'])->middleware(['auth', 'verified','user'])->name('notifications');
 Route::get('/fetch-unread-count', [AppointmentController::class, 'fetchUnreadCount'])->middleware(['auth', 'verified','user'])->name('fetch.unread.count');
+
 
 
 Route::get('/aboutus', [UserController::class, 'aboutus'])->middleware(['auth', 'verified','user'])->name('aboutus');
