@@ -4,7 +4,7 @@
         <h1 class="text-3xl lg:text-6xl font-semibold leading-normal text-center lg:text-left">The Siblings <br class="lg:hidden"> Catering Services</h1>
         <p class="text-center lg:text-left lg:mt-4">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Deleniti, in!</p>
         <div class="mt-6 lg:mt-10 text-center lg:text-left">
-            <a href="{{ route('book-form') }}" class="bg-yellow-200 rounded-3xl py-3 px-8 font-medium inline-block mr-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t">Get Started</a>
+            <a href="{{ route('book-form') }}" class="bg-yellow-200 text-gray-700 rounded-3xl py-3 px-8 font-medium inline-block mr-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t">Get Started</a>
         </div>
     </div>
 

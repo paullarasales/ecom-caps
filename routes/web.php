@@ -275,6 +275,10 @@ Route::get('/post/{post_id}/destroy', [PostController::class, 'destroy'])
 //APPOINTMENT
 Route::resource('/appointment', AppointmentController::class);
 
+Route::post('/appointment/meeting', [AppointmentController::class, 'meeting'])
+    ->middleware(['auth', 'verified', 'user'])
+    ->name('appointment.meeting');
+
 Route::put('/appointment/{appointment_id}/accept', [AppointmentController::class, 'accept'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('appointment.accept');
@@ -290,6 +294,10 @@ Route::put('/appointment/{appointment_id}/rebook', [AppointmentController::class
 Route::put('/appointment/{appointment_id}/cancel', [AppointmentController::class, 'cancel'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('appointment.cancel');
+
+Route::put('/appointment/{appointment_id}/cancel/meeting', [AppointmentController::class, 'cancelmeeting'])
+    ->middleware(['auth', 'verified', 'admin'])
+    ->name('appointment.cancel.meeting');
 
 Route::get('/appointment/{appointment_id}/details-edit', [AppointmentController::class, 'detailsedit'])
     ->middleware(['auth', 'verified', 'admin'])
@@ -423,6 +431,7 @@ Route::get('/events/data', [UserController::class, 'events'])->middleware(['auth
 Route::get('/events', [UserController::class, 'eventsView'])->middleware(['auth', 'verified','user'])->name('eventsView');
 Route::get('/book-form', [UserController::class, 'book'])->middleware(['auth', 'verified','user'])->name('book-form');
 Route::get('/form', [UserController::class, 'form'])->middleware(['auth', 'verified','user'])->name('form');
+Route::get('/meeting-form', [UserController::class, 'meetingform'])->middleware(['auth', 'verified','user'])->name('meetingform');
 Route::get('/idverify', [UserController::class, 'idverify'])->middleware(['auth', 'verified','user'])->name('idverify');
 Route::get('/personal/{id}', [UserController::class, 'personal'])->middleware(['auth', 'verified','user'])->name('personal');
 Route::patch('/update-personal/{id}', [UserController::class, 'update'])->middleware(['auth', 'verified','user'])->name('update-personal');

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Package;
 use App\Models\Blockeddate;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
@@ -94,17 +95,119 @@ class AppointmentController extends Controller
         $dateTime = Carbon::createFromFormat('Y-m-d H:i', $request->appointment_date . ' ' . $request->appointment_time);
         $appointment = new Appointment($request->all());
         $appointment->user_id = Auth::id();
-        $appointment->theme ='undefined';
         $appointment->appointment_datetime = $dateTime;
         $appointment->package_id = $request->package_id;
         // Generate a unique reference
-        $appointment->reference = strtoupper(uniqid('APP'));
-        $appointment->adate = now();
-        $appointment->atime = 'null';
+        $appointment->reference = strtoupper(uniqid('REF'));
         $appointment->save();
 
-        return redirect()->route('dashboard')->with('alert', 'Request Submitted. Your reference number is ' . $appointment->reference);
+        // Email logic directly in the controller
+        $user = Auth::user();
+
+        $appointmentDate = \Carbon\Carbon::parse($appointment->edate)->format('F j, Y'); // e.g., September 21, 2024
+        $appointmentDateTime = \Carbon\Carbon::parse($appointment->appointment_datetime)->format('F j, Y h:i A'); // e.g., September 21, 2024 02:30 PM
+
+        $emailContent = "
+            <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                <h1 style='color: #333;'>Your appointment request has been received!</h1>
+                <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                <p>Thank you for your request. Your appointment details are as follows:</p>
+                <div style='border: 1px solid #ccc; padding: 15px; border-radius: 5px; background-color: #f9f9f9;'>
+                    <p>
+                        <strong>Location:</strong> <span style='color: #555;'>{$appointment->location}</span><br>
+                        <strong>Date:</strong> <span style='color: #555;'>{$appointmentDate}</span><br>
+                        <strong>Time:</strong> <span style='color: #555;'>{$appointment->etime}</span><br>
+                        <strong>Package:</strong> <span style='color: #555;'>{$appointment->package->packagename}</span><br>
+                        <strong>Reference Number:</strong> <span style='color: #555;'>{$appointment->reference}</span>
+                    </p>
+                </div>
+                <p>
+                    Kindly arrive on <strong style='color: #007bff;'>{$appointmentDateTime}</strong> 
+                    to ensure all final details of your event are confirmed. We recommend arriving at least 15 minutes early to allow for any last-minute preparations.
+                </p>
+                <p style='color: #555;'>Thank you for choosing our service!</p>
+            </div>
+        ";
+
+
+        // Send email using html method
+        Mail::send([], [], function ($message) use ($user, $emailContent) {
+            $message->to($user->email)
+                    ->subject('Your Appointment Request Received')
+                    ->html($emailContent); // Use html() method for setting HTML body
+        });
+
+        return redirect()->route('book-form')->with('alert', 'Request Submitted. Your reference number is ' . $appointment->reference);
     }
+
+
+    public function meeting(Request $request)
+    {
+        $request->validate([
+            'appointment_date' => [
+            'required',
+            'date',
+             // Ensure appointment_date is at least 7 days before edate
+        ],
+            'appointment_time' => 'required|date_format:H:i',
+        ]);
+
+        // Combine appointment date and time
+        $dateTime = Carbon::createFromFormat('Y-m-d H:i', $request->appointment_date . ' ' . $request->appointment_time);
+
+        // Check if there is an existing appointment at the same date and time with a pending status
+        $conflictingAppointment = Appointment::where('appointment_datetime', $dateTime)
+                                            ->where('status', 'pending') // Only check for pending status
+                                            ->first();
+
+        if ($conflictingAppointment) {
+            // Redirect back with an error message
+            return redirect()->route('book-form')->with('alert', 'There is already a pending appointment scheduled at this date and time.');
+        }
+
+        $dateTime = Carbon::createFromFormat('Y-m-d H:i', $request->appointment_date . ' ' . $request->appointment_time);
+        $appointment = new Appointment($request->all());
+        $appointment->user_id = Auth::id();
+        $appointment->appointment_datetime = $dateTime;
+        $appointment->reference = strtoupper(uniqid('REF'));
+        $appointment->save();
+
+        // Email logic directly in the controller
+        $user = Auth::user();
+
+        $appointmentDateTime = \Carbon\Carbon::parse($appointment->appointment_datetime)->format('F j, Y h:i A'); 
+
+        $emailContent = "
+            <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                <h1 style='color: #333;'>Your appointment request has been received!</h1>
+                <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                <p>Thank you for your request. Your appointment details are as follows:</p>
+                <div style='border: 1px solid #ccc; padding: 15px; border-radius: 5px; background-color: #f9f9f9;'>
+                    <p>
+                        <strong>Reference Number:</strong> <span style='color: #555;'>{$appointment->reference}</span>
+                    </p>
+                </div>
+                <p>
+                    Kindly arrive on <strong style='color: #007bff;'>{$appointmentDateTime}</strong> 
+                    to ensure all final details of your event are confirmed. We recommend arriving at least 15 minutes early to allow for any last-minute preparations.
+                </p>
+                <p style='color: #555;'>Thank you for choosing our service!</p>
+            </div>
+        ";
+
+
+        // Send email using html method
+        Mail::send([], [], function ($message) use ($user, $emailContent) {
+            $message->to($user->email)
+                    ->subject('Your Appointment Request Received')
+                    ->html($emailContent); // Use html() method for setting HTML body
+        });
+
+        return redirect()->route('meetingform')->with('alert', 'Request Submitted. Your reference number is ' . $appointment->reference);
+
+    }
+
+
     
     public function directsave(Request $request)
     {
@@ -157,10 +260,7 @@ class AppointmentController extends Controller
         $appointment->etime = $request->input('etime');
         $appointment->type = $request->input('type');
         $appointment->package_id = $request->input('package_id');
-        $appointment->reference = strtoupper(uniqid('APP'));
-        $appointment->adate = now();
-        $appointment->atime = 'null';
-        $appointment->theme ='undefined';
+        $appointment->reference = strtoupper(uniqid('REF'));
         $appointment->status = 'booked'; // Consider using null instead of 'null' if you want it to be a database NULL
         $appointment->save();
 
@@ -200,12 +300,67 @@ class AppointmentController extends Controller
         $appointment->isread = "unread";
         $appointment->save();
 
+
+        // Get the user who made the appointment
+        $user = $appointment->user; // Assuming you have a relation between Appointment and User models
+
+        // Format the appointment date and time
+        $appointmentDateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+
+        // Create the email content
+        $emailContent = "
+            <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                <h1 style='color: #333;'>Your event has been booked</h1>
+                <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                <p>Thank you for choosing us. Your event details are as follows:</p>
+                <div style='border: 1px solid #ccc; padding: 15px; border-radius: 5px; background-color: #f9f9f9;'>
+                    <p>
+                        <strong>Location:</strong> <span style='color: #555;'>{$appointment->location}</span><br>
+                        <strong>Date:</strong> <span style='color: #555;'>{$appointmentDateFormatted}</span><br>
+                        <strong>Time:</strong> <span style='color: #555;'>{$appointment->etime}</span><br>
+                        <strong>Type:</strong> <span style='color: #555;'>{$appointment->type}</span><br>
+                        <strong>Package:</strong> <span style='color: #555;'>{$appointment->package->packagename}</span><br>
+                        <strong>Reference Number:</strong> <span style='color: #555;'>{$appointment->reference}</span>
+                    </p>
+                </div>
+                <p>
+                    Your event is confirmed and booked for:
+                    <strong style='color: #007bff;'>{$appointmentDateFormatted}</strong>.
+                    We look forward to making your event special!
+                </p>
+                <p style='color: #555;'>Thank you for choosing our service!</p>
+            </div>
+        ";
+
+        try {
+            // Send the email
+            Mail::send([], [], function ($message) use ($user, $emailContent) {
+                $message->to($user->email)
+                        ->subject('Your Event Has Been Booked!')
+                        ->html($emailContent);
+            });
+        } catch (\Exception $e) {
+            // Log the error or handle it
+            Log::error('Email could not be sent: ' . $e->getMessage());
+            
+            // Redirect back with an error message
+            return redirect()->route('pending')->with('error', 'Failed to send confirmation email.');
+        }
+
         // Redirect back or to a specific route
-        return redirect("admin/pending")->with('alert', 'Request Successfully Accepted');
+        session()->flash('alert', 'Event Successfully Booked');
+        return redirect()->route('pending');
     }
     public function rebook(Request $request, string $appointment_id)
     {
         $appointment = Appointment::findOrFail($appointment_id);
+
+
+        // Check if essential fields (edate, etime, location, type) are not null
+        if (is_null($appointment->edate) || is_null($appointment->etime) || 
+            is_null($appointment->location) || is_null($appointment->type)) {
+            return redirect()->route('cancelled')->with('error', 'Appointment details are incomplete. Please make sure all fields are filled.');
+        }
         
         // Get the date of the appointment
         $appointmentDate = $appointment->edate; // Assuming 'edate' is a field in the appointments table
@@ -233,8 +388,55 @@ class AppointmentController extends Controller
         $appointment->isread = "unread";
         $appointment->save();
 
+
+        // Get the user who made the appointment
+        $user = $appointment->user; // Assuming you have a relation between Appointment and User models
+
+        // Format the appointment date and time
+        $appointmentDateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+
+        // Create the email content
+        $emailContent = "
+            <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                <h1 style='color: #333;'>Your event has been booked</h1>
+                <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                <p>Thank you for choosing us. Your event details are as follows:</p>
+                <div style='border: 1px solid #ccc; padding: 15px; border-radius: 5px; background-color: #f9f9f9;'>
+                    <p>
+                        <strong>Location:</strong> <span style='color: #555;'>{$appointment->location}</span><br>
+                        <strong>Date:</strong> <span style='color: #555;'>{$appointmentDateFormatted}</span><br>
+                        <strong>Time:</strong> <span style='color: #555;'>{$appointment->etime}</span><br>
+                        <strong>Type:</strong> <span style='color: #555;'>{$appointment->type}</span><br>
+                        <strong>Package:</strong> <span style='color: #555;'>{$appointment->package->packagename}</span><br>
+                        <strong>Reference Number:</strong> <span style='color: #555;'>{$appointment->reference}</span>
+                    </p>
+                </div>
+                <p>
+                    Your event is confirmed and booked for:
+                    <strong style='color: #007bff;'>{$appointmentDateFormatted}</strong>.
+                    We look forward to making your event special!
+                </p>
+                <p style='color: #555;'>Thank you for choosing our service!</p>
+            </div>
+        ";
+
+        try {
+            // Send the email
+            Mail::send([], [], function ($message) use ($user, $emailContent) {
+                $message->to($user->email)
+                        ->subject('Your Event Has Been Re-Booked!')
+                        ->html($emailContent);
+            });
+        } catch (\Exception $e) {
+            // Log the error or handle it
+            Log::error('Email could not be sent: ' . $e->getMessage());
+            
+            // Redirect back with an error message
+            return redirect()->route('cancelled')->with('error', 'Failed to send confirmation email.');
+        }
+
         // Redirect back or to a specific route
-        return redirect("admin/cancelled")->with('alert', 'Event Successfully Re-booked');
+        return redirect()->route('cancelled')->with('alert', 'Event Successfully Re-booked');
     }
     public function done(Request $request, string $appointment_id)
     {
@@ -250,6 +452,38 @@ class AppointmentController extends Controller
             $appointment->status = 'done';
             $appointment->isread = "unread";
             $appointment->save();
+
+            // Get the user who made the appointment
+            $user = $appointment->user; // Assuming you have a relation between Appointment and User models
+
+            // Format the appointment date and time
+            $appointmentDateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+
+            // Create the email content
+            $emailContent = "
+                <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                    <h1 style='color: #333;'>Your event has been done</h1>
+                    <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                    <p>Thank you for choosing The Siblings Catering Services. We look forward on making your next event wonderful.</p>
+                    <p>You can now make reviews.</p>
+                    <p style='color: #555;'>Thank you for choosing our service!</p>
+                </div>
+            ";
+
+            try {
+                // Send the email
+                Mail::send([], [], function ($message) use ($user, $emailContent) {
+                    $message->to($user->email)
+                            ->subject('Your Event Has Been Done!')
+                            ->html($emailContent);
+                });
+            } catch (\Exception $e) {
+                // Log the error or handle it
+                Log::error('Email could not be sent: ' . $e->getMessage());
+                
+                // Redirect back with an error message
+                return redirect()->route('booked')->with('error', 'Failed to send confirmation email.');
+            }
     
             // Redirect back or to a specific route
             return redirect("admin/booked")->with('alert', 'Event moved to done');
@@ -275,7 +509,40 @@ class AppointmentController extends Controller
         if ($edate->greaterThanOrEqualTo($today->addDays(3))) {
             // Update appointment status to "cancelled"
             $appointment->status = 'cancelled';
+            $appointment->isread = "unread";
             $appointment->save();
+
+            // Get the user who made the appointment
+            $user = $appointment->user; // Assuming you have a relation between Appointment and User models
+
+            // Format the appointment date and time
+            $appointmentDateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+
+            // Create the email content
+            $emailContent = "
+                <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                    <h1 style='color: #333;'>Your event has been cancelled</h1>
+                    <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                    <p>Your event on {$appointmentDateFormatted}.</p>
+                    <p>We look forward on making your next event wonderful.</p>
+                    <p style='color: #555;'>Message us on our Facebook page or on our Website if you want your event to be re-booked</p>
+                </div>
+            ";
+
+            try {
+                // Send the email
+                Mail::send([], [], function ($message) use ($user, $emailContent) {
+                    $message->to($user->email)
+                            ->subject('Your Event Has Been Cancelled')
+                            ->html($emailContent);
+                });
+            } catch (\Exception $e) {
+                // Log the error or handle it
+                Log::error('Email could not be sent: ' . $e->getMessage());
+                
+                // Redirect back with an error message
+                return redirect()->route('booked')->with('error', 'Failed to send confirmation email.');
+            }
 
             // Redirect back or to a specific route
             return redirect("admin/booked")->with('alert', 'Event has been canceled');
@@ -283,6 +550,53 @@ class AppointmentController extends Controller
             // Redirect back or to a specific route with an error message
             return redirect("admin/booked")->with('error', 'The event is not eligible for cancellation.');
         }
+    }
+
+    public function cancelmeeting(Request $request, string $appointment_id)
+    {
+        $appointment = Appointment::findOrFail($appointment_id);
+
+
+
+            // Update appointment status to "cancelled"
+            $appointment->status = 'cancelled';
+            $appointment->isread = "unread";
+            $appointment->save();
+
+
+            // Get the user who made the appointment
+            $user = $appointment->user; // Assuming you have a relation between Appointment and User models
+
+            // Format the appointment date and time
+            $appointmentDateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+
+            // Create the email content
+            $emailContent = "
+                <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                    <h1 style='color: #333;'>Your event request has been cancelled</h1>
+                    <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                    <p>We look forward on making your next event wonderful.</p>
+                    <p style='color: #555;'>Message us on our Facebook page or on our Website if you want your event to be re-booked</p>
+                </div>
+            ";
+
+            try {
+                // Send the email
+                Mail::send([], [], function ($message) use ($user, $emailContent) {
+                    $message->to($user->email)
+                            ->subject('Your Event Request Has Been Cancelled')
+                            ->html($emailContent);
+                });
+            } catch (\Exception $e) {
+                // Log the error or handle it
+                Log::error('Email could not be sent: ' . $e->getMessage());
+                
+                // Redirect back with an error message
+                return redirect()->route('pending')->with('error', 'Failed to send confirmation email.');
+            }
+
+            // Redirect back or to a specific route
+            return redirect("admin/pending")->with('alert', 'Event has been canceled');
     }
 
     //Details Edit
@@ -317,7 +631,7 @@ class AppointmentController extends Controller
         $appointment->save();
 
         // Redirect back or to a success page
-        return redirect()->route('booked')->with('alert', 'Event updated successfully!');
+        return redirect()->back()->with('alert', 'Event updated successfully!');
     }
 
 

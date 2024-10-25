@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('faqs', function (Blueprint $table) {
             $table->id('faq_id');
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('question');
-            $table->string('answer');
+            $table->string('question')->nullable();
+            $table->string('answer')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

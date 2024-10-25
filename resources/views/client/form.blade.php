@@ -1,4 +1,11 @@
-<form action="/appointment" method="POST">
+<div class="text-center lg:mt-20 mt-10">
+    <a href="{{ route('meetingform') }}" class="bg-yellow-200 text-gray-700 rounded-3xl py-3 px-8 font-medium inline-block mr-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t">
+        Schedule A Meeting Only
+        <i class="fa-solid fa-arrow-right ml-3"></i>
+    </a>
+</div>
+
+<form action="/appointment" method="POST" id="appointmentForm">
     @csrf
     <!-- Display validation errors -->
     <div id="errorModal" class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
@@ -134,7 +141,7 @@
                             </div>
 
                             <div class="md:col-span-5">
-                                <label for="email">Event Type</label>
+                                <label for="type">Event Type</label>
                                 <input type="text" name="type" id="type" placeholder="(Ex. 1st Birthday)" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('type') }}" />
                             </div>
 
@@ -183,58 +190,6 @@
 
                 <hr class="my-5 border-yellow-100">
 
-                {{-- <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                    <div class="text-gray-600">
-                        <p class="font-medium text-lg">Meeting Details</p>
-                        <p>Please fill out all the fields.</p>
-                    </div>
-
-                    <div class="lg:col-span-2">
-                        <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-
-                            <div class="md:col-span-3">
-                                <label for="date">Meeting Date</label>
-                                <input type="date" name="adate" id="adate" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
-                            </div>
-                            <script>
-                                var today = new Date();
-                                var minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4);
-                                var minDateString = minDate.toISOString().split('T')[0];
-                                document.getElementById("adate").setAttribute('min', minDateString);
-                            </script>
-
-                            <div class="md:col-span-2">
-                                <label for="time">Meeting Time</label>
-                                <select name="atime" id="atime" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
-                                    <option value="10:00 am">10:00 am</option>
-                                    <option value="10:30 am">10:30 am</option>
-                                    <option value="11:00 am">11:00 am</option>
-                                    <option value="11:30 am">11:30 am</option>
-                                    <option value="12:00 pm">12:00 pm</option>
-                                    <option value="12:30 pm">12:30 pm</option>
-                                    <option value="1:00 pm">1:00 pm</option>
-                                    <option value="1:30 pm">1:30 pm</option>
-                                    <option value="2:00 pm">2:00 pm</option>
-                                    <option value="2:30 pm">2:30 pm</option>
-                                    <option value="3:00 pm">3:00 pm</option>
-                                    <option value="3:30 pm">3:30 pm</option>
-                                    <option value="4:00 pm">4:00 pm</option>
-                                    <option value="4:30 pm">4:30 pm</option>
-                                    <option value="5:00 pm">5:00 pm</option>
-                                    <option value="5:30 pm">5:30 pm</option>
-                                    <option value="6:00 pm">6:00 pm</option>
-                                    <option disabled selected></option>
-                                </select>
-                            </div>
-
-                            <div class="md:col-span-5 text-right">
-                                <input type="submit" name="submit" value="Submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-                            </div>
-
-                        </div>
-                    </div>
-                </div> --}}
-
                 <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                     <div class="text-gray-600">
                         <p class="font-medium text-lg">Meeting Details</p>
@@ -258,11 +213,72 @@
                             </div>
                 
                             <div class="md:col-span-5 text-right">
-                                <input type="submit" name="submit" value="Submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                                <input type="submit" name="submit" value="Submit" class="bg-yellow-500 hover:bg-yellow-700 cursor-pointer text-white font-bold py-2 px-4 rounded">
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Loading animation overlay -->
+                <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+                    <div class="flex flex-col items-center">
+                        <div id="loaderSpinner" class="loader border-t-4 border-yellow-500 rounded-full w-16 h-16 animate-spin"></div>
+                        <p class="text-white mt-4 font-semibold" id="loadingText">Your request is being processed</p>
+                    </div>
+                </div>
+
+                <!-- Styling for loading animation -->
+                <style>
+                    /* Spinner animation */
+                    .loader {
+                        border: 4px solid rgba(255, 255, 255, 0.3);
+                        border-top-color: #f59e0b; /* Yellow color */
+                        border-radius: 50%;
+                        width: 3rem;
+                        height: 3rem;
+                        animation: spin 1s linear infinite;
+                    }
+
+                    @keyframes spin {
+                        0% {
+                            transform: rotate(0deg);
+                        }
+                        100% {
+                            transform: rotate(360deg);
+                        }
+                    }
+                </style>
+
+                <!-- JavaScript to handle loading animation and form submission -->
+                <script>
+                    // Show the loading animation when the form is submitted
+                    document.getElementById('appointmentForm').addEventListener('submit', function(event) {
+                        // Show the loading overlay
+                        document.getElementById('loadingOverlay').classList.remove('hidden');
+                        // Store a flag in session storage to indicate form submission
+                        sessionStorage.setItem('formSubmitted', 'true');
+                    });
+
+                    // Check if the form was submitted after page reload
+                    window.addEventListener('load', function() {
+                        if (sessionStorage.getItem('formSubmitted') === 'true') {
+                            // Clear the session storage flag
+                            sessionStorage.removeItem('formSubmitted');
+                            // Display the loading overlay with the "submitted" message
+                            document.getElementById('loadingOverlay').classList.remove('hidden');
+                            document.getElementById('loadingText').textContent = "Your request is submitted";
+                            
+                            // Hide the loader spinner
+                            document.getElementById('loaderSpinner').classList.add('hidden');
+
+                            // Hide the loading overlay after a few seconds (optional)
+                            setTimeout(function() {
+                                document.getElementById('loadingOverlay').classList.add('hidden');
+                            }, 3000); // Adjust time as needed (3 seconds here)
+                        }
+                    });
+                </script>
+
 
                 <!-- Modal Structure -->
                 <div id="datemodal" class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">

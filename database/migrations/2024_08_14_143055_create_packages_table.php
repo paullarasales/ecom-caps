@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('packages', function (Blueprint $table) {
             $table->id('package_id');
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('packagename');
-            $table->string('packagedesc');
-            $table->string('packagephoto');
+            $table->string('packagename')->nullable();
+            $table->string('packagedesc')->nullable();
+            $table->string('packagephoto')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

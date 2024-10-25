@@ -127,11 +127,26 @@ class AppointmentsPagesController extends Controller
 
     public function booked()
     {
+        // $appointments = Appointment::with('user')
+        // ->where('status', 'booked')
+        // ->paginate(10);
+
+        $search = request('search');
+
         $appointments = Appointment::with('user')
-        ->where('status', 'booked')
-        ->paginate(10);
+            ->where('status', 'booked')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('firstname', 'like', "%{$search}%")
+                        ->orWhere('lastname', 'like', "%{$search}%");
+                    })
+                    ->orWhere('reference', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10);
         
-        return view('admin.booked', compact('appointments'));
+        return view('admin.booked', compact('appointments', 'search'));
         // return view('admin.booked');
     }
     public function bookedView(string $app)
@@ -152,24 +167,24 @@ class AppointmentsPagesController extends Controller
 
     //PENDING
     public function pending()
-{
-    $search = request('search');
+    {
+        $search = request('search');
 
-    $appointments = Appointment::with('user')
-        ->where('status', 'pending')
-        ->when($search, function ($query) use ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('user', function ($q) use ($search) {
-                    $q->where('firstname', 'like', "%{$search}%")
-                      ->orWhere('lastname', 'like', "%{$search}%");
-                })
-                ->orWhere('reference', 'like', "%{$search}%");
-            });
-        })
-        ->paginate(10);
-    
-    return view('admin.pending', compact('appointments', 'search'));
-}
+        $appointments = Appointment::with('user')
+            ->where('status', 'pending')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('firstname', 'like', "%{$search}%")
+                        ->orWhere('lastname', 'like', "%{$search}%");
+                    })
+                    ->orWhere('reference', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10);
+        
+        return view('admin.pending', compact('appointments', 'search'));
+    }
     public function pendingView(string $app)
     {
         $appointment = Appointment::with(['user', 'package'])

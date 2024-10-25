@@ -32,8 +32,8 @@
                 <tr class="bg-white border-b dark:bg-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 hover:text-gray-200">
                     <th scope="row" class="px-6 py-4 capitalize">{{ $app->user->firstname ?? 'N/A' }} {{ $app->user->lastname ?? '' }} </th>
                     
-                    <td class="px-6 py-4">{{ $app->location }}</td>
-                    <td class="px-6 py-4">{{ $app->edate }}</td>
+                    <td class="px-6 py-4">{{ $app->location ? :'No Selected Location' }}</td>
+                    <td class="px-6 py-4">{{ $app->edate ? : 'No Selected Event Date'}}</td>
                     <td class="px-6 py-4">
                         {{-- <a href="" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Edit
@@ -119,7 +119,7 @@
     </div>
 
 
-    @if(session('alert'))
+@if(session('alert'))
     <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
         <span>{{ session('alert') }}</span>
         <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">

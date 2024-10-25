@@ -189,6 +189,13 @@ class UserController extends Controller
         // return view('client.form', compact('faqs'));
         return view('client.form');
     }
+    public function meetingform()
+    {
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
+        $blockedApps = Blockedapp::pluck('blocked_app')->toArray(); 
+        
+        return view('client.form-meeting', compact('blockedDates', 'blockedApps'));
+    }
     public function idverify()
     {
         return view('client.edit-verify');

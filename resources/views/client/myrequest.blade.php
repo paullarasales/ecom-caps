@@ -73,7 +73,7 @@
                                 Event Date
                             </th>
                             <td class="px-6 py-4">
-                                {{ \Carbon\Carbon::parse($appointment->edate)->format('F j, Y') }}
+                                {{ $appointment->edate ? \Carbon\Carbon::parse($appointment->edate)->format('F j, Y') : 'No event date assigned' }}
                             </td>
                         </tr>
                         <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
@@ -81,7 +81,7 @@
                                 Event Time
                             </th>
                             <td class="px-6 py-4">
-                                {{ $appointment->etime }}
+                                {{ $appointment->etime ? : 'No Event time assigned' }}
                             </td>
                         </tr>
                         <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
@@ -89,7 +89,7 @@
                                 Location
                             </th>
                             <td class="px-6 py-4">
-                                {{ $appointment->location }}
+                                {{ $appointment->location ? : 'No Event location assigned' }}
                             </td>
                         </tr>
                         <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
@@ -97,113 +97,29 @@
                                 Type
                             </th>
                             <td class="px-6 py-4">
-                                {{ $appointment->type }}
+                                {{ $appointment->type ? : 'No Event type assigned' }}
                             </td>
                         </tr>
                         <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
                                 Package
                             </th>
-                            <td class="px-6 py-4" >
-                                <a href="javascript:void(0);" onclick="openModal('{{ asset($appointment->package->packagephoto) }}')">{{ $appointment->package->packagename }}</a>
+                            <td class="px-6 py-4">
+                                @if ($appointment->package)
+                                    <a href="javascript:void(0);" onclick="openModal('{{ asset($appointment->package->packagephoto) }}')">
+                                        {{ $appointment->package->packagename }}
+                                    </a>
+                                @else
+                                    No package assigned
+                                @endif
                             </td>
                         </tr>
+                        
                     </tbody>
                 </table>
             </div>
         </div>
         @endforeach
-
-
-        {{-- @foreach ($doneAppointments as $appointment)
-        <div class="text-center py-4 px-6">
-            <h2 class="font-heading bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-64 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
-                Done Events
-            </h2>
-        </div>
-        <div class="bg-gray-100 lg:mx-56 lg:my-5 rounded-xl lg:p-4">
-            <div class="relative overflow-x-auto shadow-sm sm:rounded-lg ">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" style="table-layout: fixed;">
-                    <thead class="text-xs text-gray-700 uppercase bg-yellow-200 dark:text-gray-500">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">
-                                Event
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Details
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
-                                Reference
-                            </th>
-                            <td class="px-6 py-4">
-                                {{ $appointment->reference }}
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
-                                Meeting Date
-                            </th>
-                            <td class="px-6 py-4">
-                                {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('F j, Y') }} <!-- Display date -->
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
-                                Meeting Time
-                            </th>
-                            <td class="px-6 py-4">
-                                {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('g:i A') }} <!-- Display time -->
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
-                                Event Date
-                            </th>
-                            <td class="px-6 py-4">
-                                {{ \Carbon\Carbon::parse($appointment->edate)->format('F j, Y') }}
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
-                                Event Time
-                            </th>
-                            <td class="px-6 py-4">
-                                {{ $appointment->etime }}
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
-                                Location
-                            </th>
-                            <td class="px-6 py-4">
-                                {{ $appointment->location }}
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
-                                Type
-                            </th>
-                            <td class="px-6 py-4">
-                                {{ $appointment->type }}
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
-                                Package
-                            </th>
-                            <td class="px-6 py-4" >
-                                <a href="javascript:void(0);" onclick="openModal('{{ asset($appointment->package->packagephoto) }}')">{{ $appointment->package->packagename }}</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        @endforeach --}}
 
 
     @endif

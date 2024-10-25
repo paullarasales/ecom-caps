@@ -15,14 +15,14 @@ return new class extends Migration
             $table->id('appointment_id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('package_id')->nullable();
-            $table->string('location');
-            $table->date('edate');
-            $table->string('etime');
-            $table->string('type');
-            $table->string('theme');
-            $table->date('adate');
-            $table->string('atime');
-            $table->string('reference', 20);
+            $table->string('location')->nullable();
+            $table->date('edate')->nullable();
+            $table->string('etime')->nullable();
+            $table->string('type')->nullable();
+            $table->string('theme')->nullable();
+            $table->date('adate')->nullable();
+            $table->string('atime')->nullable();
+            $table->string('reference', 20)->nullable();
             $table->string('status')->default('pending');
             $table->timestamps();
 

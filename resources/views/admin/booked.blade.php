@@ -16,6 +16,20 @@
 
     </div>
 
+
+    <div class="lg:mx-10 lg:my-5">
+        <form method="GET" action="{{ route('booked') }}">
+            <div class="flex items-center justify-center mb-4">
+                <input type="text" name="search" class="border-2 border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 rounded-lg py-2 px-4 w-full lg:w-1/3"
+                    placeholder="Search by name/reference..." value="{{ $search }}">
+                <button type="submit" class="ml-2 px-4 py-2 bg-yellow-700 text-white rounded-lg hover:bg-yellow-800">
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg lg:mx-10 lg:my-5">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -24,6 +38,7 @@
                     
                     {{-- <th scope="col" class="px-6 py-3">Location</th> --}}
                     <th scope="col" class="px-6 py-3">Date</th>
+                    <th scope="col" class="px-6 py-3">Reference</th>
                     <th scope="col" class="px-6 py-3">Actions</th>
                 </tr>
             </thead>
@@ -34,6 +49,7 @@
                     
                     {{-- <td class="px-6 py-4">{{ $app->location }}</td> --}}
                     <td class="px-6 py-4">{{ $app->edate }}</td>
+                    <td class="px-6 py-4">{{ $app->reference }}</td>
                     <td class="px-6 py-4">
                         {{-- <a href="" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Edit
