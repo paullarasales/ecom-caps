@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('packages', function (Blueprint $table) {
-            $table->id('package_id');
+        Schema::create('setups', function (Blueprint $table) {
+            $table->id('setup_id');
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('packagename')->nullable();
-            $table->string('packagedesc')->nullable();
-            $table->string('packagephoto')->nullable();
-            $table->string('packagetype')->nullable();
+            $table->string('setupname')->nullable();
+            $table->decimal('setupprice', 8, 2)->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('packages');
+        Schema::dropIfExists('setups');
     }
 };

@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Custom;
 use App\Models\Appointment;
+use App\Models\Food;
+use App\Models\Foodcart;
+use App\Models\Foodpack;
+use App\Models\Customitem;
+use App\Models\Custompackage;
 
 class PackagesController extends Controller
 {
@@ -182,15 +187,30 @@ class PackagesController extends Controller
      * Display the specified resource.
      */
     public function show(string $pk)
-    {
-        $package = Package::find($pk);
-        $custom = Custom::where('package_id', $package->package_id)->first();
-        // return view('admin.packages-see')->with("package", $package);
-        return view('admin.packages-see')->with([
-            'package' => $package,
-            'custom' => $custom,
-        ]);
-    }
+{
+    // Find the Package by its primary key (pk)
+    $package = Package::findOrFail($pk);
+
+    // Retrieve the associated Custompackage, loading its related Customitems
+    $customPackage = Custompackage::with('items') // This will load the related items
+                                  ->where('package_id', $package->package_id)
+                                  ->first(); // Ensure you're getting a single instance
+
+    // Pass both the package and the custom package (with items) to the view
+    return view('admin.packages-see')->with([
+        'package' => $package,
+        'customPackage' => $customPackage,
+    ]);
+}
+
+
+    // $package = Package::find($pk);
+        // $custom = Custom::where('package_id', $package->package_id)->first();
+        // // return view('admin.packages-see')->with("package", $package);
+        // return view('admin.packages-see')->with([
+        //     'package' => $package,
+        //     'custom' => $custom,
+        // ]);
     public function managershow(string $pk)
     {
         $package = Package::find($pk);

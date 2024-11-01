@@ -1,0 +1,102 @@
+<x-admin-layout>
+
+    <div class="absolute">
+        <a href="{{route('customfacepaint')}}">
+            <i class="fa-solid fa-arrow-left float-left ml-5 text-xl"></i>
+        </a>
+    </div>
+
+    <div class="text-center py-2 my-2">
+                
+        <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
+            Add <span class="text-yellow-600">Facepainting</span>
+        </h3>
+
+    </div>
+
+    
+    <form action="{{route('customfacepaint.store')}}" method="POST" enctype="multipart/form-data">
+        @csrf
+    <div class="my-10 p-2 flex items-center justify-center">
+        <div class="container max-w-screen-lg mx-auto">
+            <div>
+                <div class="bg-white rounded shadow-lg shadow-yellow-100 p-4 px-4 md:p-8 mb-6">
+                    <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+                            <div class="text-gray-600">
+                                <p class="font-medium text-lg">Add Facepainting</p>
+                                <p>Please fill out all the fields.</p>
+                            </div>
+    
+                        <div class="lg:col-span-2">
+                            <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-4">
+                                <div class="md:col-span-2">
+                                    <label for="facepaintname">Description</label>
+                                    <input type="text" name="facepaintname" id="facepaintname" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
+                                </div>
+    
+                                <div class="md:col-span-2">
+                                    <label for="facepaintprice">Price</label>
+                                    <input type="text" name="facepaintprice" id="facepaintprice" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
+                                </div>
+
+
+                                <div class="md:col-span-5 text-right">
+                                    <input type="submit" name="submit" value="Submit" class="cursor-pointer bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                                </div>
+    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
+    <div id="terms-modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                Terms and Conditions
+                            </h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">
+                                    <!-- Add your terms and conditions content here -->
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" id="close-modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @if(session('alert'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('alert') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@elseif(session('error'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('error') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@endif
+</x-admin-layout>

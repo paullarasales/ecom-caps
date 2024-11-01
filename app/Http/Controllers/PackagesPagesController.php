@@ -19,6 +19,10 @@ class PackagesPagesController extends Controller
     {
         return view('admin.packages-customize');
     }
+    public function newcustomize()
+    {
+        return view('admin.packages-new-customize');
+    }
     public function managercustomize()
     {
         return view('manager.packages-customize');

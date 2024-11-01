@@ -348,8 +348,8 @@ class AppointmentController extends Controller
         }
 
         // Redirect back or to a specific route
-        session()->flash('alert', 'Event Successfully Booked');
-        return redirect()->route('pending');
+        // session()->flash('alert', 'Event Successfully Booked');
+        return redirect()->route('pending')->with('alert', 'Event Successfully Booked');
     }
     public function rebook(Request $request, string $appointment_id)
     {
@@ -893,9 +893,9 @@ class AppointmentController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
 
-            // Check if the user's type is "user"
+            
             if ($user->usertype === 'owner') {
-                // Count unread messages where receiver_id is the authenticated user's ID and receiverisread is "unread"
+                
                 $unreadChatCount = \App\Models\Message::where('receiver_id', $user->id)
                     ->where('isopened', 'unread')
                     ->count();

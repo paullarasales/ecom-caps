@@ -138,7 +138,7 @@
             </table>
             <div class="flex justify-end gap-3 my-5">
 
-                <form action="{{  route('appointment.done', $appointment->appointment_id) }}" method="POST">
+                <form id="acceptForm" action="{{  route('appointment.done', $appointment->appointment_id) }}" method="POST">
                     @csrf
                     @method("PUT")
                     <input type="hidden" name="status" value="{{$appointment->status}}">
@@ -153,7 +153,7 @@
                     <i class="fa-regular fa-pen-to-square ml-3"></i>
                 </a>
 
-                <form action="{{  route('appointment.cancel', $appointment->appointment_id) }}" method="POST">
+                <form id="cancelForm" action="{{  route('appointment.cancel', $appointment->appointment_id) }}" method="POST">
                     @csrf
                     @method("PUT")
                     <input type="hidden" name="status" value="{{$appointment->status}}">
@@ -166,6 +166,38 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Loading animation overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex flex-col items-center justify-center hidden">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-yellow-500 h-12 w-12 mb-4"></div>
+        <p class="text-white mt-4 font-semibold" id="loadingText">Your request is being processed</p>
+    </div>
+    
+
+    <!-- CSS for loader animation -->
+    <style>
+        .loader {
+            border-top-color: #3498db;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <!-- JavaScript to show loading overlay on form submission -->
+    <script>
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const acceptForm = document.getElementById('acceptForm');
+        const cancelForm = document.getElementById('cancelForm');
+
+        function showLoading() {
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        acceptForm.addEventListener('submit', showLoading);
+        cancelForm.addEventListener('submit', showLoading);
+    </script>
 
 
     <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden bg-gray-800 bg-opacity-50">
