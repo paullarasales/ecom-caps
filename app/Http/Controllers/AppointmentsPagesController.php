@@ -218,11 +218,22 @@ class AppointmentsPagesController extends Controller
     }
     public function cancelled()
     {
+        $search = request('search');
+
         $appointments = Appointment::with('user')
-        ->where('status', 'cancelled')
-        ->paginate(10);
+            ->where('status', 'cancelled')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('firstname', 'like', "%{$search}%")
+                        ->orWhere('lastname', 'like', "%{$search}%");
+                    })
+                    ->orWhere('reference', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10);
         
-        return view('admin.cancelled', compact('appointments'));
+        return view('admin.cancelled', compact('appointments', 'search'));
         // return view('admin.cancelled');
     }
     public function cancelledView(string $app)
@@ -242,11 +253,22 @@ class AppointmentsPagesController extends Controller
     }
     public function done()
     {
+        $search = request('search');
+
         $appointments = Appointment::with('user')
-        ->where('status', 'done')
-        ->paginate(10);
+            ->where('status', 'done')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('firstname', 'like', "%{$search}%")
+                        ->orWhere('lastname', 'like', "%{$search}%");
+                    })
+                    ->orWhere('reference', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10);
         
-        return view('admin.done', compact('appointments'));
+        return view('admin.done', compact('appointments', 'search'));
         // return view('admin.done');
     }
     public function doneView(string $app)

@@ -16,6 +16,18 @@
 
     </div>
 
+    <div class="lg:mx-10 lg:my-5">
+        <form method="GET" action="{{ route('cancelled') }}">
+            <div class="flex items-center justify-center mb-4">
+                <input type="text" name="search" class="border-2 border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 rounded-lg py-2 px-4 w-full lg:w-1/3"
+                    placeholder="Search by name/reference..." value="{{ $search }}">
+                <button type="submit" class="ml-2 px-4 py-2 bg-yellow-700 text-white rounded-lg hover:bg-yellow-800">
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg lg:mx-10 lg:my-5">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

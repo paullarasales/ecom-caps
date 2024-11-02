@@ -1,7 +1,7 @@
-<x-admin-layout>
+<x-manager-layout>
 
     <div class="flex ml-3">
-        <a href="{{route('done')}}">
+        <a href="{{route('manager.done')}}">
             <div class="text-xl">
                 <i class="fa-solid fa-arrow-left"></i>
             </div>
@@ -193,4 +193,4 @@
     {{-- <h1>{{ $appointment->user->firstname }}</h1>
     <h1>{{ $appointment->location }}</h1> --}}
 
-</x-admin-layout>
+</x-manager-layout>

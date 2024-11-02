@@ -380,7 +380,7 @@ class AppointmentController extends Controller
         // Check if the count is less than 3
         if ($acceptedAppointmentsCount >= 3) {
             // Redirect back with an error message
-            return redirect("admin/pending")->with('error', 'Date is Fully booked');
+            return redirect("admin/booked")->with('error', 'Date is Fully booked');
         }
 
         // Update appointment status to "accepted"
@@ -447,7 +447,7 @@ class AppointmentController extends Controller
         $edate = Carbon::parse($appointment->edate);
 
         // Check if the edate is today
-        if ($edate->isToday()) {
+        if ($edate->isToday() || $edate->isPast()) {
             // Update appointment status to "done"
             $appointment->status = 'done';
             $appointment->isread = "unread";

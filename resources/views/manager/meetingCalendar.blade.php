@@ -38,7 +38,7 @@
     </style>
 
     <div class="flex ml-3">
-        <a href="{{ url()->previous() }}">
+        <a href="{{route('managerappointments')}}">
             <div class="text-xl">
                 <i class="fa-solid fa-arrow-left"></i>
             </div>

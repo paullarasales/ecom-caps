@@ -366,40 +366,99 @@ Route::get('/post/{post_id}/destroy', [PostController::class, 'destroy'])
 // POSTING// POSTING// POSTING// POSTING// POSTING // POSTING// POSTING// POSTING// POSTING// POSTING
 
 
-//APPOINTMENT
+//APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT 
 Route::resource('/appointment', AppointmentController::class);
 
 Route::post('/appointment/meeting', [AppointmentController::class, 'meeting'])
     ->middleware(['auth', 'verified', 'user'])
     ->name('appointment.meeting');
 
+
+
+// ACCEPT // ACCEPT // ACCEPT // ACCEPT // ACCEPT // ACCEPT 
 Route::put('/appointment/{appointment_id}/accept', [AppointmentController::class, 'accept'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('appointment.accept');
 
+Route::put('/appointment/manager/{appointment_id}/accept', [ManagerAppointmensController::class, 'accept'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.appointment.accept');
+// ACCEPT // ACCEPT // ACCEPT // ACCEPT // ACCEPT // ACCEPT 
+
+
+
+//DONE //DONE //DONE //DONE //DONE //DONE //DONE //DONE //DONE //DONE 
 Route::put('/appointment/{appointment_id}/done', [AppointmentController::class, 'done'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('appointment.done');
 
+Route::put('/appointment/manager/{appointment_id}/done', [ManagerAppointmensController::class, 'done'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.appointment.done');
+//DONE //DONE //DONE //DONE //DONE //DONE //DONE //DONE //DONE //DONE 
+
+
+
+//REBOOK //REBOOK //REBOOK //REBOOK //REBOOK //REBOOK //REBOOK //REBOOK 
 Route::put('/appointment/{appointment_id}/rebook', [AppointmentController::class, 'rebook'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('appointment.rebook');
 
+Route::put('/appointment/manager/{appointment_id}/rebook', [ManagerAppointmensController::class, 'rebook'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.appointment.rebook');
+//REBOOK //REBOOK //REBOOK //REBOOK //REBOOK //REBOOK //REBOOK //REBOOK 
+
+
+
+//CANCEL-EVENT //CANCEL-EVENT //CANCEL-EVENT //CANCEL-EVENT //CANCEL-EVENT //CANCEL-EVENT 
 Route::put('/appointment/{appointment_id}/cancel', [AppointmentController::class, 'cancel'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('appointment.cancel');
 
+Route::put('/appointment/manager/{appointment_id}/cancel', [ManagerAppointmensController::class, 'cancel'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.appointment.cancel');
+//CANCEL-EVENT //CANCEL-EVENT //CANCEL-EVENT //CANCEL-EVENT //CANCEL-EVENT //CANCEL-EVENT 
+
+
+
+//CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING 
 Route::put('/appointment/{appointment_id}/cancel/meeting', [AppointmentController::class, 'cancelmeeting'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('appointment.cancel.meeting');
 
+Route::put('/appointment/manager/{appointment_id}/cancel/meeting', [ManagerAppointmensController::class, 'cancelmeeting'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.appointment.cancel.meeting');
+//CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING 
+
+
+
+//DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT 
 Route::get('/appointment/{appointment_id}/details-edit', [AppointmentController::class, 'detailsedit'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('details.edit');
 
+Route::get('/appointment/manager/{appointment_id}/details-edit', [ManagerAppointmensController::class, 'detailsedit'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.details.edit');
+//DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT 
+
+
+
+// DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE 
 Route::put('/appointment/{appointment_id}/save', [AppointmentController::class, 'save'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('appointment.save');
+
+Route::put('/appointment/manager/{appointment_id}/save', [ManagerAppointmensController::class, 'save'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.appointment.save');
+// DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE 
+
+//APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT 
+
 
 
 
@@ -449,6 +508,18 @@ Route::get('/manager/meetingCalendar', [ManagerAppointmentsPagesController::clas
 Route::get('/manager/meetingCalendar/data', [ManagerAppointmentsPagesController::class, 'meetingCalendar'])->middleware(['auth', 'verified','manager'])->name('managermeetingCalendar');
 
 //MANAGER CALENDAR //MANAGER CALENDAR //MANAGER CALENDAR //MANAGER CALENDAR 
+
+Route::get('/manager/pending', [ManagerAppointmentsPagesController::class, 'pending'])->middleware(['auth', 'verified','manager'])->name('manager.pending');
+Route::get('/manager/pending/{appointment_id}/view', [ManagerAppointmentsPagesController::class, 'pendingView'])->middleware(['auth', 'verified','manager'])->name('manager.pendingView');
+
+Route::get('/manager/booked', [ManagerAppointmentsPagesController::class, 'booked'])->middleware(['auth', 'verified','manager'])->name('manager.booked');
+Route::get('/manager/booked/{appointment_id}/view', [ManagerAppointmentsPagesController::class, 'bookedView'])->middleware(['auth', 'verified','manager'])->name('manager.bookedView');
+
+Route::get('/manager/cancelled', [ManagerAppointmentsPagesController::class, 'cancelled'])->middleware(['auth', 'verified','manager'])->name('manager.cancelled');
+Route::get('/manager/cancelled/{appointment_id}/view', [ManagerAppointmentsPagesController::class, 'cancelledView'])->middleware(['auth', 'verified','manager'])->name('manager.cancelledView');
+
+Route::get('/manager/done', [ManagerAppointmentsPagesController::class, 'done'])->middleware(['auth', 'verified','manager'])->name('manager.done');
+Route::get('/manager/done/{appointment_id}/view', [ManagerAppointmentsPagesController::class, 'doneView'])->middleware(['auth', 'verified','manager'])->name('manager.doneView');
 
 
 
