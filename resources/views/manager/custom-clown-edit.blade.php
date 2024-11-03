@@ -1,7 +1,7 @@
-<x-admin-layout>
+<x-manager-layout>
 
     <div class="absolute">
-        <a href="{{route('customfoodcart.view')}}">
+        <a href="{{route('manager.customclown.view')}}">
             <i class="fa-solid fa-arrow-left float-left ml-5 text-xl"></i>
         </a>
     </div>
@@ -9,13 +9,13 @@
     <div class="text-center py-2 my-2">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Edit <span class="text-yellow-600">Food Cart Item</span>
+            Edit <span class="text-yellow-600">Clown/Emcee Item</span>
         </h3>
 
     </div>
 
     
-    <form action="{{route('customfoodcart.update', $food->foodcart_id)}}" method="POST" enctype="multipart/form-data">
+    <form action="{{route('manager.customclown.update', $food->clown_id)}}" method="POST" enctype="multipart/form-data">
         @csrf
         @method("PUT")
         <!-- Display validation errors -->
@@ -63,20 +63,20 @@
                 <div class="bg-white rounded shadow-lg shadow-yellow-100 p-4 px-4 md:p-8 mb-6">
                     <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                             <div class="text-gray-600">
-                                <p class="font-medium text-lg">Edit Food Cart Item</p>
+                                <p class="font-medium text-lg">Edit Clown/Emcee Item</p>
                                 <p>Please fill out all the fields.</p>
                             </div>
     
                         <div class="lg:col-span-2">
                             <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-4">
                                 <div class="md:col-span-2">
-                                    <label for="foodcartname">Foodcart Name</label>
-                                    <input type="text" name="foodcartname" id="foodcartname" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{$food->foodcartname}}" />
+                                    <label for="clownname">Description</label>
+                                    <input type="text" name="clownname" id="clownname" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{$food->clownname}}" />
                                 </div>
     
                                 <div class="md:col-span-2">
-                                    <label for="foodcartprice">Price</label>
-                                    <input type="text" name="foodcartprice" id="foodcartprice" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{$food->foodcartprice}}" />
+                                    <label for="clownprice">Price</label>
+                                    <input type="text" name="clownprice" id="clownprice" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{$food->clownprice}}" />
                                 </div>
 
                                 <div class="md:col-span-5 text-right">
@@ -138,4 +138,4 @@
         </button>
     </div>
 @endif
-</x-admin-layout>
+</x-manager-layout>

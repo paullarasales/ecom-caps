@@ -1,7 +1,7 @@
-<x-admin-layout>
+<x-manager-layout>
 
     <div class="absolute">
-        <a href="{{route('customfoodcart.view')}}">
+        <a href="{{route('manager.customfoodcart.view')}}">
             <i class="fa-solid fa-arrow-left float-left ml-5 text-xl"></i>
         </a>
     </div>
@@ -15,7 +15,7 @@
     </div>
 
     
-    <form action="{{route('customfoodcart.update', $food->foodcart_id)}}" method="POST" enctype="multipart/form-data">
+    <form action="{{route('manager.customfoodcart.update', $food->foodcart_id)}}" method="POST" enctype="multipart/form-data">
         @csrf
         @method("PUT")
         <!-- Display validation errors -->
@@ -138,4 +138,4 @@
         </button>
     </div>
 @endif
-</x-admin-layout>
+</x-manager-layout>

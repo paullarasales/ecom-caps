@@ -53,10 +53,10 @@
                                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                             <tr>
-                                                <th scope="col" class="px-6 py-3">
+                                                <th scope="col" class="px-6 py-3 capitalize">
                                                     Item Name
                                                 </th>
-                                                <th scope="col" class="px-6 py-3">
+                                                <th scope="col" class="px-6 py-3 capitalize">
                                                     Quantity
                                                 </th>
                                             </tr>
@@ -64,10 +64,10 @@
                                         <tbody>
                                             @foreach($foodAndPackItems as $item)
                                                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                    <th scope="row" class="px-6 py-4 capitalize font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                         {{ $item->item_name }}
                                                     </th>
-                                                    <td class="px-6 py-4">
+                                                    <td class="px-6 py-4 capitalize">
                                                         {{ $item->quantity }}
                                                     </td>
                                                 </tr>
@@ -89,23 +89,23 @@
                                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                             <tr>
-                                                <th scope="col" class="px-6 py-3">
+                                                <th scope="col" class="px-6 py-3 capitalize">
+                                                    Item Type
+                                                </th>
+                                                <th scope="col" class="px-6 py-3 capitalize">
                                                     Item Name
                                                 </th>
-                                                {{-- <th scope="col" class="px-6 py-3">
-                                                    Quantity
-                                                </th> --}}
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach($otherItems as $item)
                                                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                        {{ $item->item_name }}
+                                                    <th scope="row" class="px-6 py-4 capitalize font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                        {{ $item->item_type }}
                                                     </th>
-                                                    {{-- <td class="px-6 py-4">
-                                                        {{ $item->quantity }}
-                                                    </td> --}}
+                                                    <td class="px-6 py-4 capitalize">
+                                                        {{ $item->item_name }}
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

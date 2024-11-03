@@ -55,6 +55,10 @@
 
 @endforeach
 
+
+
+
+</div>
 <div class="py-4 px-4">
     <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
         <span class="text-sm font-normal text-gray-900 mb-4 md:mb-0 block w-full md:inline md:w-auto">
@@ -112,9 +116,6 @@
             @endif
         </ul>
     </nav>
-</div>
-
-
 </div>
 <script>
     function openModal(imageSrc) {

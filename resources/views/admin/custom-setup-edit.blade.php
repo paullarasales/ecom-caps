@@ -18,6 +18,45 @@
     <form action="{{route('customsetup.update', $food->setup_id)}}" method="POST" enctype="multipart/form-data">
         @csrf
         @method("PUT")
+        <!-- Display validation errors -->
+    <div id="errorModal" class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-11/12 max-w-md">
+            <div class="flex justify-between">
+                <h2 class="text-lg font-bold mb-4">Validation Errors</h2>
+                <button id="closeErrorModal" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Close</button>
+            </div>
+            <ul id="errorMessageList" class="text-gray-600">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Check if there are validation errors
+        var errors = @json($errors->any()); // Get the boolean status of errors
+        var errorModal = document.getElementById('errorModal');
+        var closeErrorModalButton = document.getElementById('closeErrorModal');
+
+        // Show the error modal if there are errors
+        if (errors) {
+            errorModal.classList.remove('hidden'); // Show the modal
+        }
+
+        // Close error modal event
+        closeErrorModalButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent any default action (if needed)
+            errorModal.classList.add('hidden'); // Hide the modal
+        });
+
+        // Optional: Close the modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            if (event.target === errorModal) {
+                errorModal.classList.add('hidden'); // Hide the modal
+            }
+        });
+    </script>
     <div class="my-10 p-2 flex items-center justify-center">
         <div class="container max-w-screen-lg mx-auto">
             <div>

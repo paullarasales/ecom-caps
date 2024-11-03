@@ -187,21 +187,21 @@ class PackagesController extends Controller
      * Display the specified resource.
      */
     public function show(string $pk)
-{
-    // Find the Package by its primary key (pk)
-    $package = Package::findOrFail($pk);
+    {
+        // Find the Package by its primary key (pk)
+        $package = Package::findOrFail($pk);
 
-    // Retrieve the associated Custompackage, loading its related Customitems
-    $customPackage = Custompackage::with('items') // This will load the related items
-                                  ->where('package_id', $package->package_id)
-                                  ->first(); // Ensure you're getting a single instance
+        // Retrieve the associated Custompackage, loading its related Customitems
+        $customPackage = Custompackage::with('items') // This will load the related items
+                                    ->where('package_id', $package->package_id)
+                                    ->first(); // Ensure you're getting a single instance
 
-    // Pass both the package and the custom package (with items) to the view
-    return view('admin.packages-see')->with([
-        'package' => $package,
-        'customPackage' => $customPackage,
-    ]);
-}
+        // Pass both the package and the custom package (with items) to the view
+        return view('admin.packages-see')->with([
+            'package' => $package,
+            'customPackage' => $customPackage,
+        ]);
+    }
 
 
     // $package = Package::find($pk);
@@ -213,12 +213,18 @@ class PackagesController extends Controller
         // ]);
     public function managershow(string $pk)
     {
-        $package = Package::find($pk);
-        $custom = Custom::where('package_id', $package->package_id)->first();
-        // return view('admin.packages-see')->with("package", $package);
+        // Find the Package by its primary key (pk)
+        $package = Package::findOrFail($pk);
+
+        // Retrieve the associated Custompackage, loading its related Customitems
+        $customPackage = Custompackage::with('items') // This will load the related items
+                                    ->where('package_id', $package->package_id)
+                                    ->first(); // Ensure you're getting a single instance
+
+        // Pass both the package and the custom package (with items) to the view
         return view('manager.packages-see')->with([
             'package' => $package,
-            'custom' => $custom,
+            'customPackage' => $customPackage,
         ]);
     }
 

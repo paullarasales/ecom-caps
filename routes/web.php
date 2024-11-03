@@ -25,6 +25,8 @@ use App\Http\Controllers\ManagerAppointmentsPagesController;
 use App\Http\Controllers\ManagerChatController;
 use App\Http\Controllers\CustomPackagesController;
 use App\Http\Controllers\CustomPackagesPagesController;
+use App\Http\Controllers\MgrCustomPackagesPagesController;
+use App\Http\Controllers\MgrCustomPackagesController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -113,8 +115,11 @@ Route::get('/fetch-unopened-messages-count', [AppointmentController::class, 'fet
 // Route::resource('newpackage', CustomPackagesController::class);
 Route::get('/admin/new/custom/packages/add', [CustomPackagesPagesController::class, 'customadd'])->middleware(['auth', 'verified','admin'])->name('custom.add');
 Route::post('/admin/new/custom/packages/store', [CustomPackagesController::class, 'store'])->middleware(['auth', 'verified','admin'])->name('newcustom.package.store');
+Route::get('/manager/new/custom/packages/add', [MgrCustomPackagesPagesController::class, 'customadd'])->middleware(['auth', 'verified','manager'])->name('manager.custom.add');
+Route::post('/manager/new/custom/packages/store', [MgrCustomPackagesController::class, 'store'])->middleware(['auth', 'verified','manager'])->name('manager.newcustom.package.store');
 
-
+//FOOD //FOOD //FOOD //FOOD //FOOD 
+//FOOD-ADMIN
 Route::get('/admin/custom/packages/food', [CustomPackagesPagesController::class, 'food'])->middleware(['auth', 'verified','admin'])->name('customfood');
 Route::get('/admin/custom/packages/food/add', [CustomPackagesPagesController::class, 'foodAdd'])->middleware(['auth', 'verified','admin'])->name('customfoodadd');
 Route::post('/admin/custom/packages/food/store', [CustomPackagesController::class, 'foodStore'])->middleware(['auth', 'verified','admin'])->name('customfood.store');
@@ -124,6 +129,19 @@ Route::put('/admin/custom/packages/food/update/{food_id}', [CustomPackagesContro
 Route::get('/admin/custom/packages/food/destroy/{food_id}', [CustomPackagesController::class, 'foodDestroy'])->middleware(['auth', 'verified','admin'])->name('customfood.destroy');
 
 
+//FOOD-MANAGER
+Route::get('/manager/custom/packages/food', [MgrCustomPackagesPagesController::class, 'food'])->middleware(['auth', 'verified','manager'])->name('manager.customfood');
+Route::get('/manager/custom/packages/food/add', [MgrCustomPackagesPagesController::class, 'foodAdd'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodadd');
+Route::post('/manager/custom/packages/food/store', [MgrCustomPackagesController::class, 'foodStore'])->middleware(['auth', 'verified','manager'])->name('manager.customfood.store');
+Route::get('/manager/custom/packages/food/view', [MgrCustomPackagesPagesController::class, 'foodView'])->middleware(['auth', 'verified','manager'])->name('manager.customfood.view');
+Route::get('/manager/custom/packages/food/edit/{food_id}', [MgrCustomPackagesPagesController::class, 'foodEdit'])->middleware(['auth', 'verified','manager'])->name('manager.customfood.edit');
+Route::put('/manager/custom/packages/food/update/{food_id}', [MgrCustomPackagesController::class, 'foodUpdate'])->middleware(['auth', 'verified','manager'])->name('manager.customfood.update');
+Route::get('/manager/custom/packages/food/destroy/{food_id}', [MgrCustomPackagesController::class, 'foodDestroy'])->middleware(['auth', 'verified','manager'])->name('manager.customfood.destroy');
+//FOOD //FOOD //FOOD //FOOD //FOOD 
+
+
+//FOODPACK //FOODPACK //FOODPACK //FOODPACK //FOODPACK 
+//FOODPACK-ADMIN
 Route::get('/admin/custom/packages/foodpack', [CustomPackagesPagesController::class, 'foodpack'])->middleware(['auth', 'verified','admin'])->name('customfoodpack');
 Route::get('/admin/custom/packages/foodpack/add', [CustomPackagesPagesController::class, 'foodpackAdd'])->middleware(['auth', 'verified','admin'])->name('customfoodpackadd');
 Route::post('/admin/custom/packages/foodpack/store', [CustomPackagesController::class, 'foodpackStore'])->middleware(['auth', 'verified','admin'])->name('customfoodpack.store');
@@ -133,6 +151,19 @@ Route::put('/admin/custom/packages/foodpack/update/{foodpack_id}', [CustomPackag
 Route::get('/admin/custom/packages/foodpack/destroy/{foodpack_id}', [CustomPackagesController::class, 'foodpackDestroy'])->middleware(['auth', 'verified','admin'])->name('customfoodpack.destroy');
 
 
+//FOODPACK-MANAGER
+Route::get('/manager/custom/packages/foodpack', [MgrCustomPackagesPagesController::class, 'foodpack'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodpack');
+Route::get('/manager/custom/packages/foodpack/add', [MgrCustomPackagesPagesController::class, 'foodpackAdd'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodpackadd');
+Route::post('/manager/custom/packages/foodpack/store', [MgrCustomPackagesController::class, 'foodpackStore'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodpack.store');
+Route::get('/manager/custom/packages/foodpack/view', [MgrCustomPackagesPagesController::class, 'foodpackView'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodpack.view');
+Route::get('/manager/custom/packages/foodpack/edit/{foodpack_id}', [MgrCustomPackagesPagesController::class, 'foodpackEdit'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodpack.edit');
+Route::put('/manager/custom/packages/foodpack/update/{foodpack_id}', [MgrCustomPackagesController::class, 'foodpackUpdate'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodpack.update');
+Route::get('/manager/custom/packages/foodpack/destroy/{foodpack_id}', [MgrCustomPackagesController::class, 'foodpackDestroy'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodpack.destroy');
+//FOODPACK //FOODPACK //FOODPACK //FOODPACK //FOODPACK 
+
+
+//FOODCART //FOODCART //FOODCART //FOODCART //FOODCART 
+//FOODPACK-ADMIN
 Route::get('/admin/custom/packages/foodcart', [CustomPackagesPagesController::class, 'foodcart'])->middleware(['auth', 'verified','admin'])->name('customfoodcart');
 Route::get('/admin/custom/packages/foodcart/add', [CustomPackagesPagesController::class, 'foodcartAdd'])->middleware(['auth', 'verified','admin'])->name('customfoodcartadd');
 Route::post('/admin/custom/packages/foodcart/store', [CustomPackagesController::class, 'foodcartStore'])->middleware(['auth', 'verified','admin'])->name('customfoodcart.store');
@@ -142,6 +173,19 @@ Route::put('/admin/custom/packages/foodcart/update/{foodcart_id}', [CustomPackag
 Route::get('/admin/custom/packages/foodcart/destroy/{foodcart_id}', [CustomPackagesController::class, 'foodcartDestroy'])->middleware(['auth', 'verified','admin'])->name('customfoodcart.destroy');
 
 
+//FOODPACK-MANAGER
+Route::get('/manager/custom/packages/foodcart', [MgrCustomPackagesPagesController::class, 'foodcart'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodcart');
+Route::get('/manager/custom/packages/foodcart/add', [MgrCustomPackagesPagesController::class, 'foodcartAdd'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodcartadd');
+Route::post('/manager/custom/packages/foodcart/store', [MgrCustomPackagesController::class, 'foodcartStore'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodcart.store');
+Route::get('/manager/custom/packages/foodcart/view', [MgrCustomPackagesPagesController::class, 'foodcartView'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodcart.view');
+Route::get('/manager/custom/packages/foodcart/edit/{foodcart_id}', [MgrCustomPackagesPagesController::class, 'foodcartEdit'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodcart.edit');
+Route::put('/manager/custom/packages/foodcart/update/{foodcart_id}', [MgrCustomPackagesController::class, 'foodcartUpdate'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodcart.update');
+Route::get('/manager/custom/packages/foodcart/destroy/{foodcart_id}', [MgrCustomPackagesController::class, 'foodcartDestroy'])->middleware(['auth', 'verified','manager'])->name('manager.customfoodcart.destroy');
+//FOODCART //FOODCART //FOODCART //FOODCART //FOODCART 
+
+
+//LECHON //LECHON //LECHON //LECHON //LECHON //LECHON 
+//LECHON-ADMIN
 Route::get('/admin/custom/packages/lechon', [CustomPackagesPagesController::class, 'lechon'])->middleware(['auth', 'verified','admin'])->name('customlechon');
 Route::get('/admin/custom/packages/lechon/add', [CustomPackagesPagesController::class, 'lechonAdd'])->middleware(['auth', 'verified','admin'])->name('customlechonadd');
 Route::post('/admin/custom/packages/lechon/store', [CustomPackagesController::class, 'lechonStore'])->middleware(['auth', 'verified','admin'])->name('customlechon.store');
@@ -151,6 +195,19 @@ Route::put('/admin/custom/packages/lechon/update/{lechon_id}', [CustomPackagesCo
 Route::get('/admin/custom/packages/lechon/destroy/{lechon_id}', [CustomPackagesController::class, 'lechonDestroy'])->middleware(['auth', 'verified','admin'])->name('customlechon.destroy');
 
 
+//LECHON-MANAGER
+Route::get('/manager/custom/packages/lechon', [MgrCustomPackagesPagesController::class, 'lechon'])->middleware(['auth', 'verified','manager'])->name('manager.customlechon');
+Route::get('/manager/custom/packages/lechon/add', [MgrCustomPackagesPagesController::class, 'lechonAdd'])->middleware(['auth', 'verified','manager'])->name('manager.customlechonadd');
+Route::post('/manager/custom/packages/lechon/store', [MgrCustomPackagesController::class, 'lechonStore'])->middleware(['auth', 'verified','manager'])->name('manager.customlechon.store');
+Route::get('/manager/custom/packages/lechon/view', [MgrCustomPackagesPagesController::class, 'lechonView'])->middleware(['auth', 'verified','manager'])->name('manager.customlechon.view');
+Route::get('/manager/custom/packages/lechon/edit/{lechon_id}', [MgrCustomPackagesPagesController::class, 'lechonEdit'])->middleware(['auth', 'verified','manager'])->name('manager.customlechon.edit');
+Route::put('/manager/custom/packages/lechon/update/{lechon_id}', [MgrCustomPackagesController::class, 'lechonUpdate'])->middleware(['auth', 'verified','manager'])->name('manager.customlechon.update');
+Route::get('/manager/custom/packages/lechon/destroy/{lechon_id}', [MgrCustomPackagesController::class, 'lechonDestroy'])->middleware(['auth', 'verified','manager'])->name('manager.customlechon.destroy');
+//LECHON //LECHON //LECHON //LECHON //LECHON //LECHON 
+
+
+//CAKE //CAKE //CAKE //CAKE //CAKE //CAKE //CAKE //CAKE 
+//CAKE-ADMIN
 Route::get('/admin/custom/packages/cake', [CustomPackagesPagesController::class, 'cake'])->middleware(['auth', 'verified','admin'])->name('customcake');
 Route::get('/admin/custom/packages/cake/add', [CustomPackagesPagesController::class, 'cakeAdd'])->middleware(['auth', 'verified','admin'])->name('customcakeadd');
 Route::post('/admin/custom/packages/cake/store', [CustomPackagesController::class, 'cakeStore'])->middleware(['auth', 'verified','admin'])->name('customcake.store');
@@ -160,6 +217,19 @@ Route::put('/admin/custom/packages/cake/update/{cake_id}', [CustomPackagesContro
 Route::get('/admin/custom/packages/cake/destroy/{cake_id}', [CustomPackagesController::class, 'cakeDestroy'])->middleware(['auth', 'verified','admin'])->name('customcake.destroy');
 
 
+//CAKE-MANAGER
+Route::get('/manager/custom/packages/cake', [MgrCustomPackagesPagesController::class, 'cake'])->middleware(['auth', 'verified','manager'])->name('manager.customcake');
+Route::get('/manager/custom/packages/cake/add', [MgrCustomPackagesPagesController::class, 'cakeAdd'])->middleware(['auth', 'verified','manager'])->name('manager.customcakeadd');
+Route::post('/manager/custom/packages/cake/store', [MgrCustomPackagesController::class, 'cakeStore'])->middleware(['auth', 'verified','manager'])->name('manager.customcake.store');
+Route::get('/manager/custom/packages/cake/view', [MgrCustomPackagesPagesController::class, 'cakeView'])->middleware(['auth', 'verified','manager'])->name('manager.customcake.view');
+Route::get('/manager/custom/packages/cake/edit/{cake_id}', [MgrCustomPackagesPagesController::class, 'cakeEdit'])->middleware(['auth', 'verified','manager'])->name('manager.customcake.edit');
+Route::put('/manager/custom/packages/cake/update/{cake_id}', [MgrCustomPackagesController::class, 'cakeUpdate'])->middleware(['auth', 'verified','manager'])->name('manager.customcake.update');
+Route::get('/manager/custom/packages/cake/destroy/{cake_id}', [MgrCustomPackagesController::class, 'cakeDestroy'])->middleware(['auth', 'verified','manager'])->name('manager.customcake.destroy');
+//CAKE //CAKE //CAKE //CAKE //CAKE //CAKE //CAKE //CAKE 
+
+
+//CLOWN //CLOWN //CLOWN //CLOWN //CLOWN //CLOWN //CLOWN 
+//CLOWN-ADMIN
 Route::get('/admin/custom/packages/clown', [CustomPackagesPagesController::class, 'clown'])->middleware(['auth', 'verified','admin'])->name('customclown');
 Route::get('/admin/custom/packages/clown/add', [CustomPackagesPagesController::class, 'clownAdd'])->middleware(['auth', 'verified','admin'])->name('customclownadd');
 Route::post('/admin/custom/packages/clown/store', [CustomPackagesController::class, 'clownStore'])->middleware(['auth', 'verified','admin'])->name('customclown.store');
@@ -169,6 +239,19 @@ Route::put('/admin/custom/packages/clown/update/{clown_id}', [CustomPackagesCont
 Route::get('/admin/custom/packages/clown/destroy/{clown_id}', [CustomPackagesController::class, 'clownDestroy'])->middleware(['auth', 'verified','admin'])->name('customclown.destroy');
 
 
+//CLOWN-MANAGER
+Route::get('/manager/custom/packages/clown', [MgrCustomPackagesPagesController::class, 'clown'])->middleware(['auth', 'verified','manager'])->name('manager.customclown');
+Route::get('/manager/custom/packages/clown/add', [MgrCustomPackagesPagesController::class, 'clownAdd'])->middleware(['auth', 'verified','manager'])->name('manager.customclownadd');
+Route::post('/manager/custom/packages/clown/store', [MgrCustomPackagesController::class, 'clownStore'])->middleware(['auth', 'verified','manager'])->name('manager.customclown.store');
+Route::get('/manager/custom/packages/clown/view', [MgrCustomPackagesPagesController::class, 'clownView'])->middleware(['auth', 'verified','manager'])->name('manager.customclown.view');
+Route::get('/manager/custom/packages/clown/edit/{clown_id}', [MgrCustomPackagesPagesController::class, 'clownEdit'])->middleware(['auth', 'verified','manager'])->name('manager.customclown.edit');
+Route::put('/manager/custom/packages/clown/update/{clown_id}', [MgrCustomPackagesController::class, 'clownUpdate'])->middleware(['auth', 'verified','manager'])->name('manager.customclown.update');
+Route::get('/manager/custom/packages/clown/destroy/{clown_id}', [MgrCustomPackagesController::class, 'clownDestroy'])->middleware(['auth', 'verified','manager'])->name('manager.customclown.destroy');
+//CLOWN //CLOWN //CLOWN //CLOWN //CLOWN //CLOWN //CLOWN 
+
+
+//SETUP //SETUP //SETUP //SETUP //SETUP //SETUP //SETUP 
+//SETUP-ADMIN
 Route::get('/admin/custom/packages/setup', [CustomPackagesPagesController::class, 'setup'])->middleware(['auth', 'verified','admin'])->name('customsetup');
 Route::get('/admin/custom/packages/setup/add', [CustomPackagesPagesController::class, 'setupAdd'])->middleware(['auth', 'verified','admin'])->name('customsetupadd');
 Route::post('/admin/custom/packages/setup/store', [CustomPackagesController::class, 'setupStore'])->middleware(['auth', 'verified','admin'])->name('customsetup.store');
@@ -178,6 +261,19 @@ Route::put('/admin/custom/packages/setup/update/{setup_id}', [CustomPackagesCont
 Route::get('/admin/custom/packages/setup/destroy/{setup_id}', [CustomPackagesController::class, 'setupDestroy'])->middleware(['auth', 'verified','admin'])->name('customsetup.destroy');
 
 
+//SETUP-MANAGER
+Route::get('/manager/custom/packages/setup', [MgrCustomPackagesPagesController::class, 'setup'])->middleware(['auth', 'verified','manager'])->name('manager.customsetup');
+Route::get('/manager/custom/packages/setup/add', [MgrCustomPackagesPagesController::class, 'setupAdd'])->middleware(['auth', 'verified','manager'])->name('manager.customsetupadd');
+Route::post('/manager/custom/packages/setup/store', [MgrCustomPackagesController::class, 'setupStore'])->middleware(['auth', 'verified','manager'])->name('manager.customsetup.store');
+Route::get('/manager/custom/packages/setup/view', [MgrCustomPackagesPagesController::class, 'setupView'])->middleware(['auth', 'verified','manager'])->name('manager.customsetup.view');
+Route::get('/manager/custom/packages/setup/edit/{setup_id}', [MgrCustomPackagesPagesController::class, 'setupEdit'])->middleware(['auth', 'verified','manager'])->name('manager.customsetup.edit');
+Route::put('/manager/custom/packages/setup/update/{setup_id}', [MgrCustomPackagesController::class, 'setupUpdate'])->middleware(['auth', 'verified','manager'])->name('manager.customsetup.update');
+Route::get('/manager/custom/packages/setup/destroy/{setup_id}', [MgrCustomPackagesController::class, 'setupDestroy'])->middleware(['auth', 'verified','manager'])->name('manager.customsetup.destroy');
+//SETUP //SETUP //SETUP //SETUP //SETUP //SETUP //SETUP
+
+
+//FACEPAINT //FACEPAINT //FACEPAINT //FACEPAINT //FACEPAINT 
+//FACEPAINT-ADMIN
 Route::get('/admin/custom/packages/facepaint', [CustomPackagesPagesController::class, 'facepaint'])->middleware(['auth', 'verified','admin'])->name('customfacepaint');
 Route::get('/admin/custom/packages/facepaint/add', [CustomPackagesPagesController::class, 'facepaintAdd'])->middleware(['auth', 'verified','admin'])->name('customfacepaintadd');
 Route::post('/admin/custom/packages/facepaint/store', [CustomPackagesController::class, 'facepaintStore'])->middleware(['auth', 'verified','admin'])->name('customfacepaint.store');
@@ -185,6 +281,17 @@ Route::get('/admin/custom/packages/facepaint/view', [CustomPackagesPagesControll
 Route::get('/admin/custom/packages/facepaint/edit/{facepaint_id}', [CustomPackagesPagesController::class, 'facepaintEdit'])->middleware(['auth', 'verified','admin'])->name('customfacepaint.edit');
 Route::put('/admin/custom/packages/facepaint/update/{facepaint_id}', [CustomPackagesController::class, 'facepaintUpdate'])->middleware(['auth', 'verified','admin'])->name('customfacepaint.update');
 Route::get('/admin/custom/packages/facepaint/destroy/{facepaint_id}', [CustomPackagesController::class, 'facepaintDestroy'])->middleware(['auth', 'verified','admin'])->name('customfacepaint.destroy');
+
+
+//FACEPAINT-MANAGER
+Route::get('/manager/custom/packages/facepaint', [MgrCustomPackagesPagesController::class, 'facepaint'])->middleware(['auth', 'verified','manager'])->name('manager.customfacepaint');
+Route::get('/manager/custom/packages/facepaint/add', [MgrCustomPackagesPagesController::class, 'facepaintAdd'])->middleware(['auth', 'verified','manager'])->name('manager.customfacepaintadd');
+Route::post('/manager/custom/packages/facepaint/store', [MgrCustomPackagesController::class, 'facepaintStore'])->middleware(['auth', 'verified','manager'])->name('manager.customfacepaint.store');
+Route::get('/manager/custom/packages/facepaint/view', [MgrCustomPackagesPagesController::class, 'facepaintView'])->middleware(['auth', 'verified','manager'])->name('manager.customfacepaint.view');
+Route::get('/manager/custom/packages/facepaint/edit/{facepaint_id}', [MgrCustomPackagesPagesController::class, 'facepaintEdit'])->middleware(['auth', 'verified','manager'])->name('manager.customfacepaint.edit');
+Route::put('/manager/custom/packages/facepaint/update/{facepaint_id}', [MgrCustomPackagesController::class, 'facepaintUpdate'])->middleware(['auth', 'verified','manager'])->name('manager.customfacepaint.update');
+Route::get('/manager/custom/packages/facepaint/destroy/{facepaint_id}', [MgrCustomPackagesController::class, 'facepaintDestroy'])->middleware(['auth', 'verified','manager'])->name('manager.customfacepaint.destroy');
+//FACEPAINT //FACEPAINT //FACEPAINT //FACEPAINT //FACEPAINT
 
 
 
@@ -232,6 +339,7 @@ Route::get('/manager/packages/add', [PackagesPagesController::class, 'manageradd
 Route::get('/manager/packages/view', [PackagesPagesController::class, 'managerview'])->middleware(['auth', 'verified','manager'])->name('managerviewpackage');
 Route::get('/manager/packages/customize', [PackagesPagesController::class, 'managercustomize'])->middleware(['auth', 'verified','manager'])->name('managercustomizepackage');
 Route::post('/manager/custom/packages/add', [PackagesController::class, 'managercustom'])->middleware(['auth', 'verified','manager'])->name('manageraddcustom');
+Route::get('/manager/packages/new/customize', [PackagesPagesController::class, 'managernewcustomize'])->middleware(['auth', 'verified','manager'])->name('manager.newcustomizepackage');
 
 
 Route::get('/manager/package/{package_id}/show', [PackagesController::class, 'managershow'])
