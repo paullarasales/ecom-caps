@@ -18,6 +18,7 @@ use App\Models\Package;
 use App\Models\User;
 use App\Models\Appointment;
 use Illuminate\Support\Facades\Log;
+use App\Models\Log as ModelsLog;
 
 class MgrCustomPackagesController extends Controller
 {
@@ -203,6 +204,15 @@ class MgrCustomPackagesController extends Controller
         }
 
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Package Created';
+        $log->description = $package->packagename . " package created by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
+
         // Return success message
         return redirect()->back()->with('alert', 'Custom package created successfully!');
     }
@@ -221,6 +231,14 @@ class MgrCustomPackagesController extends Controller
         $food->user_id = Auth::id();
         $food->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Food-Item Created';
+        $log->description = $request->foodname . " food item has been added by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customfood')->with('alert', 'Food item added successfully!');
     }
     public function foodUpdate(Request $request, string $food_id)
@@ -235,6 +253,14 @@ class MgrCustomPackagesController extends Controller
         $food->foodprice = $request->input('foodprice');
         $food->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Food-Item Updated';
+        $log->description = $request->foodname . " food item has been updated by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customfood.view')->with('alert', 'Food item updated successfully!');
     }
     public function foodDestroy(string $food_id)
@@ -243,6 +269,15 @@ class MgrCustomPackagesController extends Controller
 
         if ($food) {
             $food->delete();
+
+            $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Food-Item Deleted';
+            $log->description = $food->foodname . " food item has been deleted by " . $use->firstname . " " . $use->lastname;
+            $log->save();
+
             return redirect()->route('manager.customfood')->with('alert', 'Food item deleted successfully!');
         }
 
@@ -262,6 +297,14 @@ class MgrCustomPackagesController extends Controller
         $foodpack->user_id = Auth::id();
         $foodpack->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'FoodPack-Item Created';
+        $log->description = $request->foodpackname . " foodpack item has been added by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customfoodpack')->with('alert', 'Foodpack item added successfully!');
     }
     public function foodpackUpdate(Request $request, string $foodpack_id)
@@ -276,6 +319,14 @@ class MgrCustomPackagesController extends Controller
         $food->foodpackprice = $request->input('foodpackprice');
         $food->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'FoodPack-Item Updated';
+        $log->description = $request->foodpackname . " foodpack item has been updated by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customfoodpack.view')->with('alert', 'Foodcart item updated successfully!');
     }
     public function foodpackDestroy(string $foodpack_id)
@@ -284,6 +335,15 @@ class MgrCustomPackagesController extends Controller
 
         if ($food) {
             $food->delete();
+
+            $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'FoodPack-Item Deleted';
+            $log->description = $food->foodpackname . " foodpack item has been deleted by " . $use->firstname . " " . $use->lastname;
+            $log->save();
+
             return redirect()->route('manager.customfoodpack')->with('alert', 'Foodpack item deleted successfully!');
         }
 
@@ -303,6 +363,14 @@ class MgrCustomPackagesController extends Controller
         $foodcart->user_id = Auth::id();
         $foodcart->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'FoodCart-Item Created';
+        $log->description = $request->foodcartname . " foodcart item has been added by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customfoodcart')->with('alert', 'Foodcart item added successfully!');
     }
     public function foodcartUpdate(Request $request, string $foodcart_id)
@@ -317,6 +385,14 @@ class MgrCustomPackagesController extends Controller
         $food->foodcartprice = $request->input('foodcartprice');
         $food->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'FoodCart-Item Updated';
+        $log->description = $request->foodcartname . " foodcart item has been updated by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customfoodcart.view')->with('alert', 'Foodcart item updated successfully!');
     }
     public function foodcartDestroy(string $foodcart_id)
@@ -325,6 +401,16 @@ class MgrCustomPackagesController extends Controller
 
         if ($food) {
             $food->delete();
+
+            $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'FoodCart-Item Deleted';
+            $log->description = $food->foodcartname . " foodcart item has been deleted by " . $use->firstname . " " . $use->lastname;
+            $log->save();
+
+
             return redirect()->route('manager.customfoodcart')->with('alert', 'Foodcart item deleted successfully!');
         }
 
@@ -344,6 +430,14 @@ class MgrCustomPackagesController extends Controller
         $lechon->user_id = Auth::id();
         $lechon->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Lechon-Item Created';
+        $log->description = $request->lechonname . " lechon item has been added by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customlechon')->with('alert', 'Lechon item added successfully!');
     }
     public function lechonUpdate(Request $request, string $lechon_id)
@@ -358,6 +452,14 @@ class MgrCustomPackagesController extends Controller
         $lechon->lechonprice = $request->input('lechonprice');
         $lechon->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Lechon-Item Updated';
+        $log->description = $request->lechonname . " lechon item has been updated by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customlechon.view')->with('alert', 'Lechon item updated successfully!');
     }
     public function lechonDestroy(string $lechon_id)
@@ -366,6 +468,15 @@ class MgrCustomPackagesController extends Controller
 
         if ($food) {
             $food->delete();
+
+            $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Lechon-Item Deleted';
+            $log->description = $food->lechonname . " lechon item has been deleted by " . $use->firstname . " " . $use->lastname;
+            $log->save();
+
             return redirect()->route('manager.customlechon')->with('alert', 'Lechon item deleted successfully!');
         }
 
@@ -385,6 +496,14 @@ class MgrCustomPackagesController extends Controller
         $cake->user_id = Auth::id();
         $cake->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Cake-Item Created';
+        $log->description = $request->cakename . " Cake item has been added by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customcake')->with('alert', 'Cake item added successfully!');
     }
     public function cakeUpdate(Request $request, string $cake_id)
@@ -399,6 +518,14 @@ class MgrCustomPackagesController extends Controller
         $cake->cakeprice = $request->input('cakeprice');
         $cake->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Cake-Item Updated';
+        $log->description = $request->cakename . " Cake item has been updated by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customcake.view')->with('alert', 'Cake item updated successfully!');
     }
     public function cakeDestroy(string $cake_id)
@@ -407,6 +534,15 @@ class MgrCustomPackagesController extends Controller
 
         if ($food) {
             $food->delete();
+
+            $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Cake-Item Deleted';
+            $log->description = $food->cakename . " Cake item has been deleted by " . $use->firstname . " " . $use->lastname;
+            $log->save();
+
             return redirect()->route('manager.customcake')->with('alert', 'Cake item deleted successfully!');
         }
 
@@ -426,6 +562,14 @@ class MgrCustomPackagesController extends Controller
         $clown->user_id = Auth::id();
         $clown->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Clown/Emcee-Item Created';
+        $log->description = $request->clownname . " clown/emcee item has been added by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customclown')->with('alert', 'Clown/Emcee item added successfully!');
     }
     public function clownUpdate(Request $request, string $clown_id)
@@ -440,6 +584,14 @@ class MgrCustomPackagesController extends Controller
         $clown->clownprice = $request->input('clownprice');
         $clown->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Clown/Emcee-Item Updated';
+        $log->description = $request->clownname . " clown/emcee item has been updated by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customclown.view')->with('alert', 'Clown/Emcee item updated successfully!');
     }
     public function clownDestroy(string $clown_id)
@@ -448,6 +600,15 @@ class MgrCustomPackagesController extends Controller
 
         if ($food) {
             $food->delete();
+
+            $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Clown/Emcee-Item Deleted';
+            $log->description = $food->clownname . " clown/emcee item has been deleted by " . $use->firstname . " " . $use->lastname;
+            $log->save();
+            
             return redirect()->route('manager.customclown')->with('alert', 'Clown/Emcee item deleted successfully!');
         }
 
@@ -467,6 +628,14 @@ class MgrCustomPackagesController extends Controller
         $setup->user_id = Auth::id();
         $setup->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Setup-Item Created';
+        $log->description = $request->setupname . " setup item has been added by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customsetup')->with('alert', 'Setup item added successfully!');
     }
     public function setupUpdate(Request $request, string $setup_id)
@@ -481,6 +650,14 @@ class MgrCustomPackagesController extends Controller
         $setup->setupprice = $request->input('setupprice');
         $setup->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Setup-Item Updated';
+        $log->description = $request->setupname . " setup item has been updated by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customsetup.view')->with('alert', 'Setup item updated successfully!');
     }
     public function setupDestroy(string $setup_id)
@@ -489,6 +666,15 @@ class MgrCustomPackagesController extends Controller
 
         if ($food) {
             $food->delete();
+
+            $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Setup-Item Deleted';
+            $log->description = $food->setupname . " setup item has been deleted by " . $use->firstname . " " . $use->lastname;
+            $log->save();
+            
             return redirect()->route('manager.customsetup')->with('alert', 'Setup item deleted successfully!');
         }
 
@@ -508,6 +694,14 @@ class MgrCustomPackagesController extends Controller
         $facepaint->user_id = Auth::id();
         $facepaint->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Facepaint-Item Created';
+        $log->description = $request->facepaintname . " facepaint item has been added by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customfacepaint')->with('alert', 'Facepaint item added successfully!');
     }
     public function facepaintUpdate(Request $request, string $facepaint_id)
@@ -522,6 +716,14 @@ class MgrCustomPackagesController extends Controller
         $facepaint->facepaintprice = $request->input('facepaintprice');
         $facepaint->save();
 
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Facepaint-Item Updated';
+        $log->description = $request->facepaintname . " facepaint item has been updated by " . $use->firstname . " " . $use->lastname;
+        $log->save();
+
         return redirect()->route('manager.customfacepaint.view')->with('alert', 'Facepaint item updated successfully!');
     }
     public function facepaintDestroy(string $facepaint_id)
@@ -530,6 +732,15 @@ class MgrCustomPackagesController extends Controller
 
         if ($food) {
             $food->delete();
+
+            $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Facepaint-Item Deleted';
+            $log->description = $food->facepaintname . " facepaint item has been deleted by " . $use->firstname . " " . $use->lastname;
+            $log->save();
+
             return redirect()->route('manager.customfacepaint')->with('alert', 'Facepaint item deleted successfully!');
         }
 

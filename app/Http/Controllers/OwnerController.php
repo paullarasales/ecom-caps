@@ -12,6 +12,7 @@ use App\Models\Package;
 use App\Models\Post;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB; 
+use App\Models\Log;
 
 
 class OwnerController extends Controller
@@ -170,6 +171,11 @@ class OwnerController extends Controller
     public function ownerbooking()
     {
         return view('owner.booking');
+    }
+    public function logs()
+    {
+        $logs = Log::with('user')->orderBy('created_at', 'desc')->paginate(15);
+        return view('owner.logs', compact('logs'));
     }
     public function ownerchat()
     {

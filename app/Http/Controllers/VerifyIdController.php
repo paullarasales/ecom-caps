@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Log;
 
 class VerifyIdController extends Controller
 {
@@ -72,6 +73,14 @@ class VerifyIdController extends Controller
 
         $user->save();
 
+            $use = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Verification';
+            $log->description = "A user has been " . $request->verifystatus . " by " . $use->firstname . " " . $use->lastname;
+            $log->save();
+
         return redirect("users")->with('alert', 'User Successfully Updated');
     }
     public function managerupdate(Request $request, string $id)
@@ -88,6 +97,14 @@ class VerifyIdController extends Controller
         $user->verifystatus = $request->verifystatus;
 
         $user->save();
+
+            $use = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Verification';
+            $log->description = "A user has been " . $request->verifystatus . " by " . $use->firstname . " " . $use->lastname;
+            $log->save();
 
         return redirect("managerusers")->with('alert', 'User Successfully Updated');
     }

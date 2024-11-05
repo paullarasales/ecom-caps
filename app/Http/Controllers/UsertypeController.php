@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Log;
 
 class UsertypeController extends Controller
 {
@@ -76,6 +78,14 @@ class UsertypeController extends Controller
         $user->lastname = $request->lastname;
         $user->usertype = $request->usertype;
         $user->save();
+
+            $use = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'User Role';
+            $log->description = "Admin updated " . $request->firstname . " " . $request->lastname . "'s role to " . $request->usertype;
+            $log->save();
 
         return redirect("users")->with('alert', 'User Successfully Updated');
     }

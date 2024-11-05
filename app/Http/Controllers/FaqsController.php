@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Faqs;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Log;
 
 class FaqsController extends Controller
 {
@@ -37,6 +38,14 @@ class FaqsController extends Controller
         $appointment = new Faqs($request->all());
         $appointment->user_id = Auth::id(); // Set the user ID from the authenticated user
         $appointment->save();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'FAQs Created';
+            $log->description = "new FAQs created by " . $user->firstname . " " . $user->lastname;
+            $log->save();
 
         // return redirect()->route('addfaqs')->with('alert', 'Request Submitted');
         if (Auth::check()) {
@@ -90,6 +99,14 @@ class FaqsController extends Controller
         $faq->answer = $request->input('answer');
         $faq->save();
 
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'FAQs Updated';
+            $log->description = "FAQs updated by " . $user->firstname . " " . $user->lastname;
+            $log->save();
+
         return redirect()->route('viewfaqs')->with('alert', 'Faqs Successfully Updated');
     }
     public function ownerupdate(Request $request, string $faq_id)
@@ -99,6 +116,14 @@ class FaqsController extends Controller
         $faq->answer = $request->input('answer');
         $faq->save();
 
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'FAQs Updated';
+            $log->description = "FAQs updated by " . $user->firstname . " " . $user->lastname;
+            $log->save();
+
         return redirect()->route('ownerviewfaqs')->with('alert', 'Faqs Successfully Updated');
     }
     public function managerupdate(Request $request, string $faq_id)
@@ -107,6 +132,14 @@ class FaqsController extends Controller
         $faq->question = $request->input('question');
         $faq->answer = $request->input('answer');
         $faq->save();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'FAQs Updated';
+            $log->description = "FAQs updated by " . $user->firstname . " " . $user->lastname;
+            $log->save();
 
         return redirect()->route('managerviewfaqs')->with('alert', 'Faqs Successfully Updated');
     }
@@ -121,6 +154,14 @@ class FaqsController extends Controller
         // Delete the faq from the database
         $faq->delete();
 
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'FAQs Deleted';
+            $log->description = "FAQs Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->save();
+
         return redirect()->route('viewfaqs')->with('alert', 'Faqs deleted successfully!');
     }
     public function ownerdestroy(string $faq_id)
@@ -130,6 +171,14 @@ class FaqsController extends Controller
         // Delete the faq from the database
         $faq->delete();
 
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'FAQs Deleted';
+            $log->description = "FAQs Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->save();
+
         return redirect()->route('ownerviewfaqs')->with('alert', 'Faqs deleted successfully!');
     }
     public function managerdestroy(string $faq_id)
@@ -138,6 +187,14 @@ class FaqsController extends Controller
 
         // Delete the faq from the database
         $faq->delete();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'FAQs Deleted';
+            $log->description = "FAQs Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->save();
 
         return redirect()->route('managerviewfaqs')->with('alert', 'Faqs deleted successfully!');
     }

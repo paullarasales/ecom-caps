@@ -13,6 +13,7 @@ use App\Models\Foodcart;
 use App\Models\Foodpack;
 use App\Models\Customitem;
 use App\Models\Custompackage;
+use App\Models\Log;
 
 class PackagesController extends Controller
 {
@@ -40,7 +41,7 @@ class PackagesController extends Controller
         $request->validate([
             'packagephoto' => 'required|image|mimes:png,jpg,jpeg,webp',
             'packagename' => 'required',
-            'packagedesc' => 'required',
+            'packagedesc' => 'required|numeric',
         ]);
 
         if ($file = $request->file('packagephoto')) {
@@ -56,6 +57,14 @@ class PackagesController extends Controller
             $package->user_id = Auth::id();
             $package->packagephoto = $path . $filename; // Save the image path
             $package->save();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Package Created';
+            $log->description = $package->packagename . " package created by " . $user->firstname . " " . $user->lastname;
+            $log->save();
 
             // return redirect()->route('addpackage')->with('alert', 'Uploaded successfully!');
             if (Auth::check()) {
@@ -279,6 +288,14 @@ class PackagesController extends Controller
     
         // Save the changes
         $package->save();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Package Updated';
+            $log->description = $package->packagename . " package updated by " . $user->firstname . " " . $user->lastname;
+            $log->save();
     
         return redirect()->route('viewpackage')->with('alert', 'Updated successfully!');
     }
@@ -316,6 +333,14 @@ class PackagesController extends Controller
     
         // Save the changes
         $package->save();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Package Updated';
+            $log->description = $package->packagename . " package updated by " . $user->firstname . " " . $user->lastname;
+            $log->save();
     
         return redirect()->route('managerviewpackage')->with('alert', 'Updated successfully!');
     }
@@ -351,6 +376,14 @@ class PackagesController extends Controller
         // Delete the package from the database
         $package->delete();
 
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Package Deleted';
+            $log->description = $package->packagename . " package deleted by " . $user->firstname . " " . $user->lastname;
+            $log->save();
+
         return redirect()->route('viewpackage')->with('alert', 'Package deleted successfully!');
     }
 
@@ -381,6 +414,14 @@ class PackagesController extends Controller
 
         // Delete the package from the database
         $package->delete();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Package Deleted';
+            $log->description = $package->packagename . " package deleted by " . $user->firstname . " " . $user->lastname;
+            $log->save();
 
         return redirect()->route('managerviewpackage')->with('alert', 'Package deleted successfully!');
     }

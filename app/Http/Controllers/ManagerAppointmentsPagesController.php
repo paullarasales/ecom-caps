@@ -98,7 +98,7 @@ class ManagerAppointmentsPagesController extends Controller
             'start' => $event->appointment_datetime,
             'color' => $color,  // Include the color in the event data
         ];
-    });
+    })->toArray();
 
     $blockedDates = Blockedapp::all()->map(function ($blocked) {
         return [
@@ -111,10 +111,10 @@ class ManagerAppointmentsPagesController extends Controller
             'allDay' => true,  // Blocked dates are generally full-day events
             'classNames' => ['blocked-event'], 
         ];
-    });
+    })->toArray();
 
     // Merge both appointments and blocked dates into one collection
-    $mergedEvents = $events->merge($blockedDates);
+    $mergedEvents = array_merge($events, $blockedDates);
     
     return response()->json($mergedEvents);
     }

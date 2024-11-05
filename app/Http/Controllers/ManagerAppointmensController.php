@@ -13,6 +13,7 @@ use App\Models\Blockeddate;
 use App\Models\Blockedapp;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Log as ModelsLog;
 
 class ManagerAppointmensController extends Controller
 {
@@ -97,6 +98,15 @@ class ManagerAppointmensController extends Controller
         $appointment->status = 'booked'; // Consider using null instead of 'null' if you want it to be a database NULL
         $appointment->save();
 
+        $DateFormatted = Carbon::parse($request->edate)->format('F j, Y');
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Direct Booked';
+            $log->description = $use->firstname . " " . $use->lastname . " directly booked an event on " . $DateFormatted;
+            $log->save();
+
         return redirect()->back()->with('alert', 'User and appointment created successfully.');
     }
 
@@ -130,6 +140,15 @@ class ManagerAppointmensController extends Controller
         $appointment->status = 'booked';
         $appointment->isread = "unread";
         $appointment->save();
+
+        $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Accepted';
+            $log->description = $use->firstname . " " . $use->lastname . " accepted an event on " . $DateFormatted;
+            $log->save();
 
 
         // Get the user who made the appointment
@@ -165,11 +184,13 @@ class ManagerAppointmensController extends Controller
 
         try {
             // Send the email
-            Mail::send([], [], function ($message) use ($user, $emailContent) {
-                $message->to($user->email)
-                        ->subject('Your Event Has Been Booked!')
-                        ->html($emailContent);
-            });
+            if (!empty($user->email)) {
+                Mail::send([], [], function ($message) use ($user, $emailContent) {
+                    $message->to($user->email)
+                            ->subject('Your Event Has Been Booked!')
+                            ->html($emailContent);
+                });
+            }
         } catch (\Exception $e) {
             // Log the error or handle it
             Log::error('Email could not be sent: ' . $e->getMessage());
@@ -221,6 +242,15 @@ class ManagerAppointmensController extends Controller
         $appointment->isread = "unread";
         $appointment->save();
 
+        $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Rebooked';
+            $log->description = $use->firstname . " " . $use->lastname . " rebooked an event on " . $DateFormatted;
+            $log->save();
+
 
         // Get the user who made the appointment
         $user = $appointment->user; // Assuming you have a relation between Appointment and User models
@@ -255,11 +285,13 @@ class ManagerAppointmensController extends Controller
 
         try {
             // Send the email
-            Mail::send([], [], function ($message) use ($user, $emailContent) {
-                $message->to($user->email)
-                        ->subject('Your Event Has Been Re-Booked!')
-                        ->html($emailContent);
-            });
+            if (!empty($user->email)) {
+                Mail::send([], [], function ($message) use ($user, $emailContent) {
+                    $message->to($user->email)
+                            ->subject('Your Event Has Been Re-Booked!')
+                            ->html($emailContent);
+                });
+            }
         } catch (\Exception $e) {
             // Log the error or handle it
             Log::error('Email could not be sent: ' . $e->getMessage());
@@ -288,6 +320,15 @@ class ManagerAppointmensController extends Controller
             $appointment->isread = "unread";
             $appointment->save();
 
+            $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+            $use = Auth::user();
+
+                $log = new ModelsLog();
+                $log->user_id = Auth::id();
+                $log->action = 'Done';
+                $log->description = $use->firstname . " " . $use->lastname . " markeed an event on " . $DateFormatted . " as done";
+                $log->save();
+
             // Get the user who made the appointment
             $user = $appointment->user; // Assuming you have a relation between Appointment and User models
 
@@ -307,11 +348,13 @@ class ManagerAppointmensController extends Controller
 
             try {
                 // Send the email
-                Mail::send([], [], function ($message) use ($user, $emailContent) {
-                    $message->to($user->email)
-                            ->subject('Your Event Has Been Done!')
-                            ->html($emailContent);
-                });
+                if (!empty($user->email)) {
+                    Mail::send([], [], function ($message) use ($user, $emailContent) {
+                        $message->to($user->email)
+                                ->subject('Your Event Has Been Done!')
+                                ->html($emailContent);
+                    });
+                }
             } catch (\Exception $e) {
                 // Log the error or handle it
                 Log::error('Email could not be sent: ' . $e->getMessage());
@@ -349,6 +392,15 @@ class ManagerAppointmensController extends Controller
             $appointment->isread = "unread";
             $appointment->save();
 
+            $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+            $use = Auth::user();
+
+                $log = new ModelsLog();
+                $log->user_id = Auth::id();
+                $log->action = 'Cancelled';
+                $log->description = $use->firstname . " " . $use->lastname . " cancelled an event on " . $DateFormatted;
+                $log->save();
+
             // Get the user who made the appointment
             $user = $appointment->user; // Assuming you have a relation between Appointment and User models
 
@@ -368,11 +420,13 @@ class ManagerAppointmensController extends Controller
 
             try {
                 // Send the email
-                Mail::send([], [], function ($message) use ($user, $emailContent) {
-                    $message->to($user->email)
-                            ->subject('Your Event Has Been Cancelled')
-                            ->html($emailContent);
-                });
+                if (!empty($user->email)) {
+                    Mail::send([], [], function ($message) use ($user, $emailContent) {
+                        $message->to($user->email)
+                                ->subject('Your Event Has Been Cancelled')
+                                ->html($emailContent);
+                    });
+                }
             } catch (\Exception $e) {
                 // Log the error or handle it
                 Log::error('Email could not be sent: ' . $e->getMessage());
@@ -402,6 +456,15 @@ class ManagerAppointmensController extends Controller
             $appointment->isread = "unread";
             $appointment->save();
 
+            $DateFormatted = Carbon::parse($appointment->appointment_datetime)->format('F j, Y g:i A');
+            $use = Auth::user();
+
+                $log = new ModelsLog();
+                $log->user_id = Auth::id();
+                $log->action = 'Cancelled';
+                $log->description = $use->firstname . " " . $use->lastname . " cancelled a meeting on " . $DateFormatted;
+                $log->save();
+
 
             // Get the user who made the appointment
             $user = $appointment->user; // Assuming you have a relation between Appointment and User models
@@ -421,11 +484,13 @@ class ManagerAppointmensController extends Controller
 
             try {
                 // Send the email
-                Mail::send([], [], function ($message) use ($user, $emailContent) {
-                    $message->to($user->email)
-                            ->subject('Your Event Request Has Been Cancelled')
-                            ->html($emailContent);
-                });
+                if (!empty($user->email)) {
+                    Mail::send([], [], function ($message) use ($user, $emailContent) {
+                        $message->to($user->email)
+                                ->subject('Your Event Request Has Been Cancelled')
+                                ->html($emailContent);
+                    });
+                }
             } catch (\Exception $e) {
                 // Log the error or handle it
                 Log::error('Email could not be sent: ' . $e->getMessage());
@@ -468,6 +533,16 @@ class ManagerAppointmensController extends Controller
 
         // Save the updated appointment
         $appointment->save();
+
+        $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+            $use = Auth::user();
+
+                $log = new ModelsLog();
+                $log->user_id = Auth::id();
+                $log->action = 'Edited';
+                $log->description = $use->firstname . " " . $use->lastname . " edited an event on " . $DateFormatted;
+                $log->save();
+
 
         // Redirect back or to a success page
         return redirect()->back()->with('alert', 'Event updated successfully!');
@@ -518,6 +593,17 @@ class ManagerAppointmensController extends Controller
             'reason' => $request->reason,
         ]);
 
+
+        $unblockedDateFormatted = Carbon::parse($request->blocked_date)->format('F j, Y');
+
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Event Date Blocked';
+            $log->description = $unblockedDateFormatted . " Has been blocked by " . $use->firstname . " " . $use->lastname;
+            $log->save();
+
         return redirect()->back()->with('alert', 'Date blocked successfully!');
     }
     public function unblock(Request $request)
@@ -532,6 +618,16 @@ class ManagerAppointmensController extends Controller
         // Logic to unblock the date (assuming you have a model for appointments)
         // For example, if you have a `BlockedDate` model that tracks blocked dates:
         BlockedDate::where('blocked_date', $unblockedDate)->delete();
+
+        $unblockedDateFormatted = Carbon::parse($unblockedDate)->format('F j, Y');
+
+            $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Event Date Unblocked';
+            $log->description = $unblockedDateFormatted . " Has been unblocked by " . $use->firstname . " " . $use->lastname;
+            $log->save();
 
         // Optional: Return a response or redirect with a success message
         return redirect()->back()->with('alert', 'Date unblocked successfully!');
@@ -550,6 +646,16 @@ class ManagerAppointmensController extends Controller
             'appreason' => $request->appreason,
         ]);
 
+        $unblockedDateFormatted = Carbon::parse($request->blocked_date)->format('F j, Y');
+
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Meeting Date Blocked';
+            $log->description = $unblockedDateFormatted . " Has been blocked by " . $use->firstname . " " . $use->lastname;
+            $log->save();
+
         return redirect()->back()->with('alert', 'Date blocked successfully!');
     }
     public function appunblock(Request $request)
@@ -564,6 +670,17 @@ class ManagerAppointmensController extends Controller
         // Logic to unblock the date (assuming you have a model for appointments)
         // For example, if you have a `BlockedDate` model that tracks blocked dates:
         Blockedapp::where('blocked_app', $unblockedDate)->delete();
+
+
+        $unblockedDateFormatted = Carbon::parse($unblockedDate)->format('F j, Y');
+
+            $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Meeting Date Unblocked';
+            $log->description = $unblockedDateFormatted . " Has been unblocked by " . $use->firstname . " " . $use->lastname;
+            $log->save();
 
         // Optional: Return a response or redirect with a success message
         return redirect()->back()->with('alert', 'Date unblocked successfully!');

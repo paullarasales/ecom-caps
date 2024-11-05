@@ -131,4 +131,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Facepaint::class);
     }
+
+
+    public function log(): HasMany
+    {
+        return $this->hasMany(Log::class);
+    }
 }

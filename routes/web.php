@@ -69,6 +69,7 @@ Route::get('/appointments', [AdminController::class, 'appointments'])->middlewar
 Route::get('/users', [UsertypeController::class, 'index'])->middleware(['auth', 'verified','admin'])->name('adminusers');
 Route::get('/adminreviews', [AdminController::class, 'adminreviews'])->middleware(['auth', 'verified','admin'])->name('adminratings');
 Route::get('/packages', [AdminController::class, 'packages'])->middleware(['auth', 'verified','admin'])->name('adminpackages');
+Route::get('/logs', [AdminController::class, 'logs'])->middleware(['auth', 'verified','admin'])->name('adminlogs');
 Route::get('/admin/profile', [AdminController::class, 'profile'])->middleware(['auth', 'verified','admin'])->name('profile');
 
 //ADMIN APPOINTMENT
@@ -668,7 +669,7 @@ Route::get('/owner/calendar', [OwnerAppointmentsPagesController::class, 'calenda
 
 Route::get('/ownerbooking', [OwnerController::class, 'ownerbooking'])->middleware(['auth', 'verified','owner'])->name('ownerbooking');
 Route::get('/ownerchat', [OwnerController::class, 'ownerchat'])->middleware(['auth', 'verified','owner'])->name('ownerchat');
-
+Route::get('/owner/logs', [OwnerController::class, 'logs'])->middleware(['auth', 'verified','owner'])->name('ownerlogs');
 
 
 //OWNER NOTIFICATIONS //OWNER NOTIFICATIONS //OWNER NOTIFICATIONS //OWNER NOTIFICATIONS 

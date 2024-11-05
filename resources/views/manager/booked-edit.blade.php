@@ -1,4 +1,21 @@
 <x-manager-layout>
+
+    <div class="flex ml-3">
+        <a href="javascript:window.history.back();">
+            <div class="text-xl">
+                <i class="fa-solid fa-arrow-left"></i>
+            </div>
+        </a>
+    </div>
+    
+    <div class="text-center py-2 my-2">
+                
+        <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
+            Edit <span class="text-yellow-600">Event</span>
+        </h3>
+
+    </div>
+    
     <form action="{{  route('manager.appointment.save', $appointment->appointment_id) }}" method="POST">
         @method("PUT")
         @csrf

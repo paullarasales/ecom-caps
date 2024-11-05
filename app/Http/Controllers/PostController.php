@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
+use App\Models\Log;
 
 class PostController extends Controller
 {
@@ -53,6 +54,14 @@ class PostController extends Controller
         $post->user_id = Auth::id();
         $post->postimage = $imageData; // Save all image paths as an array
         $post->save();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Post Created';
+            $log->description = "new Post Created by " . $user->firstname . " " . $user->lastname;
+            $log->save();
     
         if (Auth::check()) {
             $user = Auth::user();
@@ -140,6 +149,14 @@ class PostController extends Controller
     $post->postimage = $imageData; // Update the image paths with new ones
     $post->save();
 
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Post Updated';
+            $log->description = "Post Updated by " . $user->firstname . " " . $user->lastname;
+            $log->save();
+
         if (Auth::check()) {
             $user = Auth::user();
         
@@ -173,6 +190,14 @@ class PostController extends Controller
         // Delete the post from the database
         $post->delete();
 
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Post Deleted';
+            $log->description = "Post Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->save();
+
         return redirect()->route('viewpost')->with('alert', 'Post deleted successfully!');
     }
     public function ownerdestroy(string $post_id)
@@ -191,6 +216,14 @@ class PostController extends Controller
         // Delete the post from the database
         $post->delete();
 
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Post Deleted';
+            $log->description = "Post Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->save();
+
         return redirect()->route('ownerviewpost')->with('alert', 'Post deleted successfully!');
     }
     public function managerdestroy(string $post_id)
@@ -208,6 +241,14 @@ class PostController extends Controller
 
         // Delete the post from the database
         $post->delete();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Post Deleted';
+            $log->description = "Post Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->save();
 
         return redirect()->route('managerviewpost')->with('alert', 'Post deleted successfully!');
     }
