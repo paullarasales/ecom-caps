@@ -47,8 +47,8 @@
         <div class="shadow-2xl rounded-xl m-2 lg:mx-32 mb-10">
             <blockquote class="overflow-hidden h-full flex flex-col bg-white shadow rounded-xl">
                 <header class="p-6 space-y-4 flex flex-col flex-1 text-justify">
-                    <p class="text-sm">
-                        <span class="text-yellow-600">Content: </span>
+                    <p class="text-md">
+                        <span class="text-yellow-600 font-semibold">Content: </span>
                         {{ $review->content }}
                     </p>
                     @if (is_array($review->reviewimage))
@@ -99,6 +99,15 @@
                             <i class="fa-regular fa-eye-slash ml-3"></i>
                         </button>                          
                     </form> --}}
+                </div>
+                <div class="bg-gray-500">
+                    <div class="bg-gray-100 m-5 p-5 rounded-md">
+                        <h1 class="text-justify">
+                            <span class="text-md text-yellow-600 font-semibold">The Siblings Catering Services: </span>
+                            {!! nl2br(e($review->response)) !!}
+                        </h1>
+                        
+                    </div>
                 </div>
             </blockquote>
         </div>

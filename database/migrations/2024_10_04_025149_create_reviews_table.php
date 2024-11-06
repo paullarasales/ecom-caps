@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->integer('rating')->nullable();
             $table->string('reviewimage')->nullable();
+            $table->text('response')->nullable();
             $table->string('reviewstatus')->default('pending');
             $table->timestamps();
 

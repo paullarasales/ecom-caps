@@ -98,6 +98,7 @@ Route::get('/admin/reviews/pending', [ReviewController::class, 'pending'])->midd
 Route::get('/admin/reviews/approved', [ReviewController::class, 'approved'])->middleware(['auth', 'verified','admin'])->name('reviewapproved');
 Route::put('/admin/reviews/pending/to/approved/{review_id}', [ReviewController::class, 'statusApproved'])->middleware(['auth', 'verified','admin'])->name('reviews.approve');
 Route::put('/admin/reviews/approved/to/pending/{review_id}', [ReviewController::class, 'statusPending'])->middleware(['auth', 'verified','admin'])->name('reviews.pending');
+Route::put('/admin/reviews/response{review_id}', [ReviewController::class, 'response'])->middleware(['auth', 'verified','admin'])->name('reviews.response');
 
 //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS 
 
@@ -655,6 +656,8 @@ Route::get('/manager/reviews/pending', [ReviewController::class, 'managerpending
 Route::get('/manager/reviews/approved', [ReviewController::class, 'managerapproved'])->middleware(['auth', 'verified','manager'])->name('managerreviewapproved');
 Route::put('/manager/reviews/pending/to/approved/{review_id}', [ReviewController::class, 'managerstatusApproved'])->middleware(['auth', 'verified','manager'])->name('managerreviews.approve');
 Route::put('/manager/reviews/approved/to/pending/{review_id}', [ReviewController::class, 'managerstatusPending'])->middleware(['auth', 'verified','manager'])->name('managerreviews.pending');
+Route::put('/manager/reviews/response{review_id}', [ReviewController::class, 'managerresponse'])->middleware(['auth', 'verified','manager'])->name('manager.reviews.response');
+
 //MANAGER REVIEW //MANAGER REVIEW //MANAGER REVIEW //MANAGER REVIEW //MANAGER REVIEW 
 
 //MANAGER //MANAGER //MANAGER //MANAGER //MANAGER //MANAGER //MANAGER //MANAGER 

@@ -106,11 +106,47 @@ class ReviewController extends Controller
         $review->rating = $request->rating;
         $review->reviewimage = $imageData; // Save all image paths as an array
         $review->user_id = Auth::id(); // Assuming the user is logged in
+        $review->reviewstatus = "approved";
         $review->appointment_id = $request->appointment_id; // Ensure you pass appointment_id in your form
         $review->save();
 
         return redirect()->back()->with('alert', 'Review submitted successfully!');
     }
+
+
+    public function response(Request $request, $review_id)
+    {
+        $request->validate([
+            'response' => 'required|string'
+        ]);
+
+        $review = Review::findOrFail($review_id);
+
+        $review->response = $request->response;
+        $review->save();
+
+        return redirect()->back()->with('alert', 'Response Submitted successfully!');
+    }
+
+    public function managerresponse(Request $request, $review_id)
+    {
+        $request->validate([
+            'response' => 'required|string'
+        ]);
+
+        $review = Review::findOrFail($review_id);
+
+        $review->response = $request->response;
+        $review->save();
+
+        return redirect()->back()->with('alert', 'Response Submitted successfully!');
+    }
+
+
+
+
+
+
 
     public function statusApproved(Request $request, $review_id)
     {

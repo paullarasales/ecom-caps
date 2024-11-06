@@ -1,16 +1,16 @@
 <x-manager-layout>
 
-    <div class="flex ml-3">
+    {{-- <div class="flex ml-3">
         <a href="{{route('managerreviews')}}">
             <div class="text-xl">
                 <i class="fa-solid fa-arrow-left"></i>
             </div>
         </a>
-    </div>
+    </div> --}}
 
     <div class="text-center py-4 my-2">
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Approved <span class="text-yellow-600">Reviews</span> and <span class="text-yellow-600">Ratings</span>
+            <span class="text-yellow-600">Reviews</span> and <span class="text-yellow-600">Ratings</span>
         </h3>
     </div>
 
@@ -18,7 +18,7 @@
         <div class="shadow-2xl rounded-xl m-2 lg:m-10 mb-10">
             <blockquote class="overflow-hidden h-full flex flex-col bg-white shadow rounded-xl">
                 <header class="p-6 space-y-4 flex flex-col flex-1 text-justify">
-                    <p class="text-sm">
+                    <p class="text-sm lg:text-md">
                         <span class="text-yellow-600">Content: </span>
                         {{ $review->content }}
                     </p>
@@ -61,7 +61,7 @@
                         <span class="text-gray-200">Event: </span>
                         {{ \Carbon\Carbon::parse($review->appointment->edate)->format('F j, Y') . ' at ' . $review->appointment->location }}
                     </p>
-                    <form action="{{ route('managerreviews.pending', $review->review_id) }}" method="POST">
+                    {{-- <form action="{{ route('managerreviews.pending', $review->review_id) }}" method="POST">
                         @csrf
                         @method("PUT")
                         <input type="hidden" name="status" value="pending">
@@ -69,8 +69,29 @@
                             Hide
                             <i class="fa-regular fa-eye-slash ml-3"></i>
                         </button>                          
-                    </form>
+                    </form> --}}
                 </div>
+
+                <div class="bg-gray-700">
+                    <div class="bg-gray-100 lg:m-5 lg:p-5 m-2 p-2 rounded-md">
+                        <h1 class="text-lg font-semibold mb-4">Response</h1>
+                        <form action="{{route('manager.reviews.response', $review->review_id)}}" method="POST" class="grid grid-cols-1 gap-4">
+                            @csrf
+                            @method("PUT")
+                            <div>
+                                {{-- <label for="response" class="block text-sm font-medium text-gray-700">Write a response:</label> --}}
+                                <textarea id="response" name="response" rows="4" class="text-sm lg:text-md resize-none text-justify h-32 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">{{ $review->response }}</textarea>
+
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:outline-none focus:ring-4 focus:ring-yellow-300">
+                                    Submit Response
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
             </blockquote>
         </div>
     @empty

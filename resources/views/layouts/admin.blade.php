@@ -102,12 +102,12 @@
                     </x-side-nav-link>
                 </div>
         
-                <div class="{{ request()->routeIs('adminratings') ? 'bg-gray-200' : '' }} flex items-center gap-2 rounded-sm h-12">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ request()->routeIs('adminratings') ? '#FFB200' : '#000000'}}" class="ml-4 sm:ml-10 w-6 h-6">
+                <div class="{{ request()->routeIs('reviewapproved') ? 'bg-gray-200' : '' }} flex items-center gap-2 rounded-sm h-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ request()->routeIs('reviewapproved') ? '#FFB200' : '#000000'}}" class="ml-4 sm:ml-10 w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
                     </svg>
         
-                    <x-side-nav-link href="{{ route('adminratings') }}" :active="request()->routeIs('adminratings')" class="text-xl text-black font-medium mt-1 flex items-center w-full">
+                    <x-side-nav-link href="{{ route('reviewapproved') }}" :active="request()->routeIs('reviewapproved')" class="text-xl text-black font-medium mt-1 flex items-center w-full">
                         {{ __('Reviews')}}
                     </x-side-nav-link>
                 </div>

@@ -19,9 +19,6 @@ return new class extends Migration
             $table->date('edate')->nullable();
             $table->string('etime')->nullable();
             $table->string('type')->nullable();
-            $table->string('theme')->nullable();
-            $table->date('adate')->nullable();
-            $table->string('atime')->nullable();
             $table->string('reference', 20)->nullable();
             $table->string('status')->default('pending');
             $table->timestamps();

@@ -38,8 +38,8 @@
                         <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
                         <div class="md:col-span-5">
                                 <label for="firstname">Description</label>
-                                <input type="text" name="description" id="description" class="h-10 border py-10 mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" maxlength="220" value="" />
-                                <script>
+                                <input type="text" name="description" id="description" class="h-10 border py-10 mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1"  value="" />
+                                {{-- <script>
                                     document.getElementById("description").addEventListener("input", function() {
                                         if (this.value.length > 220) {
                                             this.value = this.value.slice(0, 220);
@@ -52,7 +52,7 @@
                                             this.value += ' '.repeat(remainingSpace);
                                         }
                                     });
-                                    </script>
+                                    </script> --}}
                             </div>
 
                             <div class="md:col-span-5">

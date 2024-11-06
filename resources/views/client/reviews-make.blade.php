@@ -26,7 +26,6 @@
                                     </div>
                                     
                                     
-
                                     <div class="md:col-span-5">
                                         <label for="rating">Rating</label>
                                         <!-- Hidden select dropdown -->
