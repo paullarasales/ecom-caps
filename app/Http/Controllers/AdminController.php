@@ -44,7 +44,7 @@ class AdminController extends Controller
             ->map->count();
 
         // Count the total number of users, packages, posts, and FAQs
-        $userCount = User::where('usertype', 'user')->count();
+        $userCount = User::where('usertype', 'user')->has('appointment')->count();
         $packageCount = Package::count();
         $postCount = Post::count();
         $faqCount = Faqs::count();

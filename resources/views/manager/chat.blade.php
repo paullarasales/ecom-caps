@@ -4,20 +4,50 @@
             background-color: #e2e8f0; /* Light gray background */
             border-left: 4px solid #e5c846; /* Add a left border for emphasis */
         }
+        /* Hide sidebar on small screens */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .sidebar.show {
+                display: block;
+            }
+
+            .chat-container.show {
+                display: block;
+                width: 100%;
+            }
+
+            .chat-container {
+                display: none;
+                width: 100%;
+            }
+        }
+
+        /* Ensure chat container is full height */
+        .chat-container {
+            height: 100%;
+        }
     </style>
     
-    <div class="flex h-screen w-full">
-        <!-- Sidebar -->
-        <div class="w-2/5 p-4 border-r border-gray-200 overflow-y-auto">
-            <h3 class="text-lg font-semibold mb-4">Clients</h3>
+    <div class="flex h-[80vh]  w-full">
+        <!-- Sidebar (User List) -->
+        <div id="sidebar" class="sidebar lg:w-2/5 w-full mt-10 p-4 border-r border-gray-200 overflow-y-auto">
+            <h3 class="text-lg font-semibold mb-4">User List</h3>
             <div id="user-list" class="space-y-2">
                 <!-- User list items will be populated here -->
             </div>
         </div>
 
         <!-- Chat Container -->
-        <div class="w-3/5 flex flex-col">
-            <div class="flex flex-col h-full border border-gray-200 bg-gray-100">
+        <div id="chat-container" class="chat-container w-full flex flex-col border-l border-gray-200 bg-gray-100">
+            <div class="flex flex-col h-full">
+                <!-- User name section (added this part) -->
+                <div id="chat-header" class="p-4 border-b border-gray-200 bg-gray-200 flex justify-center items-center">
+                    <h3 id="selected-user-name" class="text-lg font-semibold sm:ml-5">Select a user to chat</h3>
+                </div>
+                
                 <div id="message-list" class="flex-1 overflow-y-auto p-4 space-y-2">
                     <!-- Messages will be populated here -->
                 </div>
@@ -29,12 +59,28 @@
                 </div>
             </div>
         </div>
+
+        <!-- Hamburger Button (Visible on small screens) -->
+        <button id="hamburger-button" class="lg:hidden p-2  text-gray-900 font-bold text-xl rounded-full absolute top-4 left-4 z-10">
+            &#9776;
+        </button>
     </div>
 
     <script>
         window.authUserId = @json(auth()->id());
         window.authUserType = @json(auth()->user()->usertype);
         let currentReceiverId = null;
+        let currentReceiverName = null; // Variable to store the selected user's name
+        let sidebarVisible = false;
+
+        // Toggle Sidebar Visibility
+        document.getElementById('hamburger-button').addEventListener('click', function () {
+            sidebarVisible = !sidebarVisible;
+            const sidebar = document.getElementById('sidebar');
+            const chatContainer = document.getElementById('chat-container');
+            sidebar.classList.toggle('show', sidebarVisible);
+            chatContainer.classList.toggle('show', !sidebarVisible);
+        });
 
         async function fetchUserList() {
             try {
@@ -85,8 +131,17 @@
                         userElement.classList.add('selected');
 
                         currentReceiverId = user.id;
+                        currentReceiverName = displayName; // Save the selected user's name
+
+                        // Update the chat header with the selected user's name
+                        document.getElementById('selected-user-name').textContent = `${currentReceiverName}`;
                         await fetchMessages(); // Fetch messages for the selected user
                         await markMessagesAsRead(user.id);  // Pass the receiver's user ID here
+
+                        if (window.innerWidth <= 768) {
+                            document.getElementById('sidebar').classList.remove('show');
+                            document.getElementById('chat-container').classList.add('show');
+                        }
                     });
 
                     userList.appendChild(userElement);
