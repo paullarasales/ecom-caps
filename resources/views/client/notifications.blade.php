@@ -15,7 +15,7 @@
                     @if($appointment->status === 'pending')
                     <h1 class="text-md text-gray-600 py-4">
                         Your request has already been submitted. Please arrive on the meeting date 
-                        {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('F j, Y g:i A') }}.
+                        {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('F j, Y g:i A') }}. <span class="text-blue-500"><a href="{{route('myrequest')}}"> Reference {{$appointment->reference}}</a></span>
                     </h1>                    
                     @elseif($appointment->status === 'booked')
                         <h1 class="text-md text-gray-600 py-4">Your event {{ $appointment->type }} on {{ $appointment->edate }} is already booked.</h1>
@@ -29,7 +29,18 @@
                             @endif
                         </h1>
                     @elseif($appointment->status === 'cancelled')
-                        <h1 class="text-md text-gray-600 py-4">Your event {{ $appointment->type }} on {{ $appointment->edate }} has been cancelled.</h1>
+                        <h1 class="text-md text-gray-600 py-4">Your event {{ $appointment->type }} on {{ \Carbon\Carbon::parse($appointment->edate)->format('F j, Y') }} has been cancelled.</h1>
+                    @elseif($appointment->user && $appointment->status === 'mcancelled' && \Carbon\Carbon::parse($appointment->edate)->isFuture())
+                        <h1 class="text-md text-gray-600 py-4">
+                            Your appointment meeting on {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('F j, Y g:i A') }} 
+                            for the event {{$appointment->type}} on {{ \Carbon\Carbon::parse($appointment->edate)->format('F j, Y') }} has been cancelled</h1>
+                    @elseif (!$appointment->location && $appointment->status === 'mcancelled' && \Carbon\Carbon::parse($appointment->appointment_datetime)->isFuture())
+                        {{-- Handle case where appointment does not have an associated user --}}
+                        <h1 class="text-md text-gray-600 py-4">
+                            Your appointment meeting on {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('F j, Y g:i A') }} 
+                            has been canceled.
+                        </h1>
+                        <hr>
                     @endif
                     <hr>
                 @endforeach
@@ -53,9 +64,13 @@
             @endif
 
             {{-- Check if user has submitted personal details --}}
-            @if($hasPersonalDetails)
+            @if(!$isVerified && $hasPersonalDetails)
                 <div class="lg:mx-32 my-10 bg-green-50 text-gray-600 p-4 rounded-lg">
                     <h1 class="text-md font-semibold">You have submitted your personal details, waiting for verification.</h1>
+                </div>
+            @elseif($hasPersonalDetails)
+                <div class="lg:mx-32 my-10 bg-green-50 text-gray-600 p-4 rounded-lg">
+                    <h1 class="text-md font-semibold">You have submitted your personal details.</h1>
                 </div>
             @else
                 <div class="lg:mx-32 my-10 bg-red-100 text-red-800 p-4 rounded-lg">

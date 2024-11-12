@@ -229,9 +229,10 @@ class AdminController extends Controller
         ->get();
 
         // Fetch unread appointments for each user
-        $unreadAppointments = Appointment::where('ismanagerread', 'unread')
-        ->with('user') // Assuming you have a relationship defined in the Appointment model
-        ->where('status', 'pending')
+        $unreadAppointments = Appointment::
+        with('user') // Assuming you have a relationship defined in the Appointment model
+        ->whereIn('status', ['pending' , 'mcancelled', 'cancelled'])
+        ->orderBy('created_at', 'desc')
         ->get();
 
         User::where('usertype', 'user')

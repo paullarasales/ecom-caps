@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use PHPUnit\Metadata\Before;
 
 class Package extends Model
@@ -33,9 +34,9 @@ class Package extends Model
         return $this->hasMany(Custom::class);
     }
 
-    public function custompackage(): HasMany
+    public function custompackage(): HasOne
     {
-        return $this->hasMany(Custompackage::class, 'package_id');
+        return $this->hasOne(Custompackage::class, 'package_id');
     }
 
 }

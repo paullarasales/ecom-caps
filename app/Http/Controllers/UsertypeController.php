@@ -20,17 +20,18 @@ class UsertypeController extends Controller
 
         $search = $request->input('search');
 
-    // If a search query exists, filter users based on name or usertype
-    $users = User::when($search, function ($query, $search) {
-        return $query->where('firstname', 'like', "%{$search}%")
-        ->orWhere('lastname', 'like', "%{$search}%")
-        ->orWhereRaw("CONCAT(firstname, ' ', lastname) like ?", ["%{$search}%"]);
-    })
-    ->orderBy('created_at', 'desc')
-    ->whereIn('usertype', ['manager', 'user', 'owner'])
-    ->paginate(10);
+        // If a search query exists, filter users based on name or usertype
+        $users = User::when($search, function ($query, $search) {
+            return $query->where('firstname', 'like', "%{$search}%")
+            ->orWhere('lastname', 'like', "%{$search}%")
+            ->orWhereRaw("CONCAT(firstname, ' ', lastname) like ?", ["%{$search}%"]);
+        })
+        ->orderBy('created_at', 'desc')
+        ->whereIn('usertype', ['manager', 'user', 'owner'])
+        ->whereNotNull('email')
+        ->paginate(10);
 
-    return view('admin.users', compact('users', 'search'));
+        return view('admin.users', compact('users', 'search'));
     }
 
     /**

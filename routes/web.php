@@ -84,13 +84,15 @@ Route::get('/admin/booked/{appointment_id}/view', [AppointmentsPagesController::
 Route::get('/admin/pending', [AppointmentsPagesController::class, 'pending'])->middleware(['auth', 'verified','admin'])->name('pending');
 Route::get('/admin/pending/{appointment_id}/view', [AppointmentsPagesController::class, 'pendingView'])->middleware(['auth', 'verified','admin'])->name('pendingView');
 Route::get('/admin/cancelled/{appointment_id}/view', [AppointmentsPagesController::class, 'cancelledView'])->middleware(['auth', 'verified','admin'])->name('cancelledView');
+Route::get('/admin/cancelled', [AppointmentsPagesController::class, 'cancelled'])->middleware(['auth', 'verified','admin'])->name('cancelled');
 Route::get('/admin/done/{appointment_id}/view', [AppointmentsPagesController::class, 'doneView'])->middleware(['auth', 'verified','admin'])->name('doneView');
+Route::get('/admin/done', [AppointmentsPagesController::class, 'done'])->middleware(['auth', 'verified','admin'])->name('done');
 Route::get('/admin/approved', [AppointmentsPagesController::class, 'approved'])->middleware(['auth', 'verified','admin'])->name('approved');
 Route::get('/admin/returned', [AppointmentsPagesController::class, 'returned'])->middleware(['auth', 'verified','admin'])->name('returned');
-Route::get('/admin/cancelled', [AppointmentsPagesController::class, 'cancelled'])->middleware(['auth', 'verified','admin'])->name('cancelled');
-Route::get('/admin/done', [AppointmentsPagesController::class, 'done'])->middleware(['auth', 'verified','admin'])->name('done');
 Route::get('/admin/direct', [AppointmentsPagesController::class, 'direct'])->middleware(['auth', 'verified','admin'])->name('direct');
 Route::post('/admin/direct/save', [AppointmentController::class, 'directsave'])->middleware(['auth', 'verified','admin'])->name('directsave');
+Route::get('/admin/cancelled/meeting', [AppointmentsPagesController::class, 'cancelledMeeting'])->middleware(['auth', 'verified','admin'])->name('cancelledMeeting');
+Route::get('/admin/cancelled/meeting/{appointment_id}/view', [AppointmentsPagesController::class, 'cancelledmeetingView'])->middleware(['auth', 'verified','admin'])->name('cancelledMeetingView');
 
 
 //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS //REVIEWS 
@@ -541,6 +543,10 @@ Route::put('/appointment/{appointment_id}/cancel/meeting', [AppointmentControlle
 Route::put('/appointment/manager/{appointment_id}/cancel/meeting', [ManagerAppointmensController::class, 'cancelmeeting'])
     ->middleware(['auth', 'verified', 'manager'])
     ->name('manager.appointment.cancel.meeting');
+
+Route::put('/appointment/client/{appointment_id}/cancel/meeting', [AppointmentController::class, 'clientcancelmeeting'])
+    ->middleware(['auth', 'verified', 'user'])
+    ->name('client.appointment.cancel.meeting');
 //CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING //CANCEL-MEETING 
 
 
@@ -553,6 +559,15 @@ Route::get('/appointment/{appointment_id}/details-edit', [AppointmentController:
 Route::get('/appointment/manager/{appointment_id}/details-edit', [ManagerAppointmensController::class, 'detailsedit'])
     ->middleware(['auth', 'verified', 'manager'])
     ->name('manager.details.edit');
+
+//CLIENT
+Route::put('/appointment/client/{appointment_id}/save', [AppointmentController::class, 'saveClient'])
+    ->middleware(['auth', 'verified', 'user'])
+    ->name('client.appointment.save');
+
+Route::put('/appointment/client/meeting/{appointment_id}/save', [AppointmentController::class, 'saveClientMeeting'])
+    ->middleware(['auth', 'verified', 'user'])
+    ->name('client.appointment.meeting.save');
 //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT 
 
 
@@ -566,6 +581,27 @@ Route::put('/appointment/manager/{appointment_id}/save', [ManagerAppointmensCont
     ->middleware(['auth', 'verified', 'manager'])
     ->name('manager.appointment.save');
 // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE 
+
+
+
+//DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE 
+Route::delete('/appointment/{appointment_id}/delete', [AppointmentController::class, 'destroy'])
+    ->middleware(['auth', 'verified', 'admin'])
+    ->name('appointment.delete');
+
+Route::delete('/appointment/{appointment_id}/delete/meeting', [AppointmentController::class, 'destroyMeeting'])
+    ->middleware(['auth', 'verified', 'admin'])
+    ->name('appointment.delete.meeting');
+
+Route::delete('/appointment/manager/{appointment_id}/delete', [ManagerAppointmensController::class, 'destroy'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.appointment.delete');
+
+Route::delete('/appointment/manager/{appointment_id}/delete/meeting', [ManagerAppointmensController::class, 'destroyMeeting'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.appointment.delete.meeting');
+
+//DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE 
 
 //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT 
 
@@ -630,6 +666,9 @@ Route::get('/manager/cancelled/{appointment_id}/view', [ManagerAppointmentsPages
 
 Route::get('/manager/done', [ManagerAppointmentsPagesController::class, 'done'])->middleware(['auth', 'verified','manager'])->name('manager.done');
 Route::get('/manager/done/{appointment_id}/view', [ManagerAppointmentsPagesController::class, 'doneView'])->middleware(['auth', 'verified','manager'])->name('manager.doneView');
+
+Route::get('/manager/cancelled/meeting', [ManagerAppointmentsPagesController::class, 'cancelledMeeting'])->middleware(['auth', 'verified','manager'])->name('manager.cancelledMeeting');
+Route::get('/manager/cancelled/meeting/{appointment_id}/view', [ManagerAppointmentsPagesController::class, 'cancelledmeetingView'])->middleware(['auth', 'verified','manager'])->name('manager.cancelledMeetingView');
 
 
 
@@ -706,12 +745,17 @@ Route::get('/mydone', [UserController::class, 'mydone'])->middleware(['auth', 'v
 Route::get('/myrequest', [UserController::class, 'myrequest'])->middleware(['auth', 'verified','user'])->name('myrequest');
 Route::get('/events/data', [UserController::class, 'events'])->middleware(['auth', 'verified','user'])->name('events');
 Route::get('/events', [UserController::class, 'eventsView'])->middleware(['auth', 'verified','user'])->name('eventsView');
-Route::get('/book-form', [UserController::class, 'book'])->middleware(['auth', 'verified','user'])->name('book-form');
-Route::get('/form', [UserController::class, 'form'])->middleware(['auth', 'verified','user'])->name('form');
-Route::get('/meeting-form', [UserController::class, 'meetingform'])->middleware(['auth', 'verified','user'])->name('meetingform');
 Route::get('/idverify', [UserController::class, 'idverify'])->middleware(['auth', 'verified','user'])->name('idverify');
 Route::get('/personal/{id}', [UserController::class, 'personal'])->middleware(['auth', 'verified','user'])->name('personal');
 Route::patch('/update-personal/{id}', [UserController::class, 'update'])->middleware(['auth', 'verified','user'])->name('update-personal');
+
+
+Route::get('/book-form', [UserController::class, 'book'])->middleware(['auth', 'verified','user'])->name('book-form');
+Route::get('/form', [UserController::class, 'form'])->middleware(['auth', 'verified','user'])->name('form');
+Route::get('/form/meeting-edit/{appointment_id}', [UserController::class, 'formMeetingEdit'])->middleware(['auth', 'verified','user'])->name('form.meeting.edit');
+Route::get('/form-edit/{appointment_id}', [UserController::class, 'formEdit'])->middleware(['auth', 'verified','user'])->name('form.edit');
+Route::get('/meeting-form', [UserController::class, 'meetingform'])->middleware(['auth', 'verified','user'])->name('meetingform');
+
 
 //REVIEWS
 

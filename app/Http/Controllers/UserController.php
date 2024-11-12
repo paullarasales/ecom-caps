@@ -40,7 +40,7 @@ class UserController extends Controller
                 'start' => $event->edate,
                 'color' => '#ffc107', // Color for booked events
             ];
-        });
+        })->toArray();
 
         // Fetch blocked dates
         $blockedDates = BlockedDate::all()->map(function ($blocked) {
@@ -54,10 +54,10 @@ class UserController extends Controller
                 'allDay' => true,  // Blocked dates are generally full-day events
                 'classNames' => ['blocked-event'],
             ];
-        });
+        })->toArray();
 
         // Combine booked events and blocked dates
-        $allEvents = $events->merge($blockedDates);
+        $allEvents = array_merge($events, $blockedDates);
 
         return response()->json($allEvents);
     }
@@ -188,6 +188,30 @@ class UserController extends Controller
         // $faqs = Faqs::orderBy('created_at', 'desc')->paginate(30);
         // return view('client.form', compact('faqs'));
         return view('client.form');
+    }
+    public function formEdit($appointment_id) 
+    {
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        $packages = Package::where('packagename', '!=', 'Custom')
+                   ->orderBy('created_at', 'desc')
+                   ->paginate(50);
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
+        $blockedApps = Blockedapp::pluck('blocked_app')->toArray(); 
+        
+        return view('client.form-edit', compact('appointment', 'packages', 'blockedDates', 'blockedApps'));
+    }
+    public function formMeetingEdit($appointment_id) 
+    {
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        $packages = Package::where('packagename', '!=', 'Custom')
+                   ->orderBy('created_at', 'desc')
+                   ->paginate(50);
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
+        $blockedApps = Blockedapp::pluck('blocked_app')->toArray(); 
+        
+        return view('client.form-meeting-edit', compact('appointment', 'packages', 'blockedDates', 'blockedApps'));
     }
     public function meetingform()
     {

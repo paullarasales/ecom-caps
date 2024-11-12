@@ -123,8 +123,7 @@
                     <i class="fa-solid fa-arrow-right ml-5"></i>
                 </a>
             @endif
-        </div>>            
-        </div>
+        </div>           
         @endforeach
         <div class="flex justify-center">
             <div class="mt-6 text-center lg:text-left">

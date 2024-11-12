@@ -119,7 +119,34 @@
                 </table>
             </div>
         </div>
+        <div class="flex justify-center lg:mx-56 gap-2">
+            @if($appointment->location)
+                <a href="{{ route('form.edit', $appointment->appointment_id) }}" class="bg-yellow-500 text-center hover:bg-yellow-700 text-white font-bold px-4 py-2 text-xs w-44 rounded-lg">
+                    Edit details
+                    <i class="fa-solid fa-arrow-right ml-5"></i>
+                </a>
+            @else
+                <a href="{{ route('form.meeting.edit', $appointment->appointment_id) }}" class="bg-yellow-500 text-center hover:bg-yellow-700 text-white font-bold px-4 py-2 text-xs w-44 rounded-lg">
+                    Edit details
+                    <i class="fa-solid fa-arrow-right ml-5"></i>
+                </a>
+            @endif
+            <form id="cancelForm" action="{{ route('client.appointment.cancel.meeting', $appointment->appointment_id) }}" method="POST">
+                @csrf
+                @method("PUT")
+                <input type="hidden" name="status" value="{{ $appointment->status }}">
+                <button type="submit" name="submit" class="bg-yellow-500 text-center hover:bg-yellow-700 text-white font-bold px-4 py-2 text-xs w-44 rounded-lg">
+                    Cancel
+                    <i class="fa-solid fa-ban ml-3"></i>
+                </button>                          
+            </form>
+        </div>
         @endforeach
+        <div class="mb-10">
+            
+        </div>
+
+        
 
 
     @endif
@@ -134,6 +161,39 @@
             </div>
         </div>
     </div>
+
+    <!-- Loading animation overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex flex-col items-center justify-center hidden">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-yellow-500 h-12 w-12 mb-4"></div>
+        <p class="text-white mt-4 font-semibold" id="loadingText">Your request is being processed</p>
+    </div>
+
+    <!-- CSS for loader animation -->
+    <style>
+        .loader {
+            border-top-color: #3498db;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    <!-- JavaScript to show loading overlay on form submission -->
+    <script>
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
+        const cancelForm = document.getElementById('cancelForm');
+
+        function showLoading(event) {
+            loadingOverlay.classList.remove('hidden');
+            if (event.target === cancelForm) {
+                loadingText.textContent = 'Canceling the meeting';
+            }
+        }
+
+        cancelForm.addEventListener('submit', showLoading);
+    </script>
 
     <script>
         function openModal(imageSrc) {

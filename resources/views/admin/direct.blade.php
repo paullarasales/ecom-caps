@@ -264,6 +264,61 @@
                     </div>
                 </div>
 
+                <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+                    <div class="flex flex-col items-center">
+                        <div id="loaderSpinner" class="loader border-t-4 border-yellow-500 rounded-full w-16 h-16 animate-spin"></div>
+                        <p class="text-white mt-4 font-semibold" id="loadingText">Your request is being processed</p>
+                    </div>
+                </div>
+                
+                <!-- Styling for loading animation -->
+                <style>
+                    /* Spinner animation */
+                    .loader {
+                        border: 4px solid rgba(255, 255, 255, 0.3);
+                        border-top-color: #f59e0b; /* Yellow color */
+                        border-radius: 50%;
+                        width: 3rem;
+                        height: 3rem;
+                        animation: spin 1s linear infinite;
+                    }
+                
+                    @keyframes spin {
+                        0% {
+                            transform: rotate(0deg);
+                        }
+                        100% {
+                            transform: rotate(360deg);
+                        }
+                    }
+                </style>
+                
+                <!-- JavaScript to handle loading animation and form submission -->
+                <script>
+                    window.onload = function() {
+                        @if (session('alert'))
+                            // Show the loading overlay with the appropriate message
+                            document.getElementById('loadingOverlay').classList.remove('hidden');
+                            let alertType = "{{ session('alert') }}";
+                            let alertMessage = "{{ session('message') }}";
+                            
+                            // Set the message based on success or error
+                            if (alertType === 'success') {
+                                document.getElementById('loadingText').textContent = alertMessage;
+                                document.getElementById('loaderSpinner').classList.add('hidden');
+                            } else if (alertType === 'error') {
+                                document.getElementById('loadingText').textContent = alertMessage;
+                                document.getElementById('loaderSpinner').classList.add('hidden');
+                            }
+                
+                            // Hide the overlay after a few seconds
+                            setTimeout(function() {
+                                document.getElementById('loadingOverlay').classList.add('hidden');
+                            }, 3000); // Adjust time as needed
+                        @endif
+                    };
+                </script>
+
                 {{-- <hr class="my-5 border-yellow-100">
 
                 <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
@@ -361,7 +416,7 @@
     }
 </script>
 
-@if(session('alert'))
+{{-- @if(session('alert'))
     <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
         <span>{{ session('alert') }}</span>
         <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
@@ -375,6 +430,6 @@
             <i class="fa-solid fa-times"></i>
         </button>
     </div>
-@endif
+@endif --}}
 
 </x-admin-layout>

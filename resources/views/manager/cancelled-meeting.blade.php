@@ -1,7 +1,7 @@
-<x-admin-layout>
+<x-manager-layout>
 
     <div class="flex ml-3">
-        <a href="{{route('adminappointments')}}">
+        <a href="{{route('managerappointments')}}">
             <div class="text-xl">
                 <i class="fa-solid fa-arrow-left"></i>
             </div>
@@ -11,13 +11,13 @@
     <div class="text-center py-2 my-2">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Cancelled <span class="text-yellow-600">Events</span>
+            Cancelled <span class="text-yellow-600">Meetings</span>
         </h3>
 
     </div>
 
     <div class="lg:mx-10 lg:my-5">
-        <form method="GET" action="{{ route('cancelled') }}">
+        <form method="GET" action="{{ route('manager.cancelledMeeting') }}">
             <div class="flex items-center justify-center mb-4">
                 <input type="text" name="search" class="border-2 border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 rounded-lg py-2 px-4 w-full lg:w-1/3"
                     placeholder="Search by name/reference..." value="{{ $search }}">
@@ -35,7 +35,7 @@
                     <th scope="col" class="px-6 py-3">Name</th>
                     
                     
-                    <th scope="col" class="px-6 py-3">Date</th>
+                    <th scope="col" class="px-6 py-3">Meeting Date</th>
                     <th scope="col" class="px-6 py-3">Reference</th>
                     <th scope="col" class="px-6 py-3">Actions</th>
                 </tr>
@@ -46,14 +46,14 @@
                     <th scope="row" class="px-6 py-4 capitalize">{{ $app->user->firstname ?? 'N/A' }} {{ $app->user->lastname ?? '' }} </th>
                     
                     
-                    <td class="px-6 py-4">{{ $app->edate ? : 'No Selected Event Date'}}</td>
-                    <td class="px-6 py-4">{{ $app->reference }}</td>
+                    <td class="px-6 py-4">{{ \Carbon\Carbon::parse($app->appointment_datetime)->format('F j, Y g:i A') }}</td>
+                    <td class="px-6 py-4">{{ $app->reference}}</td>
                     <td class="px-6 py-4">
                         {{-- <a href="" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Edit
                             <i class="fa-regular fa-pen-to-square ml-3"></i>
                         </a> --}}
-                        <a href="{{route('cancelledView', $app->appointment_id)}}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        <a href="{{route('manager.cancelledMeetingView', $app->appointment_id)}}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             View
                             <i class="fa-regular fa-eye ml-3"></i>
                         </a>
@@ -148,4 +148,4 @@
         </button>
     </div>
 @endif
-</x-admin-layout>
+</x-manager-layout>

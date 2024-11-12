@@ -91,10 +91,7 @@ class ManagerAppointmensController extends Controller
         $appointment->etime = $request->input('etime');
         $appointment->type = $request->input('type');
         $appointment->package_id = $request->input('package_id');
-        $appointment->reference = strtoupper(uniqid('APP'));
-        $appointment->adate = now();
-        $appointment->atime = 'null';
-        $appointment->theme ='undefined';
+        $appointment->reference = strtoupper(uniqid('REF'));
         $appointment->status = 'booked'; // Consider using null instead of 'null' if you want it to be a database NULL
         $appointment->save();
 
@@ -117,6 +114,11 @@ class ManagerAppointmensController extends Controller
 
         // Get the date of the appointment
         $appointmentDate = $appointment->edate; // Assuming 'edate' is a field in the appointments table
+
+        // Check if the appointment date is in the past
+        if (Carbon::parse($appointmentDate)->isPast()) {
+            return redirect()->route('manager.pending')->with('error', 'The selected date is in the past. Please select a valid future date.');
+        }
 
         $blockedDateExists = BlockedDate::where('blocked_date', $appointmentDate)->exists();
 
@@ -218,6 +220,11 @@ class ManagerAppointmensController extends Controller
         
         // Get the date of the appointment
         $appointmentDate = $appointment->edate; // Assuming 'edate' is a field in the appointments table
+
+        // Check if the appointment date is in the past
+        if (Carbon::parse($appointmentDate)->isPast()) {
+            return redirect()->route('manager.cancelled')->with('error', 'The selected date is in the past. Please select a valid future date.');
+        }
 
         $blockedDateExists = BlockedDate::where('blocked_date', $appointmentDate)->exists();
 
@@ -575,9 +582,40 @@ class ManagerAppointmensController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $appointment_id)
     {
-        //
+        // Find the appointment by its ID
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        // Optionally check if the status is something other than 'done' if necessary
+        if ($appointment->status === 'done') {
+            // You can redirect back or return an error message if deletion is not allowed
+            return redirect()->route('manager.pending')->with('error', 'Completed appointments cannot be deleted.');
+        }
+
+        // Delete the appointment
+        $appointment->delete();
+
+        // Redirect back or to another route with a success message
+        return redirect()->route('manager.pending')->with('success', 'Appointment deleted successfully.');
+    }
+
+    public function destroyMeeting(string $appointment_id)
+    {
+         // Find the appointment by its ID
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        // Optionally check if the status is something other than 'done' if necessary
+        if ($appointment->status === 'done') {
+            // You can redirect back or return an error message if deletion is not allowed
+            return redirect()->route('manager.cancelledMeeting')->with('error', 'Completed appointments cannot be deleted.');
+        }
+
+        // Delete the appointment
+        $appointment->delete();
+
+        // Redirect back or to another route with a success message
+        return redirect()->route('manager.cancelledMeeting')->with('success', 'Appointment deleted successfully.');
     }
 
     public function block(Request $request)

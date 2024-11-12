@@ -125,7 +125,7 @@
                         </th>
                         <td class="px-6 py-4">
                             @if ($appointment->package)
-                                <a href="javascript:void(0);" onclick="openModal('{{ asset($appointment->package->packagephoto) }}')">
+                                <a href="javascript:void(0);" onclick="openModal({{ $appointment->package->packagename === 'Custom' ? json_encode($appointment->package->custompackage) : json_encode(asset($appointment->package->packagephoto)) }}, {{ $appointment->package->packagename === 'Custom' ? 'true' : 'false' }})">
                                     {{ $appointment->package->packagename }}
                                 </a>
                             @else
@@ -188,120 +188,116 @@
     <!-- JavaScript to show loading overlay on form submission -->
     <script>
         const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
         const acceptForm = document.getElementById('acceptForm');
         const cancelForm = document.getElementById('cancelForm');
-
-        function showLoading() {
+    
+        function showLoading(event) {
             loadingOverlay.classList.remove('hidden');
+            // Check if the form being submitted is the accept form or the cancel form
+            if (event.target === acceptForm) {
+                loadingText.textContent = 'Moving the event to done';
+            } else if (event.target === cancelForm) {
+                loadingText.textContent = 'Canceling the event';
+            }
         }
-
+    
         acceptForm.addEventListener('submit', showLoading);
         cancelForm.addEventListener('submit', showLoading);
     </script>
 
 
-    <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden bg-gray-800 bg-opacity-50">
-        <div class="flex items-center justify-center min-h-screen">
-            <div class="relative max-w-lg max-h-[75vh] bg-white  rounded-lg shadow-lg">
-                <button class="absolute top-0 right-0 m-4 text-white" onclick="closeModal()">
-                    <i class="fa-solid text-black fa-xmark text-3xl"></i>
-                </button>
-                <div id="modal-content" class="border rounded-lg border-gray-700"></div>
-            </div>
+    <!-- Modal Structure -->
+<div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden bg-gray-800 bg-opacity-50">
+    <div class="flex items-center justify-center min-h-screen">
+        <div id="modal-container" class="relative max-w-lg max-h-[75vh] bg-white rounded-lg shadow-lg overflow-auto p-4">
+            <!-- Close Button -->
+            <button class="absolute top-4 right-4 text-gray-600 hover:text-gray-800 z-50" onclick="closeModal()">
+                <i class="fa-solid fa-xmark text-3xl"></i>
+            </button>
+            <!-- Modal Content -->
+            <div id="modal-content" class="mt-6"></div>
         </div>
     </div>
+</div>
+<style>
+    /* Additional styling for wider modal */
+    .wider-modal {
+        max-width: 90%; /* Adjust the width as desired */
+    }
+</style>
+<script>
+    function openModal(content, isCustom = false) {
+        const modal = document.getElementById('modal');
+        const modalContainer = document.getElementById('modal-container');
+        const modalContent = document.getElementById('modal-content');
 
-    <script>
-        function openModal(imageSrc) {
-            var modal = document.getElementById('modal');
-            var modalContent = document.getElementById('modal-content');
-            modalContent.innerHTML = '<img src="' + imageSrc + '" class="max-w-full max-h-full rounded-lg">';
-            modal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-    
-            // Close modal when clicked anywhere outside of the modal content
-            modal.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    closeModal();
-                }
+        // Toggle the wider modal class based on content type
+        if (isCustom) {
+            modalContainer.classList.add('wider-modal');  // Add wider class for custom packages
+            modalContent.innerHTML = generateCustomPackageTable(content);
+        } else {
+            modalContainer.classList.remove('wider-modal');  // Remove wider class for normal packages
+            modalContent.innerHTML = `<img src="${content}" class="max-w-full max-h-full rounded-lg">`;
+        }
+
+        // Show modal
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        
+        // Add event listener to close modal on click outside content
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('modal');
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    function generateCustomPackageTable(customPackage) {
+        let foodAndPackItems = customPackage.items.filter(item => ['food', 'food_pack'].includes(item.item_type));
+        let otherItems = customPackage.items.filter(item => !['food', 'food_pack'].includes(item.item_type));
+
+        let tableHtml = '<div class="flex flex-col md:flex-row gap-4 mb-4">';
+
+        // Food and Foodpack Items Table
+        if (foodAndPackItems.length) {
+            tableHtml += '<div class="flex-1"><div class="relative overflow-x-auto"><table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">';
+            tableHtml += '<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"><tr><th scope="col" class="px-6 py-3 capitalize">Item Name</th><th scope="col" class="px-6 py-3 capitalize">Quantity</th></tr></thead>';
+            tableHtml += '<tbody>';
+            foodAndPackItems.forEach(item => {
+                tableHtml += `<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"><th scope="row" class="px-6 py-4 capitalize font-medium text-gray-900 whitespace-nowrap dark:text-white">${item.item_name}</th><td class="px-6 py-4 capitalize">${item.quantity}</td></tr>`;
             });
+            tableHtml += '</tbody></table></div></div>';
+        } else {
+            tableHtml += '<div class="text-gray-600 flex-1"><p>No food or foodpack items available for this custom package.</p></div>';
         }
+
+        // Other Items Table
+        if (otherItems.length) {
+            tableHtml += '<div class="flex-1"><div class="relative overflow-x-auto"><table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">';
+            tableHtml += '<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"><tr><th scope="col" class="px-6 py-3 capitalize">Item Type</th><th scope="col" class="px-6 py-3 capitalize">Item Name</th></tr></thead>';
+            tableHtml += '<tbody>';
+            otherItems.forEach(item => {
+                tableHtml += `<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"><th scope="row" class="px-6 py-4 capitalize font-medium text-gray-900 whitespace-nowrap dark:text-white">${item.item_type}</th><td class="px-6 py-4 capitalize">${item.item_name}</td></tr>`;
+            });
+            tableHtml += '</tbody></table></div></div>';
+        } else {
+            tableHtml += '<div class="text-gray-600 flex-1"><p>No other items available for this custom package.</p></div>';
+        }
+
+        tableHtml += '</div>';
+        return tableHtml;
+    }
+</script>
+
+
     
-        function closeModal() {
-            var modal = document.getElementById('modal');
-            modal.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-    </script>
-
-
-    {{-- <div class="flex justify-center items-center uppercase">
-        <div class="bg-gray-700 text-gray-100 flex flex-col lg:flex-row lg:w-5/6 md:w-full sm:w-full justify-between px-10 py-10 lg:py-10 rounded-2xl">
-            
-            <div class="bg-gray-200 text-gray-700 py-5 px-5 lg:flex-1 rounded-lg">
-                <h2 class="text-xl sm:text-3xl md:text-4xl lg:text-4xl uppercase my-5 font-bold">
-                    {{$appointment->user->firstname. ' '. $appointment->user->lastname}}
-                </h2>
-                <hr class="border-gray-700">
-                <h4 class="text-lg sm:text-xl md:text-2xl lg:text-2xl my-5 font-extrabold">
-                    <span class="font-normal mr-2">Age: </span>
-                    {{ \Carbon\Carbon::parse($appointment->user->birthday)->age }}
-                </h4>
-                <h4 class="text-lg sm:text-xl md:text-2xl lg:text-2xl my-5 font-extrabold">
-                    <span class="font-normal mr-2">Phone Number: </span>{{$appointment->user->phone}}
-                </h4>
-                <h4 class="text-lg sm:text-xl md:text-2xl lg:text-2xl my-5 font-extrabold">
-                    <span class="font-normal mr-2">Street/Barangay: </span>{{$appointment->user->address}}
-                </h4>
-                <h4 class="text-lg sm:text-xl md:text-2xl lg:text-2xl my-5 font-extrabold">
-                    <span class="font-normal mr-2">City: </span>{{$appointment->user->city}}
-                </h4>
-            </div>
-            
-            <div class="py-5 px-5 lg:flex-1 flex justify-between">
-                <div>
-                    <h2 class="text-xl sm:text-3xl md:text-4xl lg:text-4xl uppercase">Date:</h2>
-                    <br>
-                    <h2 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">Time:</h2>
-                    <h2 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">Location:</h2>
-                    <h2 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">Event:</h2>
-                    <h2 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">Package:</h2>
-                </div>
-                <div class="text-right">
-                    <h2 class="text-xl sm:text-3xl md:text-4xl lg:text-4xl uppercase">{{$appointment->edate}}</h2>
-                    <br>
-                    <h4 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">{{$appointment->etime}}</h4>
-                    <h4 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">{{$appointment->location}}</h4>
-                    <h4 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">{{$appointment->type}}</h4>
-                    <h4 class="text-sm sm:text-base md:text-lg lg:text-xl my-5">{{ $appointment->package->packagename }}</h4>
-                    <div class="flex justify-end gap-3 capitalize">
-                        <form action="{{  route('appointment.done', $appointment->appointment_id) }}" method="POST">
-                            @csrf
-                            @method("PUT")
-                            <input type="hidden" name="status" value="{{$appointment->status}}">
-                            <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                                Done
-                                <i class="fa-solid fa-check ml-3"></i>
-                            </button>                        
-                        </form>
-                        <a href="{{ route('details.edit', $appointment->appointment_id) }}" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                            Edit
-                            <i class="fa-regular fa-pen-to-square ml-3"></i>
-                        </a>
-                        <form action="{{  route('appointment.cancel', $appointment->appointment_id) }}" method="POST">
-                            @csrf
-                            @method("PUT")
-                            <input type="hidden" name="status" value="{{$appointment->status}}">
-                            <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                                Cancel
-                                <i class="fa-solid fa-ban ml-3"></i>
-                            </button> 
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> --}}
     
     
     @if(session('alert'))

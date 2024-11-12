@@ -3,12 +3,13 @@
 
     <div class="text-center py-4 lg:my-20 my-10">
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Request <span class="text-yellow-600">Meeting</span>
+            Edit <span class="text-yellow-600">Details</span>
         </h3>
     </div>
 
-    <form action="{{route('appointment.meeting')}}" method="POST" enctype="multipart/form-data" id="appointmentForm">
-    @csrf
+    <form action="{{route('client.appointment.meeting.save', $appointment->appointment_id)}}" method="POST" enctype="multipart/form-data" id="appointmentForm">
+        @method("PUT")
+        @csrf
     <div class="p-6 flex items-center justify-center">
         <div class="container max-w-screen-lg mx-auto">
             <div>
@@ -24,7 +25,7 @@
 
                                 <div class="md:col-span-3">
                                     <label for="appointment_date">Meeting Date</label>
-                                    <input type="date" name="appointment_date" id="appointment_date" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('appointment_date') }}" />
+                                    <input type="date" name="appointment_date" id="appointment_date" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('appointment_date', \Carbon\Carbon::parse($appointment->appointment_datetime)->format('Y-m-d')) }}" />
                                 </div>
 
                                 <div class="md:col-span-2">
@@ -32,6 +33,11 @@
                                     <select name="appointment_time" id="appointment_time" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
                                         <option disabled selected value="">Select appointment time</option>
                                         <!-- Options will be populated by JavaScript -->
+                                        <option 
+                                        value="{{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('H:i') }}" 
+                                        selected>
+                                        {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('h:i A') }}
+                                    </option>
                                     </select>
                                 </div>
 

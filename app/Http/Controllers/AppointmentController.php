@@ -77,7 +77,10 @@ class AppointmentController extends Controller
     
         if ($pendingAppointmentsCount >= 1) {
             // Redirect back with an error message
-            return redirect()->route('book-form')->with('alert', 'You can have only 1 pending request.');
+            return redirect()->route('book-form')->with([
+                'alert' => 'error',
+                'message' => 'You still have pending appointment'
+            ]);
         }
 
         // Combine appointment date and time
@@ -90,7 +93,10 @@ class AppointmentController extends Controller
 
         if ($conflictingAppointment) {
             // Redirect back with an error message
-            return redirect()->route('book-form')->with('alert', 'There is already a pending appointment scheduled at this date and time.');
+            return redirect()->route('book-form')->with([
+                'alert' => 'error',
+                'message' => 'There is already a pending appointment scheduled at this date and time.'
+            ]);
         }
 
         $dateTime = Carbon::createFromFormat('Y-m-d H:i', $request->appointment_date . ' ' . $request->appointment_time);
@@ -138,7 +144,110 @@ class AppointmentController extends Controller
                     ->html($emailContent); // Use html() method for setting HTML body
         });
 
-        return redirect()->route('book-form')->with('alert', 'Request Submitted. Your reference number is ' . $appointment->reference);
+        return redirect()->route('book-form')->with([
+            'alert' => 'success',
+            'message' => 'Request Submitted. Your reference number is ' . $appointment->reference
+        ]);
+    }
+
+    public function saveClient(Request $request, string $appointment_id)
+    {
+        $request->validate([
+            'location' => 'required',
+            'edate' => 'required|date|after_or_equal:today',
+            'etime' => 'required',
+            'type' => 'required',
+            'package_id' => 'required|exists:packages,package_id',
+            'appointment_date' => [
+            'required',
+            'date',
+            'before_or_equal:' . Carbon::parse($request->edate)->subDays(7)->toDateString(), // Ensure appointment_date is at least 7 days before edate
+        ],
+            'appointment_time' => 'required|date_format:H:i',
+        ]);
+
+        // Check if the selected date is blocked
+        $blockedDateExists = BlockedDate::where('blocked_date', $request->edate)->exists();
+
+        if ($blockedDateExists) {
+            // Redirect back with an error message if the date is blocked
+            return redirect()->route('meetingform')->with('error', 'The selected date is blocked, please select another date.');
+        }
+
+        // Check if there are already 3 accepted event on the same date
+        $existingAppointments = Appointment::where('edate', $request->edate)
+                                            ->where('status', 'booked')
+                                            ->count();
+    
+        if ($existingAppointments >= 3) {
+            // Redirect back with an error message
+            return redirect()->back()->with('error', 'The selected date is fully booked, please select other date.');
+        }
+
+
+        // Combine appointment date and time
+        $dateTime = Carbon::createFromFormat('Y-m-d H:i', $request->appointment_date . ' ' . $request->appointment_time);
+
+        // Check if there is an existing appointment at the same date and time with a pending status
+        $conflictingAppointment = Appointment::where('appointment_datetime', $dateTime)
+                                            ->where('status', 'pending') // Only check for pending status
+                                            ->where('appointment_id', '!=', $appointment_id)
+                                            ->first();
+
+        if ($conflictingAppointment) {
+            // Redirect back with an error message
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'There is already a pending appointment scheduled at this date and time.'
+            ]);
+        }
+
+        $appointment = Appointment::findOrFail($appointment_id);
+        
+        // Update appointment details
+        $appointment->location = $request->input('location');
+        $appointment->edate = $request->input('edate');
+        $appointment->etime = $request->input('etime');
+        $appointment->type = $request->input('type');
+        $appointment->package_id = $request->input('package_id');
+        $appointment->appointment_datetime = $dateTime;
+
+        // Save the updated appointment
+        $appointment->save();
+
+            // Email logic directly in the controller
+        $user = Auth::user();
+
+        $appointmentDateTime = \Carbon\Carbon::parse($appointment->appointment_datetime)->format('F j, Y h:i A'); 
+
+        $emailContent = "
+            <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                <h1 style='color: #333;'>Your Appointment Request Has Been Edited And Received!</h1>
+                <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                <p>Thank you for your request. Your appointment details are as follows:</p>
+                <div style='border: 1px solid #ccc; padding: 15px; border-radius: 5px; background-color: #f9f9f9;'>
+                    <p>
+                        <strong>Reference Number:</strong> <span style='color: #555;'>{$appointment->reference}</span>
+                    </p>
+                </div>
+                <p>
+                    Kindly arrive on <strong style='color: #007bff;'>{$appointmentDateTime}</strong> 
+                    to ensure all final details of your event are confirmed. We recommend arriving at least 15 minutes early to allow for any last-minute preparations.
+                </p>
+                <p style='color: #555;'>Thank you for choosing our service!</p>
+            </div>
+        ";
+
+
+        // Send email using html method
+        Mail::send([], [], function ($message) use ($user, $emailContent) {
+            $message->to($user->email)
+                    ->subject('Your Appointment Request Has Been Edited And Received')
+                    ->html($emailContent); // Use html() method for setting HTML body
+        });
+
+        // Redirect back or to a success page
+        return redirect()->back()->with('alert', 'Event updated successfully!');
     }
 
 
@@ -152,6 +261,17 @@ class AppointmentController extends Controller
         ],
             'appointment_time' => 'required|date_format:H:i',
         ]);
+        $pendingAppointmentsCount = Appointment::where('user_id', Auth::id())
+                                                ->where('status', 'pending')
+                                                ->count();
+    
+        if ($pendingAppointmentsCount >= 1) {
+            // Redirect back with an error message
+            return redirect()->route('meetingform')->with([
+                'alert' => 'error',
+                'message' => 'You still have pending appointment'
+            ]);
+        }
 
         // Combine appointment date and time
         $dateTime = Carbon::createFromFormat('Y-m-d H:i', $request->appointment_date . ' ' . $request->appointment_time);
@@ -163,7 +283,10 @@ class AppointmentController extends Controller
 
         if ($conflictingAppointment) {
             // Redirect back with an error message
-            return redirect()->route('book-form')->with('alert', 'There is already a pending appointment scheduled at this date and time.');
+            return redirect()->route('meetingform')->with([
+                'alert' => 'error',
+                'message' => 'There is already a pending appointment scheduled at this date and time.'
+            ]);
         }
 
         $dateTime = Carbon::createFromFormat('Y-m-d H:i', $request->appointment_date . ' ' . $request->appointment_time);
@@ -204,7 +327,84 @@ class AppointmentController extends Controller
                     ->html($emailContent); // Use html() method for setting HTML body
         });
 
-        return redirect()->route('meetingform')->with('alert', 'Request Submitted. Your reference number is ' . $appointment->reference);
+        return redirect()->route('meetingform')->with([
+            'alert' => 'success',
+            'message' => 'Request Submitted. Your reference number is ' . $appointment->reference
+        ]);
+
+    }
+
+
+    public function saveClientMeeting(Request $request, string $appointment_id)
+    {
+        $request->validate([
+            'appointment_date' => [
+            'required',
+            'date',
+             // Ensure appointment_date is at least 7 days before edate
+        ],
+            'appointment_time' => 'required|date_format:H:i',
+        ]);
+        
+
+        // Combine appointment date and time
+        $dateTime = Carbon::createFromFormat('Y-m-d H:i', $request->appointment_date . ' ' . $request->appointment_time);
+
+        // Check if there is an existing appointment at the same date and time with a pending status
+        $conflictingAppointment = Appointment::where('appointment_datetime', $dateTime)
+                                            ->where('status', 'pending') // Only check for pending status
+                                            ->where('appointment_id', '!=', $appointment_id)
+                                            ->first();
+
+        if ($conflictingAppointment) {
+            // Redirect back with an error message
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'There is already a pending appointment scheduled at this date and time.'
+            ]);
+        }
+
+        $dateTime = Carbon::createFromFormat('Y-m-d H:i', $request->appointment_date . ' ' . $request->appointment_time);
+
+        $appointment = Appointment::findOrFail($appointment_id);
+        $appointment->appointment_datetime = $dateTime;
+        $appointment->save();
+
+        // Email logic directly in the controller
+        $user = Auth::user();
+
+        $appointmentDateTime = \Carbon\Carbon::parse($appointment->appointment_datetime)->format('F j, Y h:i A'); 
+
+        $emailContent = "
+            <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                <h1 style='color: #333;'>Your Appointment Request Has Been Edited And Received!</h1>
+                <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                <p>Thank you for your request. Your appointment details are as follows:</p>
+                <div style='border: 1px solid #ccc; padding: 15px; border-radius: 5px; background-color: #f9f9f9;'>
+                    <p>
+                        <strong>Reference Number:</strong> <span style='color: #555;'>{$appointment->reference}</span>
+                    </p>
+                </div>
+                <p>
+                    Kindly arrive on <strong style='color: #007bff;'>{$appointmentDateTime}</strong> 
+                    to ensure all final details of your event are confirmed. We recommend arriving at least 15 minutes early to allow for any last-minute preparations.
+                </p>
+                <p style='color: #555;'>Thank you for choosing our service!</p>
+            </div>
+        ";
+
+
+        // Send email using html method
+        Mail::send([], [], function ($message) use ($user, $emailContent) {
+            $message->to($user->email)
+                    ->subject('Your Appointment Request Has Been Edited And Received')
+                    ->html($emailContent); // Use html() method for setting HTML body
+        });
+
+        return redirect()->back()->with([
+            'alert' => 'success',
+            'message' => 'Request Submitted. Your reference number is ' . $appointment->reference
+        ]);
 
     }
 
@@ -226,12 +426,17 @@ class AppointmentController extends Controller
             'package_id' => 'required|exists:packages,package_id',
         ]);
 
+        
+
         // Check if the selected date is blocked
         $blockedDateExists = BlockedDate::where('blocked_date', $request->edate)->exists();
 
         if ($blockedDateExists) {
             // Redirect back with an error message if the date is blocked
-            return redirect()->route('direct')->with('error', 'The selected date is blocked, please select another date.');
+            return redirect()->route('direct')->with([
+                'alert' => 'error',
+                'message' => 'The selecrted date is unavailable, please choose other date.'
+            ]);
         }
 
         $existingAppointments = Appointment::where('edate', $request->edate)
@@ -240,7 +445,10 @@ class AppointmentController extends Controller
     
         if ($existingAppointments >= 3) {
             // Redirect back with an error message
-            return redirect()->route('direct')->with('error', 'The selected date is fully booked, please select other date.');
+            return redirect()->route('direct')->with([
+                'alert' => 'error',
+                'message' => 'The selected event date is fully booked, please choose other date.'
+            ]);
         }
 
         // Create and save new user
@@ -274,7 +482,10 @@ class AppointmentController extends Controller
             $log->description = $use->firstname . " " . $use->lastname . " directly booked an event on " . $DateFormatted;
             $log->save();
 
-        return redirect()->back()->with('alert', 'User and appointment created successfully.');
+        return redirect()->back()->with([
+            'alert' => 'success',
+            'message' => 'Request Submitted. reference number is ' . $appointment->reference
+        ]);
     }
 
 
@@ -286,6 +497,11 @@ class AppointmentController extends Controller
 
         // Get the date of the appointment
         $appointmentDate = $appointment->edate; // Assuming 'edate' is a field in the appointments table
+
+        // Check if the appointment date is in the past
+        if (Carbon::parse($appointmentDate)->isPast()) {
+            return redirect()->route('pending')->with('error', 'The selected date is in the past. Please select a valid future date.');
+        }
 
         $blockedDateExists = BlockedDate::where('blocked_date', $appointmentDate)->exists();
 
@@ -385,6 +601,11 @@ class AppointmentController extends Controller
         
         // Get the date of the appointment
         $appointmentDate = $appointment->edate; // Assuming 'edate' is a field in the appointments table
+
+        // Check if the appointment date is in the past
+        if (Carbon::parse($appointmentDate)->isPast()) {
+            return redirect()->route('cancelled')->with('error', 'The selected date is in the past. Please select a valid future date.');
+        }
 
         $blockedDateExists = BlockedDate::where('blocked_date', $appointmentDate)->exists();
 
@@ -613,7 +834,7 @@ class AppointmentController extends Controller
 
 
             // Update appointment status to "cancelled"
-            $appointment->status = 'cancelled';
+            $appointment->status = 'mcancelled';
             $appointment->isread = "unread";
             $appointment->save();
 
@@ -636,7 +857,7 @@ class AppointmentController extends Controller
             // Create the email content
             $emailContent = "
                 <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
-                    <h1 style='color: #333;'>Your event request has been cancelled</h1>
+                    <h1 style='color: #333;'>Your meeting on {$appointmentDateFormatted} for the event {$appointment->type} has been cancelled</h1>
                     <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
                     <p>We look forward on making your next event wonderful.</p>
                     <p style='color: #555;'>Message us on our Facebook page or on our Website if you want your event to be re-booked</p>
@@ -648,7 +869,7 @@ class AppointmentController extends Controller
                 if (!empty($user->email)) {
                     Mail::send([], [], function ($message) use ($user, $emailContent) {
                         $message->to($user->email)
-                                ->subject('Your Event Request Has Been Cancelled')
+                                ->subject('Your meeting has been canceled')
                                 ->html($emailContent);
                     });
                 }
@@ -664,13 +885,64 @@ class AppointmentController extends Controller
             return redirect("admin/pending")->with('alert', 'Event has been canceled');
     }
 
+    public function clientcancelmeeting(Request $request, string $appointment_id)
+    {
+        $appointment = Appointment::findOrFail($appointment_id);
+
+
+
+            // Update appointment status to "cancelled"
+            $appointment->status = 'mcancelled';
+            $appointment->isread = "unread";
+            $appointment->isadminread = "unread";
+            $appointment->save();
+
+
+            // Get the user who made the appointment
+            $user = $appointment->user; // Assuming you have a relation between Appointment and User models
+
+            // Format the appointment date and time
+            $appointmentDateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+
+            // Create the email content
+            $emailContent = "
+                <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                    <h1 style='color: #333;'>You canceled the meeting on {$appointmentDateFormatted} for the event {$appointment->type}</h1>
+                    <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                    <p>We look forward on making your next event wonderful.</p>
+                    <p style='color: #555;'>Message us on our Facebook page or on our Website if you want your event to be re-booked</p>
+                </div>
+            ";
+
+            try {
+                // Send the email
+                if (!empty($user->email)) {
+                    Mail::send([], [], function ($message) use ($user, $emailContent) {
+                        $message->to($user->email)
+                                ->subject('Your meeting has been canceled')
+                                ->html($emailContent);
+                    });
+                }
+            } catch (\Exception $e) {
+                // Log the error or handle it
+                Log::error('Email could not be sent: ' . $e->getMessage());
+                
+                // Redirect back with an error message
+                return redirect()->route('myrequest')->with('error', 'Failed to send confirmation email.');
+            }
+
+            // Redirect back or to a specific route
+            return redirect()->route('myrequest')->with('alert', 'Event has been canceled');
+    }
+
     //Details Edit
     public function detailsedit(string $appointment_id)
     {
         $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
 
-        return view('admin.booked-edit', compact('packages', 'appointment'));
+        return view('admin.booked-edit', compact('packages', 'appointment', 'blockedDates'));
     }
 
     public function save(Request $request, string $appointment_id)
@@ -707,6 +979,8 @@ class AppointmentController extends Controller
         // Redirect back or to a success page
         return redirect()->back()->with('alert', 'Event updated successfully!');
     }
+
+    
 
 
     //BLOCK UNBLOCK
@@ -843,9 +1117,40 @@ class AppointmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $appointment_id)
     {
-        //
+         // Find the appointment by its ID
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        // Optionally check if the status is something other than 'done' if necessary
+        if ($appointment->status === 'done') {
+            // You can redirect back or return an error message if deletion is not allowed
+            return redirect()->route('pending')->with('error', 'Completed appointments cannot be deleted.');
+        }
+
+        // Delete the appointment
+        $appointment->delete();
+
+        // Redirect back or to another route with a success message
+        return redirect()->route('pending')->with('success', 'Appointment deleted successfully.');
+    }
+
+    public function destroyMeeting(string $appointment_id)
+    {
+         // Find the appointment by its ID
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        // Optionally check if the status is something other than 'done' if necessary
+        if ($appointment->status === 'done') {
+            // You can redirect back or return an error message if deletion is not allowed
+            return redirect()->route('cancelledMeeting')->with('error', 'Completed appointments cannot be deleted.');
+        }
+
+        // Delete the appointment
+        $appointment->delete();
+
+        // Redirect back or to another route with a success message
+        return redirect()->route('cancelledMeeting')->with('success', 'Appointment deleted successfully.');
     }
 
 

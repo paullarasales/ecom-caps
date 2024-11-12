@@ -1,11 +1,13 @@
-<div class="text-center lg:mt-20 mt-10">
-    <a href="{{ route('meetingform') }}" class="bg-yellow-200 text-gray-700 rounded-3xl py-3 px-8 font-medium inline-block mr-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t">
-        Schedule A Meeting Only
-        <i class="fa-solid fa-arrow-right ml-3"></i>
-    </a>
-</div>
+<x-app-layout>
 
-<form action="/appointment" method="POST" id="appointmentForm">
+    <div class="text-center py-4 my-20">
+        <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
+            Edit <span class="text-yellow-600">Details</span>
+        </h3>
+    </div>
+
+<form action="{{route('client.appointment.save', $appointment->appointment_id)}}" method="POST" id="appointmentForm">
+    @method("PUT")
     @csrf
     <!-- Display validation errors -->
     <div id="errorModal" class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
@@ -61,12 +63,12 @@
                             
                             <div class="md:col-span-5">
                                 <label for="firstname">Event Locaton</label>
-                                <input type="text" name="location" id="location" placeholder="N/A if still" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('location') }}" />
+                                <input type="text" name="location" id="location" placeholder="N/A if still" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ $appointment->location }}" />
                             </div>
 
                             <div class="md:col-span-3">
                                 <label for="date">Event Date</label>
-                                <input type="date" name="edate" id="edate" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('edate') }}" />
+                                <input type="date" name="edate" id="edate" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ $appointment->edate }}" />
                             </div>
                             
                             <!-- Modal Structure -->
@@ -125,24 +127,36 @@
                                 <label for="time">Event Time</label>
                                 {{-- <input type="time" name="time" id="time" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" /> --}}
                                 <select name="etime" id="etime" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
-                                    <option disabled selected>Select your time</option>
-                                    @foreach ([
-                                        "8:00 am", "8:30 am", "9:00 am", "9:30 am", "10:00 am", "10:30 am",
-                                        "11:00 am", "11:30 am", "12:00 pm", "12:30 pm", "1:00 pm", "1:30 pm",
-                                        "2:00 pm", "2:30 pm", "3:00 pm", "3:30 pm", "4:00 pm", "4:30 pm",
-                                        "5:00 pm", "5:30 pm", "6:00 pm", "6:30 pm", "7:00 pm", "7:30 pm"
-                                    ] as $time)
-                                        <option value="{{ $time }}" {{ old('etime') == $time ? 'selected' : '' }}>
-                                            {{ $time }}
-                                        </option>
-                                    @endforeach
-                                    <option disabled selected></option>
+                                    <option value="8:00 am" {{ $appointment->etime == '8:00 am' ? 'selected' : '' }}>8:00 am</option>
+                                        <option value="8:30 am" {{ $appointment->etime == '8:30 am' ? 'selected' : '' }}>8:30 am</option>
+                                        <option value="9:00 am" {{ $appointment->etime == '9:00 am' ? 'selected' : '' }}>9:00 am</option>
+                                        <option value="9:30 am" {{ $appointment->etime == '9:30 am' ? 'selected' : '' }}>9:30 am</option>
+                                        <option value="10:00 am" {{ $appointment->etime == '10:00 am' ? 'selected' : '' }}>10:00 am</option>
+                                        <option value="10:30 am" {{ $appointment->etime == '10:30 am' ? 'selected' : '' }}>10:30 am</option>
+                                        <option value="11:00 am" {{ $appointment->etime == '11:00 am' ? 'selected' : '' }}>11:00 am</option>
+                                        <option value="11:30 am" {{ $appointment->etime == '11:30 am' ? 'selected' : '' }}>11:30 am</option>
+                                        <option value="12:00 pm" {{ $appointment->etime == '12:00 pm' ? 'selected' : '' }}>12:00 pm</option>
+                                        <option value="12:30 pm" {{ $appointment->etime == '12:30 pm' ? 'selected' : '' }}>12:30 pm</option>
+                                        <option value="1:00 pm" {{ $appointment->etime == '1:00 pm' ? 'selected' : '' }}>1:00 pm</option>
+                                        <option value="1:30 pm" {{ $appointment->etime == '1:30 pm' ? 'selected' : '' }}>1:30 pm</option>
+                                        <option value="2:00 pm" {{ $appointment->etime == '2:00 pm' ? 'selected' : '' }}>2:00 pm</option>
+                                        <option value="2:30 pm" {{ $appointment->etime == '2:30 pm' ? 'selected' : '' }}>2:30 pm</option>
+                                        <option value="3:00 pm" {{ $appointment->etime == '3:00 pm' ? 'selected' : '' }}>3:00 pm</option>
+                                        <option value="3:30 pm" {{ $appointment->etime == '3:30 pm' ? 'selected' : '' }}>3:30 pm</option>
+                                        <option value="4:00 pm" {{ $appointment->etime == '4:00 pm' ? 'selected' : '' }}>4:00 pm</option>
+                                        <option value="4:30 pm" {{ $appointment->etime == '4:30 pm' ? 'selected' : '' }}>4:30 pm</option>
+                                        <option value="5:00 pm" {{ $appointment->etime == '5:00 pm' ? 'selected' : '' }}>5:00 pm</option>
+                                        <option value="5:30 pm" {{ $appointment->etime == '5:30 pm' ? 'selected' : '' }}>5:30 pm</option>
+                                        <option value="6:00 pm" {{ $appointment->etime == '6:00 pm' ? 'selected' : '' }}>6:00 pm</option>
+                                        <option value="6:30 pm" {{ $appointment->etime == '6:30 pm' ? 'selected' : '' }}>6:30 pm</option>
+                                        <option value="7:00 pm" {{ $appointment->etime == '7:00 pm' ? 'selected' : '' }}>7:00 pm</option>
+                                        <option value="7:30 pm" {{ $appointment->etime == '7:30 pm' ? 'selected' : '' }}>7:30 pm</option>
                                 </select>
                             </div>
 
                             <div class="md:col-span-5">
                                 <label for="type">Event Type</label>
-                                <input type="text" name="type" id="type" placeholder="(Ex. 1st Birthday)" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('type') }}" />
+                                <input type="text" name="type" id="type" placeholder="(Ex. 1st Birthday)" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ $appointment->type }}" />
                             </div>
 
                             <div class="md:col-span-5">
@@ -150,11 +164,14 @@
                                 {{-- <input type="text" name="package" id="package" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" /> --}}
                                 <select name="package_id" id="" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
                                     
-                                    @foreach ($packages as $pk)
-                                    <option value="{{$pk->package_id}}">{{$pk->packagename}}</option>
-                                    
-                                    @endforeach
-                                    <option disabled selected>See the packages below</option>
+                                    <option disabled>See the packages below</option>
+                                
+                                        @foreach ($packages as $pk)
+                                            <option value="{{$pk->package_id}}" 
+                                                @if (isset($appointment) && $appointment->package_id == $pk->package_id) selected @endif>
+                                                {{$pk->packagename}}
+                                            </option>
+                                        @endforeach
                                     
                                 </select>
                                 
@@ -201,7 +218,7 @@
                 
                             <div class="md:col-span-3">
                                 <label for="appointment_date">Meeting Date</label>
-                                <input disabled type="date" name="appointment_date" id="appointment_date" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('appointment_date') }}" />
+                                <input disabled type="date" name="appointment_date" id="appointment_date" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('appointment_date', \Carbon\Carbon::parse($appointment->appointment_datetime)->format('Y-m-d')) }}" />
                             </div>
                 
                             <div class="md:col-span-2">
@@ -209,6 +226,11 @@
                                 <select disabled name="appointment_time" id="appointment_time" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
                                     <!-- Options will be populated by JavaScript -->
                                     <option disabled selected value="">Select appointment time</option>
+                                    <option 
+                                        value="{{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('H:i') }}" 
+                                        selected>
+                                        {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('h:i A') }}
+                                    </option>
                                 </select>
                             </div>
                 
@@ -341,12 +363,19 @@
                             timeSelect.innerHTML += options;
                         }
                 
-                        // Ensure that the date input only allows future dates
-                        function setMinDate() {
+                        function setAppointmentDateRange() {
                             var today = new Date();
-                            var minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1); // Tomorrow
-                            var minDateString = minDate.toISOString().slice(0, 10); // Format as 'YYYY-MM-DD'
-                            dateInput.setAttribute('min', minDateString);
+                            var edate = new Date(eventDateInput.value); // Parse the edate value
+                            var maxDate = new Date(edate);
+                            maxDate.setDate(maxDate.getDate() - 7); // Set max date to one week before edate
+
+                            // Format dates as 'YYYY-MM-DD'
+                            var todayString = today.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+                            var maxDateString = maxDate.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+
+                            // Set min and max attributes for appointment_date
+                            dateInput.setAttribute('min', todayString); // Today is the minimum selectable date
+                            dateInput.setAttribute('max', maxDateString); // One week before edate is the maximum selectable date
                         }
                 
                         // Function to update meeting date and time input states
@@ -354,6 +383,7 @@
                             if (eventDateInput.value) {
                                 dateInput.disabled = false; // Enable meeting date input
                                 timeSelect.disabled = false; // Enable meeting time input
+                                setAppointmentDateRange();
                             } else {
                                 dateInput.disabled = true; // Disable meeting date input
                                 timeSelect.disabled = true; // Disable meeting time input
@@ -459,4 +489,5 @@
     }
 </script>
 
+</x-app-layout>
 

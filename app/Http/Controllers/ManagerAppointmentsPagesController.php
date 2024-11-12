@@ -151,16 +151,21 @@ class ManagerAppointmentsPagesController extends Controller
     }
     public function bookedView(string $app)
     {
-        $appointment = Appointment::with(['user', 'package'])
-        ->where('status', 'booked')
-        ->where('appointment_id', $app)
-        ->first();
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'booked')
+            ->where('appointment_id', $app)
+            ->first();
 
         if (!$appointment) {
-            return redirect()->route('managerappointments')->with('error', 'Appointment not found or not pending.');
+            return redirect()->route('adminappointments')->with('error', 'Appointment not found or not pending.');
         }
 
-        return view('manager.booked-view', compact('appointment'));
+        // Pass the appointment and its related data (package, custom package with items) to the view
+        return view('manager.booked-view')->with([
+            'appointment' => $appointment,
+            'package' => $appointment->package,  // Directly access the package related to the appointment
+            'customPackage' => $appointment->package->custompackage,  // Access the custom package related to the package
+        ]);
 
     }
 
@@ -186,16 +191,22 @@ class ManagerAppointmentsPagesController extends Controller
     }
     public function pendingView(string $app)
     {
-        $appointment = Appointment::with(['user', 'package'])
-        ->where('status', 'pending')
-        ->where('appointment_id', $app)
-        ->first();
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'pending')
+            ->where('appointment_id', $app)
+            ->first();
 
-    if (!$appointment) {
-        return redirect()->route('managerappointments')->with('error', 'Appointment not found or not pending.');
-    }
+        if (!$appointment) {
+            return redirect()->route('adminappointments')->with('error', 'Appointment not found or not pending.');
+        }
 
-    return view('manager.pending-view', compact('appointment'));
+        // Pass the appointment and its related data (package, custom package with items) to the view
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
+        return view('manager.pending-view')->with([
+            'appointment' => $appointment,
+            'package' => $appointment->package,  // Directly access the package related to the appointment
+            'customPackage' => $customPackage,  // Access the custom package related to the package
+        ]);
 
         // return view('admin.pending-view');
     }
@@ -223,16 +234,66 @@ class ManagerAppointmentsPagesController extends Controller
     }
     public function cancelledView(string $app)
     {
-        $appointment = Appointment::with(['user', 'package'])
-        ->where('status', 'cancelled')
-        ->where('appointment_id', $app)
-        ->first();
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'cancelled')
+            ->where('appointment_id', $app)
+            ->first();
 
         if (!$appointment) {
-            return redirect()->route('managerappointments')->with('error', 'Appointment not found or not pending.');
+            return redirect()->route('adminappointments')->with('error', 'Appointment not found or not pending.');
         }
 
-        return view('manager.cancelled-view', compact('appointment'));
+        // Pass the appointment and its related data (package, custom package with items) to the view
+        return view('manager.cancelled-view')->with([
+            'appointment' => $appointment,
+            'package' => $appointment->package,  // Directly access the package related to the appointment
+            'customPackage' => $appointment->package->custompackage,  // Access the custom package related to the package
+        ]);
+
+            // return view('admin.pending-view');
+    }
+
+
+    public function cancelledMeeting()
+    {
+        $search = request('search');
+
+        $appointments = Appointment::with('user')
+            ->where('status', 'mcancelled')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('firstname', 'like', "%{$search}%")
+                        ->orWhere('lastname', 'like', "%{$search}%");
+                    })
+                    ->orWhere('reference', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10);
+        
+        return view('manager.cancelled-meeting', compact('appointments', 'search'));
+        // return view('admin.cancelled');
+    }
+
+    public function cancelledmeetingView(string $app)
+    {
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'mcancelled')
+            ->where('appointment_id', $app)
+            ->first();
+
+        if (!$appointment) {
+            return redirect()->route('adminappointments')->with('error', 'Appointment not found or not pending.');
+        }
+
+        // Pass the appointment and its related data (package, custom package with items) to the view
+
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
+        return view('manager.cancelled-meeting-view')->with([
+            'appointment' => $appointment,
+            'package' => $appointment->package,  // Directly access the package related to the appointment
+            'customPackage' => $customPackage,  // Access the custom package related to the package
+        ]);
 
             // return view('admin.pending-view');
     }
