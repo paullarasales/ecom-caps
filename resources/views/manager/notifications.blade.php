@@ -35,7 +35,7 @@
                         @if ($appointment->user && $appointment->status === 'pending') {{-- Ensure the appointment has a related user --}}
                             <h1 class="text-md text-gray-600 py-4">
                                 <span class="capitalize">{{ $appointment->user->firstname . ' ' . $appointment->user->lastname }}</span> made a request.
-                                <a href="{{route('pendingView', $appointment->appointment_id)}}" class="text-yellow-600 underline">View Request</a>
+                                <a href="{{route('manager.pendingView', $appointment->appointment_id)}}" class="text-yellow-600 underline">View Request</a>
                             </h1>
                             <hr>
                         @elseif ($appointment->user && $appointment->status === 'mcancelled' && \Carbon\Carbon::parse($appointment->edate)->isFuture()) {{-- Ensure the appointment has a related user --}}

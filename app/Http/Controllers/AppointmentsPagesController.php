@@ -162,10 +162,11 @@ class AppointmentsPagesController extends Controller
         }
 
         // Pass the appointment and its related data (package, custom package with items) to the view
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
         return view('admin.booked-view')->with([
             'appointment' => $appointment,
             'package' => $appointment->package,  // Directly access the package related to the appointment
-            'customPackage' => $appointment->package->custompackage,  // Access the custom package related to the package
+            'customPackage' => $customPackage,  // Access the custom package related to the package
         ]);
 
     }
@@ -261,10 +262,11 @@ class AppointmentsPagesController extends Controller
         }
 
         // Pass the appointment and its related data (package, custom package with items) to the view
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
         return view('admin.cancelled-view')->with([
             'appointment' => $appointment,
             'package' => $appointment->package,  // Directly access the package related to the appointment
-            'customPackage' => $appointment->package->custompackage,  // Access the custom package related to the package
+            'customPackage' => $customPackage,  // Access the custom package related to the package
         ]);
 
             // return view('admin.pending-view');
@@ -340,16 +342,35 @@ class AppointmentsPagesController extends Controller
     }
     public function doneView(string $app)
     {
-        $appointment = Appointment::with(['user', 'package'])
-        ->where('status', 'done')
-        ->where('appointment_id', $app)
-        ->first();
+        // $appointment = Appointment::with(['user', 'package'])
+        // ->where('status', 'done')
+        // ->where('appointment_id', $app)
+        // ->first();
+
+        // if (!$appointment) {
+        //     return redirect()->route('adminappointments')->with('error', 'Appointment not found or not pending.');
+        // }
+
+        // return view('admin.done-view', compact('appointment'));
+
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'done')
+            ->where('appointment_id', $app)
+            ->first();
 
         if (!$appointment) {
             return redirect()->route('adminappointments')->with('error', 'Appointment not found or not pending.');
         }
 
-        return view('admin.done-view', compact('appointment'));
+        // Pass the appointment and its related data (package, custom package with items) to the view
+
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
+
+        return view('admin.done-view')->with([
+            'appointment' => $appointment,
+            'package' => $appointment->package,  // Directly access the package related to the appointment
+            'customPackage' => $customPackage,  // Access the custom package related to the package
+        ]);
 
             // return view('admin.pending-view');
     }

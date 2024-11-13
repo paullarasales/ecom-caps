@@ -47,6 +47,7 @@ class CustomPackagesController extends Controller
         $request->validate([
             // 'package_id' => 'required|exists:packages,package_id',
             'final' => 'required|numeric',
+            'packagename' => 'required',
             'fooditem' => 'required|array',
             'foodquantity' => 'required|array',
             'foodpackitem' => 'required|array',
@@ -61,9 +62,10 @@ class CustomPackagesController extends Controller
         // Create a new package entry
         $package = new Package();
         $package->user_id = Auth::id();
-        $package->packagename = 'Custom'; 
+        $package->packagename = $request->input('packagename'); 
         $package->packagedesc = $request->input('final'); 
         $package->packagephoto = 'images/custom.jpg'; 
+        $package->packagetype = "Custom";
         
         // Attempt to save the package
         if (!$package->save()) {
@@ -776,6 +778,11 @@ class CustomPackagesController extends Controller
             return redirect()->back()->with('error', 'Cannot delete this package because it is associated with appointments that are pending or booked.');
         }
 
+        // Update any appointments with 'done' status to set package_id to null
+        Appointment::where('package_id', $package_id)
+        ->whereIn('status', ['done', 'cancelled', 'cancelled'])
+        ->update(['package_id' => null]);
+
         // Find the custom package
         $customPackage = CustomPackage::where('package_id', $package_id)->first();
 
@@ -790,6 +797,12 @@ class CustomPackagesController extends Controller
 
         // Finally, delete the main package
         $package = Package::findOrFail($package_id);
+
+        // Check if the package has a photo and delete it
+        if ($package->packagephoto && file_exists(public_path($package->packagephoto)) && $package->packagetype !== 'Custom') {
+            unlink(public_path($package->packagephoto)); // Delete the photo from the server
+        }
+
         $package->delete();
 
         // Redirect back with a success message

@@ -362,6 +362,10 @@ Route::get('/manager/package/{package_id}/destroy', [PackagesController::class, 
     ->middleware(['auth', 'verified'])
     ->middleware('auth', 'manager')
     ->name('managerdestroypackage');
+Route::get('/manager/package/{package_id}/destroycustom', [MgrCustomPackagesController::class, 'destroy'])
+    ->middleware(['auth', 'verified'])
+    ->middleware('auth', 'manager')
+    ->name('manager.destroycustom');
 //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES 
 
 

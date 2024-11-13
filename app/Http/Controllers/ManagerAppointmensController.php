@@ -112,6 +112,11 @@ class ManagerAppointmensController extends Controller
     {
         $appointment = Appointment::findOrFail($appointment_id);
 
+        // Check if package_id is null
+        if (is_null($appointment->package_id)) {
+            return redirect()->route('manager.pending')->with('error', 'The appointment does not have a package assigned.');
+        }
+
         // Get the date of the appointment
         $appointmentDate = $appointment->edate; // Assuming 'edate' is a field in the appointments table
 
@@ -211,11 +216,16 @@ class ManagerAppointmensController extends Controller
     {
         $appointment = Appointment::findOrFail($appointment_id);
 
+        // Check if package_id is null
+        if (is_null($appointment->package_id)) {
+            return redirect()->route('manager.cancelled')->with('error', 'The appointment does not have a package assigned.');
+        }
+
 
         // Check if essential fields (edate, etime, location, type) are not null
         if (is_null($appointment->edate) || is_null($appointment->etime) || 
             is_null($appointment->location) || is_null($appointment->type)) {
-            return redirect()->route('cancelled')->with('error', 'Appointment details are incomplete. Please make sure all fields are filled.');
+            return redirect()->route('manager.cancelled')->with('error', 'Appointment details are incomplete. Please make sure all fields are filled.');
         }
         
         // Get the date of the appointment

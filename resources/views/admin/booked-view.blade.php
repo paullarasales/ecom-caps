@@ -125,8 +125,8 @@
                         </th>
                         <td class="px-6 py-4">
                             @if ($appointment->package)
-                                <a href="javascript:void(0);" onclick="openModal({{ $appointment->package->packagename === 'Custom' ? json_encode($appointment->package->custompackage) : json_encode(asset($appointment->package->packagephoto)) }}, {{ $appointment->package->packagename === 'Custom' ? 'true' : 'false' }})">
-                                    {{ $appointment->package->packagename }}
+                                <a href="javascript:void(0);" onclick="openModal({{ $appointment->package->packagetype === 'Custom' ? json_encode($appointment->package->custompackage) : json_encode(asset($appointment->package->packagephoto)) }}, {{ $appointment->package->packagetype === 'Custom' ? 'true' : 'false' }})">
+                                    {{ $appointment->package->packagename }} (₱ {{ number_format($appointment->package->packagedesc, 2) }})
                                 </a>
                             @else
                                 No package assigned
@@ -211,9 +211,9 @@
 <!-- Modal Structure -->
 <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden bg-gray-800 bg-opacity-50">
     <div class="flex items-center justify-center min-h-screen">
-        <div id="modal-container" class="relative max-w-lg max-h-[75vh] bg-white rounded-lg shadow-lg overflow-auto p-4">
+        <div id="modal-container" class="relative max-w-lg max-h-[75vh] bg-gray-100 rounded-xl shadow-lg overflow-auto p-4">
             <!-- Close Button -->
-            <button class="absolute top-4 right-4 text-gray-600 hover:text-gray-800 z-50" onclick="closeModal()">
+            <button class="absolute top-2 right-4 text-gray-600 hover:text-gray-800 z-50" onclick="closeModal()">
                 <i class="fa-solid fa-xmark text-3xl"></i>
             </button>
             <!-- Modal Content -->
@@ -268,11 +268,11 @@
 
         // Food and Foodpack Items Table
         if (foodAndPackItems.length) {
-            tableHtml += '<div class="flex-1"><div class="relative overflow-x-auto"><table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">';
-            tableHtml += '<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"><tr><th scope="col" class="px-6 py-3 capitalize">Item Name</th><th scope="col" class="px-6 py-3 capitalize">Quantity</th></tr></thead>';
+            tableHtml += '<div class="flex-1"><div class="relative overflow-x-auto shadow-sm sm:rounded-lg "><table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" style="table-layout: fixed;">';
+            tableHtml += '<thead class="text-xs text-gray-400 uppercase bg-gray-700 dark:text-gray-400"><tr><th scope="col" class="px-6 py-3 capitalize">Item Name</th><th scope="col" class="px-6 py-3 capitalize">Quantity</th></tr></thead>';
             tableHtml += '<tbody>';
             foodAndPackItems.forEach(item => {
-                tableHtml += `<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"><th scope="row" class="px-6 py-4 capitalize font-medium text-gray-900 whitespace-nowrap dark:text-white">${item.item_name}</th><td class="px-6 py-4 capitalize">${item.quantity}</td></tr>`;
+                tableHtml += `<tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 "><th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">${item.item_name}</th><td class="px-6 py-4 capitalize">${item.quantity}</td></tr>`;
             });
             tableHtml += '</tbody></table></div></div>';
         } else {
@@ -281,11 +281,11 @@
 
         // Other Items Table
         if (otherItems.length) {
-            tableHtml += '<div class="flex-1"><div class="relative overflow-x-auto"><table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">';
-            tableHtml += '<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"><tr><th scope="col" class="px-6 py-3 capitalize">Item Type</th><th scope="col" class="px-6 py-3 capitalize">Item Name</th></tr></thead>';
+            tableHtml += '<div class="flex-1"><div class="relative overflow-x-auto shadow-sm sm:rounded-lg "><table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" style="table-layout: fixed;">';
+            tableHtml += '<thead class="text-xs text-gray-400 uppercase bg-gray-700 dark:text-gray-400"><tr><th scope="col" class="px-6 py-3 capitalize">Item Type</th><th scope="col" class="px-6 py-3 capitalize">Item Name</th></tr></thead>';
             tableHtml += '<tbody>';
             otherItems.forEach(item => {
-                tableHtml += `<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"><th scope="row" class="px-6 py-4 capitalize font-medium text-gray-900 whitespace-nowrap dark:text-white">${item.item_type}</th><td class="px-6 py-4 capitalize">${item.item_name}</td></tr>`;
+                tableHtml += `<tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 "><th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">${item.item_type.replace(/_/g, ' ')}</th><td class="px-6 py-4 capitalize">${item.item_name}</td></tr>`;
             });
             tableHtml += '</tbody></table></div></div>';
         } else {

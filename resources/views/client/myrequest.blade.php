@@ -107,7 +107,7 @@
                             <td class="px-6 py-4">
                                 @if ($appointment->package)
                                     <a href="javascript:void(0);" onclick="openModal('{{ asset($appointment->package->packagephoto) }}')">
-                                        {{ $appointment->package->packagename }}
+                                        {{ $appointment->package->packagename }} (₱ {{ number_format($appointment->package->packagedesc, 2) }})
                                     </a>
                                 @else
                                     No package assigned

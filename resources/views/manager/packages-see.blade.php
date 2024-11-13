@@ -24,7 +24,7 @@
                 <h5 class="mb-2 text-2xl uppercase font-bold tracking-tight text-gray-900 dark:text-white">{{ $package->packagename }}</h5>
                 <p class="mb-3 text-xl font-normal uppercase dark:text-gray-100">₱ {{ number_format($package->packagedesc, 2) }}</p>
 
-                @if($package->packagename === 'Custom' && $customPackage)
+                @if($package->packagetype === 'Custom' && $customPackage)
                     @if($customPackage->person > 0)
                         <div class="flex justify-start gap-3">
                             <p class="mb-3 text-xl font-normal capitalize dark:text-gray-100">
@@ -47,30 +47,30 @@
                     @endphp
 
                     {{-- Container for tables --}}
-                    <div class="flex flex-col md:flex-row gap-4 mb-4">
+                    <div class="flex flex-col md:flex-row gap-4 mb-4 rounded-xl">
 
                         {{-- Food and Foodpack Items Table --}}
                         @if($foodAndPackItems->isNotEmpty())
                             <div class="flex-1">
-                                <div class="relative overflow-x-auto">
-                                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <div class="relative overflow-x-auto shadow-sm sm:rounded-lg ">
+                                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" style="table-layout: fixed;">
+                                        <thead class="text-xs text-gray-400 uppercase bg-gray-700 dark:text-gray-400">
                                             <tr>
                                                 <th scope="col" class="px-6 py-3 capitalize">
                                                     Item Name
                                                 </th>
-                                                <th scope="col" class="px-6 py-3 capitalize">
+                                                <th scope="col" class="px-6 py-3 capitalize text-center">
                                                     Quantity
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach($foodAndPackItems as $item)
-                                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                    <th scope="row" class="px-6 py-4 capitalize font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 ">
+                                                    <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
                                                         {{ $item->item_name }}
                                                     </th>
-                                                    <td class="px-6 py-4 capitalize">
+                                                    <td class="px-6 py-4 capitalize text-center">
                                                         {{ $item->quantity }}
                                                     </td>
                                                 </tr>
@@ -88,9 +88,9 @@
                         {{-- Other Items Table --}}
                         @if($otherItems->isNotEmpty())
                             <div class="flex-1">
-                                <div class="relative overflow-x-auto">
-                                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <div class="relative overflow-x-auto shadow-sm sm:rounded-lg ">
+                                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" style="table-layout: fixed;">
+                                        <thead class="text-xs text-gray-400 uppercase bg-gray-700 dark:text-gray-400">
                                             <tr>
                                                 <th scope="col" class="px-6 py-3 capitalize">
                                                     Item Type
@@ -102,9 +102,9 @@
                                         </thead>
                                         <tbody>
                                             @foreach($otherItems as $item)
-                                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                    <th scope="row" class="px-6 py-4 capitalize font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                        {{ $item->item_type }}
+                                                <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 ">
+                                                    <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
+                                                        {{ str_replace('_', ' ', $item->item_type) }}
                                                     </th>
                                                     <td class="px-6 py-4 capitalize">
                                                         {{ $item->item_name }}
@@ -130,9 +130,9 @@
                 <br>
 
                 <div>
-                    @if($package->packagename === 'Custom')
+                    @if($package->packagetype === 'Custom')
                         <div>
-                            <a href="{{ route('destroycustom', $package->package_id) }}" class="inline-flex w-20 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            <a href="{{ route('manager.destroycustom', $package->package_id) }}" class="inline-flex w-20 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                                 Delete
                                 <i class="fa-solid fa-trash ml-3"></i>
                             </a>
@@ -188,5 +188,19 @@
         document.body.classList.remove('overflow-hidden');
     }
 </script>
-
+@if(session('alert'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('alert') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@elseif(session('error'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('error') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@endif
 </x-manager-layout>

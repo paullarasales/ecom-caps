@@ -106,7 +106,13 @@
                                 Package
                             </th>
                             <td class="px-6 py-4" >
-                                <a href="javascript:void(0);" onclick="openModal('{{ asset($appointment->package->packagephoto) }}')">{{ $appointment->package->packagename }}</a>
+                                @if ($appointment->package)
+                                    <a href="javascript:void(0);" onclick="openModal({{ $appointment->package->packagetype === 'Custom' ? json_encode($appointment->package->custompackage) : json_encode(asset($appointment->package->packagephoto)) }}, {{ $appointment->package->packagetype === 'Custom' ? 'true' : 'false' }})">
+                                        {{ $appointment->package->packagename }} (₱ {{ number_format($appointment->package->packagedesc, 2) }})
+                                    </a>
+                                @else
+                                    No package assigned
+                                @endif
                             </td>
                         </tr>
                     </tbody>
@@ -123,38 +129,93 @@
 
     @endif
 
-    <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden bg-gray-800 bg-opacity-50">
-        <div class="flex items-center justify-center min-h-screen">
-            <div class="relative max-w-sm max-h-[75vh] bg-white  rounded-lg shadow-lg">
-                <button class="absolute top-0 right-0 m-4 text-white" onclick="closeModal()">
-                    <i class="fa-solid text-black fa-xmark text-3xl"></i>
-                </button>
-                <div id="modal-content" class="border rounded-lg border-gray-700"></div>
-            </div>
+    <!-- Modal Structure -->
+<div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden bg-gray-800 bg-opacity-50">
+    <div class="flex items-center justify-center min-h-screen">
+        <div id="modal-container" class="relative max-w-lg max-h-[75vh] bg-gray-100 rounded-xl shadow-lg overflow-auto p-4">
+            <!-- Close Button -->
+            <button class="absolute top-2 right-4 text-gray-600 hover:text-gray-800 z-50" onclick="closeModal()">
+                <i class="fa-solid fa-xmark text-3xl"></i>
+            </button>
+            <!-- Modal Content -->
+            <div id="modal-content" class="mt-6"></div>
         </div>
     </div>
+</div>
+<style>
+    /* Additional styling for wider modal */
+    .wider-modal {
+        max-width: 90%; /* Adjust the width as desired */
+    }
+</style>
+<script>
+    function openModal(content, isCustom = false) {
+        const modal = document.getElementById('modal');
+        const modalContainer = document.getElementById('modal-container');
+        const modalContent = document.getElementById('modal-content');
 
-    <script>
-        function openModal(imageSrc) {
-            var modal = document.getElementById('modal');
-            var modalContent = document.getElementById('modal-content');
-            modalContent.innerHTML = '<img src="' + imageSrc + '" class="max-w-full max-h-full rounded-lg">';
-            modal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-    
-            // Close modal when clicked anywhere outside of the modal content
-            modal.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    closeModal();
-                }
+        // Toggle the wider modal class based on content type
+        if (isCustom) {
+            modalContainer.classList.add('wider-modal');  // Add wider class for custom packages
+            modalContent.innerHTML = generateCustomPackageTable(content);
+        } else {
+            modalContainer.classList.remove('wider-modal');  // Remove wider class for normal packages
+            modalContent.innerHTML = `<img src="${content}" class="max-w-full max-h-full rounded-lg">`;
+        }
+
+        // Show modal
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        
+        // Add event listener to close modal on click outside content
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('modal');
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    function generateCustomPackageTable(customPackage) {
+        let foodAndPackItems = customPackage.items.filter(item => ['food', 'food_pack'].includes(item.item_type));
+        let otherItems = customPackage.items.filter(item => !['food', 'food_pack'].includes(item.item_type));
+
+        let tableHtml = '<div class="flex flex-col md:flex-row gap-4 mb-4">';
+
+        // Food and Foodpack Items Table
+        if (foodAndPackItems.length) {
+            tableHtml += '<div class="flex-1"><div class="relative overflow-x-auto shadow-sm sm:rounded-lg "><table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" style="table-layout: fixed;">';
+            tableHtml += '<thead class="text-xs text-gray-700 uppercase bg-yellow-200 dark:text-gray-500"><tr><th scope="col" class="px-6 py-3 capitalize">Item Name</th><th scope="col" class="px-6 py-3 capitalize">Quantity</th></tr></thead>';
+            tableHtml += '<tbody>';
+            foodAndPackItems.forEach(item => {
+                tableHtml += `<tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 "><th scope="row" class="px-6 py-4 capitalize font-medium text-gray-800 whitespace-nowrap ">${item.item_name}</th><td class="px-6 py-4 capitalize">${item.quantity}</td></tr>`;
             });
+            tableHtml += '</tbody></table></div></div>';
+        } else {
+            tableHtml += '<div class="text-gray-600 flex-1"><p>No food or foodpack items available for this custom package.</p></div>';
         }
-    
-        function closeModal() {
-            var modal = document.getElementById('modal');
-            modal.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
+
+        // Other Items Table
+        if (otherItems.length) {
+            tableHtml += '<div class="flex-1"><div class="relative overflow-x-auto shadow-sm sm:rounded-lg "><table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" style="table-layout: fixed;">';
+            tableHtml += '<thead class="text-xs text-gray-700 uppercase bg-yellow-200 dark:text-gray-500"><tr><th scope="col" class="px-6 py-3 capitalize">Item Type</th><th scope="col" class="px-6 py-3 capitalize">Item Name</th></tr></thead>';
+            tableHtml += '<tbody>';
+            otherItems.forEach(item => {
+                tableHtml += `<tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 "><th scope="row" class="px-6 py-4 capitalize font-medium text-gray-800 whitespace-nowrap ">${item.item_type.replace(/_/g, ' ')}</th><td class="px-6 py-4 capitalize">${item.item_name}</td></tr>`;
+            });
+            tableHtml += '</tbody></table></div></div>';
+        } else {
+            tableHtml += '<div class="text-gray-600 flex-1"><p>No other items available for this custom package.</p></div>';
         }
-    </script>
+
+        tableHtml += '</div>';
+        return tableHtml;
+    }
+</script>
     
 </x-app-layout>

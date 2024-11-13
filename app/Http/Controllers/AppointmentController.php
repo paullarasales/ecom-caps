@@ -494,6 +494,11 @@ class AppointmentController extends Controller
     public function accept(Request $request, string $appointment_id)
     {
         $appointment = Appointment::findOrFail($appointment_id);
+        
+        // Check if package_id is null
+        if (is_null($appointment->package_id)) {
+            return redirect()->route('pending')->with('error', 'The appointment does not have a package assigned.');
+        }
 
         // Get the date of the appointment
         $appointmentDate = $appointment->edate; // Assuming 'edate' is a field in the appointments table
@@ -531,7 +536,7 @@ class AppointmentController extends Controller
 
             $log = new ModelsLog();
             $log->user_id = Auth::id();
-            $log->action = 'Accepted';
+            $log->action = 'Booked';
             $log->description = $use->firstname . " " . $use->lastname . " accepted an event on " . $DateFormatted;
             $log->save();
 
@@ -591,6 +596,11 @@ class AppointmentController extends Controller
     public function rebook(Request $request, string $appointment_id)
     {
         $appointment = Appointment::findOrFail($appointment_id);
+
+        // Check if package_id is null
+        if (is_null($appointment->package_id)) {
+            return redirect()->route('canceclled')->with('error', 'The appointment does not have a package assigned.');
+        }
 
 
         // Check if essential fields (edate, etime, location, type) are not null

@@ -107,21 +107,20 @@ class UserController extends Controller
     }
     public function mybooked()
     {
-        // return view('client.myrequest');
         $user = Auth::user();
-        $bookedAppointments = Appointment::with('package')
-        ->where('user_id', $user->id)
-        ->where('status', 'booked')
-        ->orderBy('edate', 'desc')
-        ->get();
-        
+        $bookedAppointments = Appointment::with(['package.custompackage.items'])
+            ->where('user_id', $user->id)
+            ->where('status', 'booked')
+            ->orderBy('edate', 'desc')
+            ->get();
+
         return view('client.mybooked', compact('bookedAppointments'));
     }
     public function mydone()
     {
         // return view('client.myrequest');
         $user = Auth::user();
-        $doneAppointments = Appointment::with(['package','review'])
+        $doneAppointments = Appointment::with(['package.custompackage.items','review'])
         ->where('user_id', $user->id)
         ->where('status', 'done')
         ->orderBy('edate', 'asc')
@@ -174,7 +173,7 @@ class UserController extends Controller
     }
     public function book()
     {
-        $packages = Package::where('packagename', '!=', 'Custom')
+        $packages = Package::where('packagetype', '!=', 'Custom')
                    ->orderBy('created_at', 'desc')
                    ->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();

@@ -56,6 +56,7 @@ class PackagesController extends Controller
             $package->packagedesc = $request->packagedesc;
             $package->user_id = Auth::id();
             $package->packagephoto = $path . $filename; // Save the image path
+            $package->packagetype = "Normal";
             $package->save();
 
             $user = Auth::user();
@@ -353,15 +354,22 @@ class PackagesController extends Controller
         $package = Package::findOrFail($package_id);
 
         // Check if the package is tied to any existing appointment
-        $appointment = Appointment::where('package_id', $package->package_id)->first();
+        $appointment = Appointment::where('package_id', $package->package_id)
+        ->whereIn('status', ['pending', 'booked'])
+        ->first();
 
         // If an appointment is tied to this package, prevent deletion
         if ($appointment) {
             return redirect()->route('viewpackage')->with('alert', 'Cannot delete package as it is tied to an existing appointment.');
         }
 
+        // Update any appointments with 'done' status to set package_id to null
+        Appointment::where('package_id', $package_id)
+        ->whereIn('status', ['done', 'cancelled', 'cancelled'])
+        ->update(['package_id' => null]);
+
         // Check if there is a corresponding custom entry
-        $custom = Custom::where('package_id', $package->package_id)->first();
+        $custom = Custompackage::where('package_id', $package->package_id)->first();
 
         // If a custom entry exists, delete it
         if ($custom) {
@@ -369,7 +377,7 @@ class PackagesController extends Controller
         }
 
         // Check if the package has a photo and delete it
-        if ($package->packagephoto && file_exists(public_path($package->packagephoto)) && $package->packagename !== 'Custom') {
+        if ($package->packagephoto && file_exists(public_path($package->packagephoto)) && $package->packagetype !== 'Custom') {
             unlink(public_path($package->packagephoto)); // Delete the photo from the server
         }
 
@@ -392,12 +400,19 @@ class PackagesController extends Controller
         $package = Package::findOrFail($package_id);
 
         // Check if the package is tied to any existing appointment
-        $appointment = Appointment::where('package_id', $package->package_id)->first();
+        $appointment = Appointment::where('package_id', $package->package_id)
+        ->whereIn('status', ['pending', 'booked'])
+        ->first();
 
         // If an appointment is tied to this package, prevent deletion
         if ($appointment) {
-            return redirect()->route('viewpackage')->with('alert', 'Cannot delete package as it is tied to an existing appointment.');
+            return redirect()->route('managerviewpackage')->with('error', 'Cannot delete package as it is tied to an existing appointment.');
         }
+
+        // Update any appointments with 'done' status to set package_id to null
+        Appointment::where('package_id', $package_id)
+        ->whereIn('status', ['done', 'cancelled', 'cancelled'])
+        ->update(['package_id' => null]);
 
         // Check if there is a corresponding custom entry
         $custom = Custom::where('package_id', $package->package_id)->first();
