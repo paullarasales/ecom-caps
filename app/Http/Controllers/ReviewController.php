@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Appointment;
+use App\Models\Log as Modelslog;
 
 class ReviewController extends Controller
 {
@@ -125,6 +126,15 @@ class ReviewController extends Controller
         $review->response = $request->response;
         $review->save();
 
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Event Date Blocked';
+            $log->description =  $use->firstname . " " . $use->lastname . " Has responded to a client review ";
+            $log->logdate = now();
+            $log->save();
+
         return redirect()->back()->with('alert', 'Response Submitted successfully!');
     }
 
@@ -138,6 +148,15 @@ class ReviewController extends Controller
 
         $review->response = $request->response;
         $review->save();
+
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Event Date Blocked';
+            $log->description =  $use->firstname . " " . $use->lastname . " Has responded to a client review ";
+            $log->logdate = now();
+            $log->save();
 
         return redirect()->back()->with('alert', 'Response Submitted successfully!');
     }

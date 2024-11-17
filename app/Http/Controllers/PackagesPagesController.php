@@ -15,10 +15,22 @@ class PackagesPagesController extends Controller
     {
         return view('manager.packages-add');
     }
+    public function owneradd()
+    {
+        return view('owner.packages-add');
+    }
+
+
     public function customize()
     {
         return view('admin.packages-customize');
     }
+    public function managercustomize()
+    {
+        return view('manager.packages-customize');
+    }
+
+
     public function newcustomize()
     {
         return view('admin.packages-new-customize');
@@ -27,10 +39,13 @@ class PackagesPagesController extends Controller
     {
         return view('manager.packages-new-customize');
     }
-    public function managercustomize()
+    public function ownernewcustomize()
     {
-        return view('manager.packages-customize');
+        return view('owner.packages-new-customize');
     }
+    
+
+
     public function view()
     {
         // return view('admin.packages-view');
@@ -42,6 +57,12 @@ class PackagesPagesController extends Controller
         // return view('admin.packages-view');
         $package = Package::orderBy('created_at', 'desc')->paginate(10);
         return view('manager.packages-view', compact('package'));
+    }
+    public function ownerview()
+    {
+        // return view('admin.packages-view');
+        $package = Package::orderBy('created_at', 'desc')->paginate(10);
+        return view('owner.packages-view', compact('package'));
     }
     // public function eye()
     // {

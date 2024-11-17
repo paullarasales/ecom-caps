@@ -15,11 +15,37 @@
     <div class="flex justify-center">
         <div class="flex flex-col items-center w-full bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-4xl dark:border-gray-700 dark:bg-gray-800 ">
             @if ($package->packagephoto)
-                <img class="object-cover w-full cursor-pointer max-w-sm h-48 md:w-48 md:h-48 rounded-t-lg md:rounded-none md:rounded-s-lg" src="{{ asset($package->packagephoto) }}" alt="Package Image" onclick="openModal('{{ asset($package->packagephoto) }}')">
+                <img class="object-cover w-full cursor-pointer max-w-sm h-48 md:w-48 md:h-full rounded-t-lg md:rounded-none md:rounded-s-lg" src="{{ asset($package->packagephoto) }}" alt="Package Image" onclick="openModal('{{ asset($package->packagephoto) }}')">
             @endif
             <div class="flex flex-col justify-between p-4 leading-normal">
                 <h5 class="mb-2 text-2xl uppercase font-bold tracking-tight text-gray-900 dark:text-white">{{ $package->packagename }}</h5>
                 <p class="mb-3 text-xl font-normal uppercase dark:text-gray-100">₱ {{ number_format($package->packagedesc, 2) }}</p>
+
+                @if ($package->packagetype === 'Normal')
+                    @if ($samplePhotos && count($samplePhotos) > 0)
+                        <!-- Display the sample photos if they exist -->
+                        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 border p-2 border-yellow-50">
+                            @foreach ($samplePhotos as $photo)
+                                <div class="relative overflow-hidden w-32 h-32" >
+                                    <img src="{{ asset($photo) }}" alt="Sample Photos" class="absolute inset-0 w-full h-full object-cover cursor-pointer" 
+                                        onclick="openModal('{{ asset($photo) }}')"/>
+                                </div>
+                            @endforeach
+                        </div>
+                        <br>
+                        <a href="{{ route('editsample', $package->sample->sample_id) }}" class="inline-flex w-28 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            Edit photos
+                            <i class="fa-solid fa-pencil ml-3"></i>
+                        </a>
+                    @else
+                            <!-- Display the Add sample photos button if no sample photos exist -->
+                            <a href="{{ route('addsample', $package->package_id) }}" class="inline-flex w-full items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                Add sample photos
+                                <i class="fa-solid fa-add ml-3"></i>
+                            </a>
+                    @endif
+                
+                @endif
 
                 @if($package->packagetype === 'Custom' && $customPackage)
                     @if($customPackage->person > 0)
@@ -128,14 +154,14 @@
 
                 <div>
                     @if($package->packagetype === 'Custom')
-                        <div>
+                        <div class="flex justify-start">
                             <a href="{{ route('destroycustom', $package->package_id) }}" class="inline-flex w-20 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                                 Delete
                                 <i class="fa-solid fa-trash ml-3"></i>
                             </a>
                         </div>
                     @else
-                        <div>
+                        <div class="flex justify-start gap-2">
                             <a href="{{ route('editpackage', $package->package_id) }}" class="inline-flex w-16 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                                 Edit
                                 <i class="fa-solid fa-arrow-right ml-3"></i>

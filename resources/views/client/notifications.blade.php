@@ -59,7 +59,7 @@
                 </div>
             @else
                 <div class="lg:mx-32 my-10 bg-yellow-50 text-gray-600 p-4 rounded-lg">
-                    <h1 class="text-md font-semibold">Your verification is still pending.</h1>
+                    <h1 class="text-md font-semibold">You are not verified, you cannot make appointments at the moment.</h1>
                 </div>
             @endif
 

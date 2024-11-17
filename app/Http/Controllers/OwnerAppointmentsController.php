@@ -36,6 +36,7 @@ class OwnerAppointmentsController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Event Date Blocked';
             $log->description = $unblockedDateFormatted . " Has been blocked by " . $use->firstname . " " . $use->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->back()->with('alert', 'Date blocked successfully!');
@@ -62,6 +63,7 @@ class OwnerAppointmentsController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Event Date Unblocked';
             $log->description = $unblockedDateFormatted . " Has been unblocked by " . $use->firstname . " " . $use->lastname;
+            $log->logdate = now();
             $log->save();
 
         // Optional: Return a response or redirect with a success message

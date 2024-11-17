@@ -26,7 +26,7 @@ class OwnerController extends Controller
             ->map->count();
 
         // Count the total number of users, packages, posts, and FAQs
-        $userCount = User::where('usertype', 'user')->count();
+        $userCount = User::where('usertype', 'user')->has('appointment')->count();
         $packageCount = Package::count();
         $postCount = Post::count();
         $faqCount = Faqs::count();
@@ -171,6 +171,14 @@ class OwnerController extends Controller
     public function ownerbooking()
     {
         return view('owner.booking');
+    }
+    public function packages()
+    {
+        return view('owner.packages');
+    }
+    public function reviews()
+    {
+        return view('owner.reviews');
     }
     public function logs()
     {

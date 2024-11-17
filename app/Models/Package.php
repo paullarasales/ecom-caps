@@ -39,4 +39,9 @@ class Package extends Model
         return $this->hasOne(Custompackage::class, 'package_id');
     }
 
+    public function sample(): HasOne
+    {
+        return $this->hasOne(Sample::class, 'package_id');
+    }
+
 }

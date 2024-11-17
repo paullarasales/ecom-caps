@@ -61,6 +61,7 @@ class PostController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Post Created';
             $log->description = "new Post Created by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
     
         if (Auth::check()) {
@@ -155,6 +156,7 @@ class PostController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Post Updated';
             $log->description = "Post Updated by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         if (Auth::check()) {
@@ -196,6 +198,7 @@ class PostController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Post Deleted';
             $log->description = "Post Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->route('viewpost')->with('alert', 'Post deleted successfully!');
@@ -222,6 +225,7 @@ class PostController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Post Deleted';
             $log->description = "Post Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->route('ownerviewpost')->with('alert', 'Post deleted successfully!');
@@ -248,6 +252,7 @@ class PostController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Post Deleted';
             $log->description = "Post Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->route('managerviewpost')->with('alert', 'Post deleted successfully!');

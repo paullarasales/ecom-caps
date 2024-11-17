@@ -45,6 +45,7 @@ class FaqsController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'FAQs Created';
             $log->description = "new FAQs created by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         // return redirect()->route('addfaqs')->with('alert', 'Request Submitted');
@@ -105,6 +106,7 @@ class FaqsController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'FAQs Updated';
             $log->description = "FAQs updated by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->route('viewfaqs')->with('alert', 'Faqs Successfully Updated');
@@ -122,6 +124,7 @@ class FaqsController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'FAQs Updated';
             $log->description = "FAQs updated by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->route('ownerviewfaqs')->with('alert', 'Faqs Successfully Updated');
@@ -139,6 +142,7 @@ class FaqsController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'FAQs Updated';
             $log->description = "FAQs updated by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->route('managerviewfaqs')->with('alert', 'Faqs Successfully Updated');
@@ -160,6 +164,7 @@ class FaqsController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'FAQs Deleted';
             $log->description = "FAQs Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->route('viewfaqs')->with('alert', 'Faqs deleted successfully!');
@@ -177,6 +182,7 @@ class FaqsController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'FAQs Deleted';
             $log->description = "FAQs Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->route('ownerviewfaqs')->with('alert', 'Faqs deleted successfully!');
@@ -194,6 +200,7 @@ class FaqsController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'FAQs Deleted';
             $log->description = "FAQs Deleted by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->route('managerviewfaqs')->with('alert', 'Faqs deleted successfully!');

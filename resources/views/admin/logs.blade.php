@@ -15,6 +15,9 @@
                     <th scope="col" class="px-6 py-3">Action</th>
                     
                     <th scope="col" class="px-6 py-3">Description</th>
+
+                    <th scope="col" class="px-6 py-3">Timestamp</th>
+
                     <th scope="col" class="px-6 py-3">User</th>
 
                 </tr>
@@ -26,6 +29,9 @@
                     <th scope="row" class="px-6 py-4 uppercase">{{$log->action}}</th>
                     
                     <td class="px-6 py-4">{{$log->description}}</td>
+
+                    <td class="px-6 py-4">{{ \Carbon\Carbon::parse($log->created_at)->format('F j, Y g:i A') }}</td>
+
                     <td class="px-6 py-4">{{$log->user->firstname}} {{$log->user->lastname}}</td>
 
                 </tr>

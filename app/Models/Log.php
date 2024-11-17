@@ -12,7 +12,8 @@ class Log extends Model
 
     protected $fillable = [
         'action',
-        'description'
+        'description',
+        'logdate'
     ];
     protected $primaryKey = 'log_id';
 

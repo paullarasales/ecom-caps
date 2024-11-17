@@ -97,6 +97,24 @@
                         {{ __('Booking') }}
                     </x-side-nav-link>
                 </div>
+                <div class="{{ request()->routeIs('ownerpackages') ? 'bg-gray-200' : '' }} flex items-center gap-2 rounded-sm h-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ request()->routeIs('ownerpackages') ? '#FFB200' : '#000000'}}" class="ml-4 sm:ml-10 w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5c0-.621.504-1.125 1.125-1.125h13.5c.621 0 1.125.504 1.125 1.125Zm-2.25 0H6.375v1.5h11.25v-1.5ZM3.375 18.75c-.621 0-1.125-.504-1.125-1.125v-1.5c0-.621.504-1.125 1.125-1.125h13.5c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125H3.375c-.621 0-1.125-.504-1.125-1.125v-1.5c0-.621.504-1.125 1.125-1.125H3.375c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125H3.375ZM3.75 7.5v-1.5c0-.621.504-1.125 1.125-1.125h13.5c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125H4.875c-.621 0-1.125-.504-1.125-1.125Z" />
+                    </svg>
+
+                    <x-side-nav-link href="{{ route('ownerpackages') }}" :active="request()->routeIs('ownerpackages')" class="text-xl text-black font-medium mt-1 flex items-center w-full">
+                        {{ __('Packages') }}
+                    </x-side-nav-link>
+                </div>
+                <div class="{{ request()->routeIs('ownerreviews') ? 'bg-gray-200' : '' }} flex items-center gap-2 rounded-sm h-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ request()->routeIs('ownerreviews') ? '#FFB200' : '#000000'}}" class="ml-4 sm:ml-10 w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
+                    </svg>
+
+                    <x-side-nav-link href="{{ route('ownerreviews') }}" :active="request()->routeIs('ownerreviews')" class="text-xl text-black font-medium mt-1 flex items-center w-full">
+                        {{ __('Reviews') }}
+                    </x-side-nav-link>
+                </div>
                 <div class="{{ request()->routeIs('ownerlogs') ? 'bg-gray-200' : '' }} flex items-center gap-2 rounded-sm h-12">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ request()->routeIs('ownerlogs') ? '#FFB200' : '#000000'}}" class="ml-4 sm:ml-10 w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />                    
@@ -130,30 +148,32 @@
                                     </span>
                                 </a>
                             </div> 
-                            <div x-data="{ open: false }" class="relative">
-                                <!-- Profile Dropdown Button -->
-                                <button @click="open = !open" class="relative inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-lg rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150" aria-haspopup="true" aria-expanded="open" style="z-index: 10;">
-                                    <div class="flex items-center">
-                                        @if(Auth::user()->photo)
+                            <div x-data="{ open: false }" class="relative flex items-center">
+                                <!-- Profile Dropdown -->
+                                <div x-data="{ open: false }" class="relative flex items-center">
+                                    <button @click="open = !open" class="relative inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-lg rounded-md text-black bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                        <div class="flex items-center">
+                                            @if(Auth::user()->photo)
                                             <img class="w-9 h-9 rounded-full ml-2 border-solid border-2 border-sky-500" src="{{ asset(Auth::user()->photo) }}" alt="Profile Image">
-                                        @endif
-                                        <svg class="fill-current h-5 w-5 ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </button>
-                                <!-- Dropdown Menu -->
-                                <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 transition ease-in-out duration-150" role="menu" style="z-index: 20;">
-                                    <div class="py-1" role="none">
-                                        <x-dropdown-link :href="route('profile.edit')">
-                                            {{ __('Edit Profile') }}
-                                        </x-dropdown-link>
-                                        <form method="POST" action="{{ route('logout') }}" role="none">
-                                            @csrf
-                                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault();this.closest('form').submit();">
-                                                {{ __('Log Out') }}
+                                            @endif
+                                            <svg class="fill-current h-5 w-5 ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    </button>
+                                    <!-- Dropdown Menu -->
+                                    <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                        <div class="py-1">
+                                            <x-dropdown-link :href="route('profile.edit')">
+                                                {{ __('Edit Profile') }}
                                             </x-dropdown-link>
-                                        </form>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <x-dropdown-link :href="route('logout')" onclick="event.preventDefault();this.closest('form').submit();">
+                                                    {{ __('Log Out') }}
+                                                </x-dropdown-link>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

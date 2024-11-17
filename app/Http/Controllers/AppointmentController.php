@@ -480,6 +480,7 @@ class AppointmentController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Direct Booked';
             $log->description = $use->firstname . " " . $use->lastname . " directly booked an event on " . $DateFormatted;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->back()->with([
@@ -537,6 +538,7 @@ class AppointmentController extends Controller
             $log = new ModelsLog();
             $log->user_id = Auth::id();
             $log->action = 'Booked';
+            $log->logdate = now();
             $log->description = $use->firstname . " " . $use->lastname . " accepted an event on " . $DateFormatted;
             $log->save();
 
@@ -647,6 +649,7 @@ class AppointmentController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Rebooked';
             $log->description = $use->firstname . " " . $use->lastname . " rebooked an event on " . $DateFormatted;
+            $log->logdate = now();
             $log->save();
 
 
@@ -723,6 +726,7 @@ class AppointmentController extends Controller
                 $log->user_id = Auth::id();
                 $log->action = 'Done';
                 $log->description = $use->firstname . " " . $use->lastname . " markeed an event on " . $DateFormatted . " as done";
+                $log->logdate = now();
                 $log->save();
 
             // Get the user who made the appointment
@@ -793,6 +797,7 @@ class AppointmentController extends Controller
                 $log->user_id = Auth::id();
                 $log->action = 'Cancelled';
                 $log->description = $use->firstname . " " . $use->lastname . " cancelled an event on " . $DateFormatted;
+                $log->logdate = now();
                 $log->save();
 
             // Get the user who made the appointment
@@ -855,6 +860,7 @@ class AppointmentController extends Controller
                 $log->user_id = Auth::id();
                 $log->action = 'Cancelled';
                 $log->description = $use->firstname . " " . $use->lastname . " cancelled a meeting on " . $DateFormatted;
+                $log->logdate = now();
                 $log->save();
 
 
@@ -984,6 +990,7 @@ class AppointmentController extends Controller
                 $log->user_id = Auth::id();
                 $log->action = 'Edited';
                 $log->description = $use->firstname . " " . $use->lastname . " edited an event on " . $DateFormatted;
+                $log->logdate = now();
                 $log->save();
 
         // Redirect back or to a success page
@@ -1015,6 +1022,7 @@ class AppointmentController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Event Date Blocked';
             $log->description = $unblockedDateFormatted . " Has been blocked by " . $use->firstname . " " . $use->lastname;
+            $log->logdate = now();
             $log->save();
 
             
@@ -1042,6 +1050,7 @@ class AppointmentController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Event Date Unblocked';
             $log->description = $unblockedDateFormatted . " Has been unblocked by " . $use->firstname . " " . $use->lastname;
+            $log->logdate = now();
             $log->save();
 
         // Optional: Return a response or redirect with a success message
@@ -1069,6 +1078,7 @@ class AppointmentController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Meeting Date Blocked';
             $log->description = $unblockedDateFormatted . " Has been blocked by " . $use->firstname . " " . $use->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->back()->with('alert', 'Date blocked successfully!');
@@ -1094,6 +1104,7 @@ class AppointmentController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Meeting Date Unblocked';
             $log->description = $unblockedDateFormatted . " Has been unblocked by " . $use->firstname . " " . $use->lastname;
+            $log->logdate = now();
             $log->save();
 
         // Optional: Return a response or redirect with a success message
@@ -1141,6 +1152,15 @@ class AppointmentController extends Controller
         // Delete the appointment
         $appointment->delete();
 
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Meeting Date Unblocked';
+            $log->description = $use->firstname . " " . $use->lastname . " Has deleted a meeting that either couldn't be completed or where the client did not attend. " ;
+            $log->logdate = now();
+            $log->save();
+
         // Redirect back or to another route with a success message
         return redirect()->route('pending')->with('success', 'Appointment deleted successfully.');
     }
@@ -1158,6 +1178,15 @@ class AppointmentController extends Controller
 
         // Delete the appointment
         $appointment->delete();
+
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Meeting Date Unblocked';
+            $log->description = $use->firstname . " " . $use->lastname . " Has deleted a meeting that either couldn't be completed or where the client did not attend. " ;
+            $log->logdate = now();
+            $log->save();
 
         // Redirect back or to another route with a success message
         return redirect()->route('cancelledMeeting')->with('success', 'Appointment deleted successfully.');

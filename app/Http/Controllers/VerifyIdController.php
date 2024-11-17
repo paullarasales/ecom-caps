@@ -79,6 +79,7 @@ class VerifyIdController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Verification';
             $log->description = "A user has been " . $request->verifystatus . " by " . $use->firstname . " " . $use->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect("users")->with('alert', 'User Successfully Updated');
@@ -104,6 +105,7 @@ class VerifyIdController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Verification';
             $log->description = "A user has been " . $request->verifystatus . " by " . $use->firstname . " " . $use->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect("managerusers")->with('alert', 'User Successfully Updated');

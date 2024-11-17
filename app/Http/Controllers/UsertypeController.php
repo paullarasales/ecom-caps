@@ -86,6 +86,7 @@ class UsertypeController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'User Role';
             $log->description = "Admin updated " . $request->firstname . " " . $request->lastname . "'s role to " . $request->usertype;
+            $log->logdate = now();
             $log->save();
 
         return redirect("users")->with('alert', 'User Successfully Updated');

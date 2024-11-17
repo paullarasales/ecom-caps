@@ -65,6 +65,7 @@ class PackagesController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Package Created';
             $log->description = $package->packagename . " package created by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
             // return redirect()->route('addpackage')->with('alert', 'Uploaded successfully!');
@@ -75,6 +76,8 @@ class PackagesController extends Controller
                     return redirect()->route('addpackage')->with('alert', 'Package added successfully!');
                 } elseif ($user->usertype === 'manager') {
                     return redirect()->route('manageraddpackage')->with('alert', 'Package added successfully!');
+                } elseif ($user->usertype === 'owner') {
+                    return redirect()->route('owneraddpackage')->with('alert', 'Package added successfully!');
                 }
             }
         }
@@ -206,10 +209,14 @@ class PackagesController extends Controller
                                     ->where('package_id', $package->package_id)
                                     ->first(); // Ensure you're getting a single instance
 
+        $samplePhotos = $package->sample ? $package->sample->samplepath : null;
+
+
         // Pass both the package and the custom package (with items) to the view
         return view('admin.packages-see')->with([
             'package' => $package,
             'customPackage' => $customPackage,
+            'samplePhotos' => $samplePhotos,
         ]);
     }
 
@@ -231,10 +238,31 @@ class PackagesController extends Controller
                                     ->where('package_id', $package->package_id)
                                     ->first(); // Ensure you're getting a single instance
 
+        $samplePhotos = $package->sample ? $package->sample->samplepath : null;
         // Pass both the package and the custom package (with items) to the view
         return view('manager.packages-see')->with([
             'package' => $package,
             'customPackage' => $customPackage,
+            'samplePhotos' => $samplePhotos,
+        ]);
+    }
+
+    public function ownershow(string $pk)
+    {
+        // Find the Package by its primary key (pk)
+        $package = Package::findOrFail($pk);
+
+        // Retrieve the associated Custompackage, loading its related Customitems
+        $customPackage = Custompackage::with('items') // This will load the related items
+                                    ->where('package_id', $package->package_id)
+                                    ->first(); // Ensure you're getting a single instance
+
+        $samplePhotos = $package->sample ? $package->sample->samplepath : null;
+        // Pass both the package and the custom package (with items) to the view
+        return view('owner.packages-see')->with([
+            'package' => $package,
+            'customPackage' => $customPackage,
+            'samplePhotos' => $samplePhotos,
         ]);
     }
 
@@ -251,6 +279,11 @@ class PackagesController extends Controller
         $package = Package::find($package);
         return view('manager.packages-edit')->with("package", $package);
     }
+    public function owneredit(string $package)
+    {
+        $package = Package::find($package);
+        return view('owner.packages-edit')->with("package", $package);
+    }
 
     /**
      * Update the specified resource in storage.
@@ -260,7 +293,7 @@ class PackagesController extends Controller
         $request->validate([
             'packagephoto' => 'nullable|image|mimes:png,jpg,jpeg,webp',
             'packagename' => 'required',
-            'packagedesc' => 'required',
+            'packagedesc' => 'required|numeric',
         ]);
     
         // Find the package by ID
@@ -296,6 +329,7 @@ class PackagesController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Package Updated';
             $log->description = $package->packagename . " package updated by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
     
         return redirect()->route('viewpackage')->with('alert', 'Updated successfully!');
@@ -305,7 +339,7 @@ class PackagesController extends Controller
         $request->validate([
             'packagephoto' => 'nullable|image|mimes:png,jpg,jpeg,webp',
             'packagename' => 'required',
-            'packagedesc' => 'required',
+            'packagedesc' => 'required|numeric',
         ]);
     
         // Find the package by ID
@@ -341,9 +375,57 @@ class PackagesController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Package Updated';
             $log->description = $package->packagename . " package updated by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
     
         return redirect()->route('managerviewpackage')->with('alert', 'Updated successfully!');
+    }
+
+    public function ownerupdate(Request $request, string $id)
+    {
+        $request->validate([
+            'packagephoto' => 'nullable|image|mimes:png,jpg,jpeg,webp',
+            'packagename' => 'required',
+            'packagedesc' => 'required|numeric',
+        ]);
+    
+        // Find the package by ID
+        $package = Package::findOrFail($id);
+    
+        if ($file = $request->file('packagephoto')) {
+            // Check if the package already has a photo and delete it
+            if ($package->packagephoto && file_exists(public_path($package->packagephoto))) {
+                unlink(public_path($package->packagephoto)); // Delete the old photo
+            }
+    
+            $extension = $file->getClientOriginalExtension();
+            $filename = time() . '_' . uniqid() . '.' . $extension; // Ensure unique filename
+        
+            $path = "uploads/package/";
+            $file->move(public_path($path), $filename); // Move the file to the public directory
+        
+            // Update the photo path if a new file is uploaded
+            $package->packagephoto = $path . $filename;
+        }
+    
+        // Update the other fields
+        $package->packagename = $request->packagename;
+        $package->packagedesc = $request->packagedesc;
+        $package->user_id = Auth::id();
+    
+        // Save the changes
+        $package->save();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Package Updated';
+            $log->description = $package->packagename . " package updated by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
+            $log->save();
+    
+        return redirect()->route('ownerviewpackage')->with('alert', 'Updated successfully!');
     }
 
     /**
@@ -390,6 +472,7 @@ class PackagesController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Package Deleted';
             $log->description = $package->packagename . " package deleted by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->route('viewpackage')->with('alert', 'Package deleted successfully!');
@@ -436,9 +519,57 @@ class PackagesController extends Controller
             $log->user_id = Auth::id();
             $log->action = 'Package Deleted';
             $log->description = $package->packagename . " package deleted by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
             $log->save();
 
         return redirect()->route('managerviewpackage')->with('alert', 'Package deleted successfully!');
+    }
+
+    public function ownerdestroy(string $package_id)
+    {
+        $package = Package::findOrFail($package_id);
+
+        // Check if the package is tied to any existing appointment
+        $appointment = Appointment::where('package_id', $package->package_id)
+        ->whereIn('status', ['pending', 'booked'])
+        ->first();
+
+        // If an appointment is tied to this package, prevent deletion
+        if ($appointment) {
+            return redirect()->route('ownerviewpackage')->with('error', 'Cannot delete package as it is tied to an existing appointment.');
+        }
+
+        // Update any appointments with 'done' status to set package_id to null
+        Appointment::where('package_id', $package_id)
+        ->whereIn('status', ['done', 'cancelled', 'cancelled'])
+        ->update(['package_id' => null]);
+
+        // Check if there is a corresponding custom entry
+        $custom = Custom::where('package_id', $package->package_id)->first();
+
+        // If a custom entry exists, delete it
+        if ($custom) {
+            $custom->delete();
+        }
+
+        // Check if the package has a photo and delete it
+        if ($package->packagephoto && file_exists(public_path($package->packagephoto)) && $package->packagename !== 'Custom') {
+            unlink(public_path($package->packagephoto)); // Delete the photo from the server
+        }
+
+        // Delete the package from the database
+        $package->delete();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Package Deleted';
+            $log->description = $package->packagename . " package deleted by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
+            $log->save();
+
+        return redirect()->route('ownerviewpackage')->with('alert', 'Package deleted successfully!');
     }
     
 }

@@ -21,6 +21,27 @@ class UserController extends Controller
         $post = Post::orderBy('created_at', 'desc')->paginate(10);
         return view('client.dashboard', compact('post'));
     }
+
+    public function packages()
+    {
+        $package = Package::with('sample')
+        ->orderBy('created_at', 'desc')
+        ->where('packagetype', 'normal')
+        ->get();
+        return view('client.packages', compact('package'));
+    }
+    public function packageShow(string $package_id) {
+        
+        $package = Package::findOrFail($package_id);
+
+        $samplePhotos = $package->sample ? $package->sample->samplepath : null;
+
+        return view('client.packages-see')->with([
+            'package' => $package,
+            'samplePhotos' => $samplePhotos,
+        ]);
+    }
+
     public function aboutus()
     {
         return view('client.aboutus');
