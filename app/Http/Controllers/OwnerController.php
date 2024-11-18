@@ -168,9 +168,13 @@ class OwnerController extends Controller
     {
         return view('owner.calendar');
     }
-    public function ownerbooking()
+    public function ownerdirect()
     {
-        return view('owner.booking');
+        return view('owner.direct');
+    }
+    public function ownerevents()
+    {
+        return view('owner.appointments');
     }
     public function packages()
     {

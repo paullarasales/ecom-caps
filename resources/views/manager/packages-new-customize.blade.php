@@ -21,7 +21,7 @@
             <div class="bg-white shadow-lg mx-auto border-b-4 border-indigo-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
                 <div class="bg-indigo-500 flex h-20 items-center">
                     <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
-                        <i class="fa-solid fa-cube"></i>
+                        <i class="fa-solid fa-add"></i>
                     </h1>
                     <p class="ml-4 text-white uppercase font-semibold">Add Custom Package</p>
                 </div>
@@ -57,7 +57,7 @@
             <div class="bg-white shadow-lg mx-auto border-b-4 border-yellow-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
                 <div class="bg-yellow-500 flex h-20 items-center">
                     <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
-                        <i class="fa-solid fa-cube"></i>
+                        <i class="fa-solid fa-bowl-food"></i>
                     </h1>
                     <p class="ml-4 text-white uppercase font-semibold">Foods</p>
                 </div>
@@ -76,7 +76,7 @@
             <div class="bg-white shadow-lg mx-auto border-b-4 border-green-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
                 <div class="bg-green-500 flex h-20 items-center">
                     <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
-                        <i class="fa-solid fa-plus"></i>
+                        <i class="fa-regular fa-window-maximize"></i>
                     </h1>
                     <p class="ml-4 text-white uppercase font-semibold">Food Carts</p>
                 </div>
@@ -95,7 +95,7 @@
             <div class="bg-white shadow-lg mx-auto border-b-4 border-teal-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
                 <div class="bg-teal-500 flex h-20 items-center">
                     <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
-                        <i class="fa-solid fa-wrench"></i>
+                        <i class="fa-solid fa-cube"></i>
                     </h1>
                     <p class="ml-4 text-white uppercase font-semibold">Food Packs</p>
                 </div>
@@ -114,7 +114,7 @@
             <div class="bg-white shadow-lg mx-auto border-b-4 border-orange-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
                 <div class="bg-orange-500 flex h-20 items-center">
                     <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
-                        <i class="fa-solid fa-wrench"></i>
+                        <i class="fa-solid fa-piggy-bank"></i>
                     </h1>
                     <p class="ml-4 text-white uppercase font-semibold">Lechon</p>
                 </div>
@@ -133,7 +133,7 @@
             <div class="bg-white shadow-lg mx-auto border-b-4 border-blue-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
                 <div class="bg-blue-500 flex h-20 items-center">
                     <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
-                        <i class="fa-solid fa-wrench"></i>
+                        <i class="fa-solid fa-cake-candles"></i>
                     </h1>
                     <p class="ml-4 text-white uppercase font-semibold">Cake</p>
                 </div>
@@ -152,7 +152,7 @@
             <div class="bg-white shadow-lg mx-auto border-b-4 border-fuchsia-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
                 <div class="bg-fuchsia-500 flex h-20 items-center">
                     <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
-                        <i class="fa-solid fa-wrench"></i>
+                        <i class="fa-solid fa-face-grin-tongue-wink"></i>
                     </h1>
                     <p class="ml-4 text-white uppercase font-semibold">Clown</p>
                 </div>
@@ -171,7 +171,7 @@
             <div class="bg-white shadow-lg mx-auto border-b-4 border-red-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
                 <div class="bg-red-500 flex h-20 items-center">
                     <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
-                        <i class="fa-solid fa-wrench"></i>
+                        <i class="fa-solid fa-paintbrush"></i>
                     </h1>
                     <p class="ml-4 text-white uppercase font-semibold">Facepaint</p>
                 </div>

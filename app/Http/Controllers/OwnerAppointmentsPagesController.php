@@ -64,4 +64,119 @@ class OwnerAppointmentsPagesController extends Controller
 
         return response()->json($mergedEvents);
     }
+
+    public function booked()
+    {
+        // $appointments = Appointment::with('user')
+        // ->where('status', 'booked')
+        // ->paginate(10);
+
+        $search = request('search');
+
+        $appointments = Appointment::with('user')
+            ->where('status', 'booked')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('firstname', 'like', "%{$search}%")
+                        ->orWhere('lastname', 'like', "%{$search}%");
+                    })
+                    ->orWhere('reference', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10);
+        
+        return view('owner.booked', compact('appointments', 'search'));
+        // return view('admin.booked');
+    }
+    public function bookedView(string $app)
+    {
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'booked')
+            ->where('appointment_id', $app)
+            ->first();
+
+        if (!$appointment) {
+            return redirect()->route('ownerevents')->with('error', 'Appointment not found or not pending.');
+        }
+
+        // Pass the appointment and its related data (package, custom package with items) to the view
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
+        return view('owner.booked-view')->with([
+            'appointment' => $appointment,
+            'package' => $appointment->package,  // Directly access the package related to the appointment
+            'customPackage' => $customPackage,  // Access the custom package related to the package
+        ]);
+
+    }
+
+    public function done()
+    {
+        $search = request('search');
+
+        $appointments = Appointment::with('user')
+            ->where('status', 'done')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('firstname', 'like', "%{$search}%")
+                        ->orWhere('lastname', 'like', "%{$search}%");
+                    })
+                    ->orWhere('reference', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10);
+        
+        return view('owner.done', compact('appointments', 'search'));
+        // return view('admin.done');
+    }
+    public function doneView(string $app)
+    {
+        // $appointment = Appointment::with(['user', 'package'])
+        // ->where('status', 'done')
+        // ->where('appointment_id', $app)
+        // ->first();
+
+        // if (!$appointment) {
+        //     return redirect()->route('managerappointments')->with('error', 'Appointment not found or not pending.');
+        // }
+
+        // return view('manager.done-view', compact('appointment'));
+
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'done')
+            ->where('appointment_id', $app)
+            ->first();
+
+        if (!$appointment) {
+            return redirect()->route('ownervents')->with('error', 'Appointment not found or not pending.');
+        }
+
+        // Pass the appointment and its related data (package, custom package with items) to the view
+
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
+
+        return view('owner.done-view')->with([
+            'appointment' => $appointment,
+            'package' => $appointment->package,  // Directly access the package related to the appointment
+            'customPackage' => $customPackage,  // Access the custom package related to the package
+        ]);
+
+            // return view('admin.pending-view');
+    }
+
+
+
+
+
+    public function direct()
+    {
+        // $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        // return view('admin.direct', compact('packages'));
+
+        $packages = Package::orderBy('created_at', 'desc')->paginate(50);
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray(); // Fetch all blocked dates
+
+        return view('owner.direct', compact('packages', 'blockedDates'));
+    }
 }

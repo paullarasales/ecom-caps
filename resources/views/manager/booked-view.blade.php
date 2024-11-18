@@ -92,7 +92,7 @@
                             Event Date
                         </th>
                         <td class="px-6 py-4">
-                            {{$appointment->edate ? : 'No Event Date Assigned'}}
+                            {{\Carbon\Carbon::parse($appointment->edate)->format('F j, Y') ? : 'No Event Date Assigned'}}
                         </td>
                     </tr>
                     <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 ">

@@ -9,7 +9,7 @@
     <div class="text-center py-2 my-2">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Manage <span class="text-yellow-600">Food Pack Package</span>
+            Manage <span class="text-yellow-600">Food Pack Items</span>
         </h3>
 
     </div>
@@ -21,7 +21,7 @@
             <div class="bg-white shadow-lg mx-auto border-b-4 border-indigo-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
                 <div class="bg-indigo-500 flex h-20 items-center">
                     <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
-                        <i class="fa-solid fa-clipboard-question"></i>
+                        <i class="fa-solid fa-eye"></i>
                     </h1>
                     <p class="ml-4 text-white uppercase font-semibold">View Foodpacks</p>
                 </div>
@@ -40,7 +40,7 @@
             <div class="bg-white shadow-lg mx-auto border-b-4 border-teal-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
                 <div class="bg-teal-500 flex h-20 items-center">
                     <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
-                        <i class="fa-solid fa-question"></i>
+                        <i class="fa-solid fa-add"></i>
                     </h1>
                     <p class="ml-4 text-white uppercase font-semibold">Add Foodpack</p>
                 </div>

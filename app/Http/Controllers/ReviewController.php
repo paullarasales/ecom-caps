@@ -66,6 +66,26 @@ class ReviewController extends Controller
         return view('manager.reviews-approved', compact('reviews'));
     }
 
+    public function ownerpending()
+    {
+        $reviews = Review::with(['user', 'appointment']) // Eager load the relationships
+            ->where('reviewstatus', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('owner.reviews-pending', compact('reviews'));
+        // return view('admin.reviews-pending');
+    }
+    public function ownerapproved()
+    {
+        $reviews = Review::with(['user', 'appointment']) // Eager load the relationships
+            ->where('reviewstatus', 'approved')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('owner.reviews-approved', compact('reviews'));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -139,6 +159,29 @@ class ReviewController extends Controller
     }
 
     public function managerresponse(Request $request, $review_id)
+    {
+        $request->validate([
+            'response' => 'required|string'
+        ]);
+
+        $review = Review::findOrFail($review_id);
+
+        $review->response = $request->response;
+        $review->save();
+
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Event Date Blocked';
+            $log->description =  $use->firstname . " " . $use->lastname . " Has responded to a client review ";
+            $log->logdate = now();
+            $log->save();
+
+        return redirect()->back()->with('alert', 'Response Submitted successfully!');
+    }
+
+    public function ownerresponse(Request $request, $review_id)
     {
         $request->validate([
             'response' => 'required|string'

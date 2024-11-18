@@ -1,7 +1,7 @@
-<x-admin-layout>
+<x-owner-layout>
 
     <div class="flex ml-3">
-        <a href="{{route('done')}}">
+        <a href="{{route('owner.done')}}">
             <div class="text-xl">
                 <i class="fa-solid fa-arrow-left"></i>
             </div>
@@ -227,7 +227,6 @@
         return tableHtml;
     }
 </script>
-
     
     
     @if(session('alert'))
@@ -249,4 +248,4 @@
     {{-- <h1>{{ $appointment->user->firstname }}</h1>
     <h1>{{ $appointment->location }}</h1> --}}
 
-</x-admin-layout>
+</x-owner-layout>

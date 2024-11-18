@@ -801,8 +801,55 @@ class OwnerCustomPackagesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $package_id)
     {
-        //
+        // Check for associated appointments with the package
+        $hasPendingOrBookedAppointments = Appointment::where('package_id', $package_id)
+        ->whereIn('status', ['pending', 'booked'])
+        ->exists();
+
+        if ($hasPendingOrBookedAppointments) {
+            // Return with an error message if there are associated appointments
+            return redirect()->back()->with('error', 'Cannot delete this package because it is associated with appointments that are pending or booked.');
+        }
+
+        // Update any appointments with 'done' status to set package_id to null
+        Appointment::where('package_id', $package_id)
+        ->whereIn('status', ['done', 'cancelled', 'cancelled'])
+        ->update(['package_id' => null]);
+
+        // Find the custom package
+        $customPackage = CustomPackage::where('package_id', $package_id)->first();
+
+        // If the custom package exists, delete associated custom items
+        if ($customPackage) {
+            // Delete related custom items
+            CustomItem::where('custompackage_id', $customPackage->custompackage_id)->delete();
+
+            // Delete the custom package
+            $customPackage->delete();
+        }
+
+        // Finally, delete the main package
+        $package = Package::findOrFail($package_id);
+
+        // Check if the package has a photo and delete it
+        if ($package->packagephoto && file_exists(public_path($package->packagephoto)) && $package->packagetype !== 'Custom') {
+            unlink(public_path($package->packagephoto)); // Delete the photo from the server
+        }
+
+        $package->delete();
+
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Custom Package Deleted';
+            $log->description = $package->packagename . " custom package has been deleted by " . $use->firstname . " " . $use->lastname;
+            $log->logdate = now();
+            $log->save();
+
+        // Redirect back with a success message
+        return redirect()->route('ownerviewpackage')->with('alert', 'Custom package deleted successfully.');
     }
 }

@@ -1,7 +1,7 @@
-<x-admin-layout>
+<x-owner-layout>
 
     <div class="flex ml-3">
-        <a href="{{route('done')}}">
+        <a href="{{route('owner.booked')}}">
             <div class="text-xl">
                 <i class="fa-solid fa-arrow-left"></i>
             </div>
@@ -11,10 +11,11 @@
     <div class="text-center py-2 my-2">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Done <span class="text-yellow-600">Event</span>
+            Booked <span class="text-yellow-600">Event</span>
         </h3>
 
     </div>
+
 
     <div class="bg-gray-100 lg:mx-40 lg:my-5 rounded-xl lg:p-4">
         <div class="relative overflow-x-auto shadow-sm sm:rounded-lg ">
@@ -135,8 +136,74 @@
                     
                 </tbody>
             </table>
+            <div class="flex justify-end gap-3 my-5">
+
+                {{-- <form id="acceptForm" action="{{  route('manager.appointment.done', $appointment->appointment_id) }}" method="POST">
+                    @csrf
+                    @method("PUT")
+                    <input type="hidden" name="status" value="{{$appointment->status}}">
+                    <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        Done
+                        <i class="fa-solid fa-check ml-3"></i>
+                    </button>                        
+                </form> --}}
+
+                <a href="{{ route('owner.details.edit', $appointment->appointment_id) }}" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                    Edit
+                    <i class="fa-regular fa-pen-to-square ml-3"></i>
+                </a>
+
+                {{-- <form id="cancelForm" action="{{  route('manager.appointment.cancel', $appointment->appointment_id) }}" method="POST">
+                    @csrf
+                    @method("PUT")
+                    <input type="hidden" name="status" value="{{$appointment->status}}">
+                    <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        Cancel
+                        <i class="fa-solid fa-ban ml-3"></i>
+                    </button> 
+                </form> --}}
+            </div>
         </div>
     </div>
+
+
+    <!-- Loading animation overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex flex-col items-center justify-center hidden">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-yellow-500 h-12 w-12 mb-4"></div>
+        <p class="text-white mt-4 font-semibold" id="loadingText">Your request is being processed</p>
+    </div>
+    
+
+    <!-- CSS for loader animation -->
+    <style>
+        .loader {
+            border-top-color: #3498db;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <!-- JavaScript to show loading overlay on form submission -->
+    <script>
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
+        const acceptForm = document.getElementById('acceptForm');
+        const cancelForm = document.getElementById('cancelForm');
+    
+        function showLoading(event) {
+            loadingOverlay.classList.remove('hidden');
+            // Check if the form being submitted is the accept form or the cancel form
+            if (event.target === acceptForm) {
+                loadingText.textContent = 'Moving the event to done';
+            } else if (event.target === cancelForm) {
+                loadingText.textContent = 'Canceling the event';
+            }
+        }
+    
+        acceptForm.addEventListener('submit', showLoading);
+        cancelForm.addEventListener('submit', showLoading);
+    </script>
 
 
 <!-- Modal Structure -->
@@ -228,6 +295,8 @@
     }
 </script>
 
+
+    
     
     
     @if(session('alert'))

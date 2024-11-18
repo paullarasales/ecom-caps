@@ -57,6 +57,7 @@ Route::post('/send-message-to-user', [ChatController::class, 'sendMessageToUser'
 Route::get('/get-messages-for-user', [ChatController::class, 'getMessagesForUser']);
 Route::get('/get-unread-message-counts', [ChatController::class, 'fetchUserUnreadMessageCounts']);
 Route::post('/mark-messages-as-read/{senderId}', [ChatController::class, 'markAsRead'])->name('messages.markAsRead');
+Route::get('/unread-message-count', [ChatController::class, 'fetchUnreadMessageCount'])->name('fetchUnreadMessageCount');
 
 
 
@@ -488,6 +489,10 @@ Route::get('/owner/package/{package_id}/destroy', [PackagesController::class, 'o
     ->middleware(['auth', 'verified'])
     ->middleware('auth', 'owner')
     ->name('ownerdestroypackage');
+Route::get('/owner/package/{package_id}/destroycustom', [OwnerCustomPackagesController::class, 'destroy'])
+    ->middleware(['auth', 'verified'])
+    ->middleware('auth', 'owner')
+    ->name('owner.destroycustom');
 //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES 
 
 
@@ -686,6 +691,10 @@ Route::get('/appointment/manager/{appointment_id}/details-edit', [ManagerAppoint
     ->middleware(['auth', 'verified', 'manager'])
     ->name('manager.details.edit');
 
+Route::get('/appointment/owner/{appointment_id}/details-edit', [OwnerAppointmentsController::class, 'detailsedit'])
+    ->middleware(['auth', 'verified', 'owner'])
+    ->name('owner.details.edit');
+
 //CLIENT
 Route::put('/appointment/client/{appointment_id}/save', [AppointmentController::class, 'saveClient'])
     ->middleware(['auth', 'verified', 'user'])
@@ -706,6 +715,10 @@ Route::put('/appointment/{appointment_id}/save', [AppointmentController::class, 
 Route::put('/appointment/manager/{appointment_id}/save', [ManagerAppointmensController::class, 'save'])
     ->middleware(['auth', 'verified', 'manager'])
     ->name('manager.appointment.save');
+
+Route::put('/appointment/owner/{appointment_id}/save', [OwnerAppointmentsController::class, 'save'])
+    ->middleware(['auth', 'verified', 'owner'])
+    ->name('owner.appointment.save');
 // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE // DETAILS-SAVE 
 
 
@@ -835,11 +848,31 @@ Route::get('/ownerdashboard', [OwnerController::class, 'ownerdashboard'])->middl
 Route::get('/owner/calendar/data', [OwnerAppointmentsPagesController::class, 'calendar'])->middleware(['auth', 'verified','owner'])->name('ownercalendar');
 Route::get('/owner/calendar', [OwnerAppointmentsPagesController::class, 'calendarView'])->middleware(['auth', 'verified','owner'])->name('ownercalendarView');
 
-Route::get('/ownerbooking', [OwnerController::class, 'ownerbooking'])->middleware(['auth', 'verified','owner'])->name('ownerbooking');
+
+Route::get('/ownerevents', [OwnerController::class, 'ownerevents'])->middleware(['auth', 'verified','owner'])->name('ownerevents');
+Route::get('/ownerdirect', [OwnerAppointmentsPagesController::class, 'direct'])->middleware(['auth', 'verified','owner'])->name('ownerdirect');
+
+Route::get('/owner/booked/events', [OwnerAppointmentsPagesController::class, 'booked'])->middleware(['auth', 'verified','owner'])->name('owner.booked');
+Route::get('/owner/booked/{appointment_id}/view', [OwnerAppointmentsPagesController::class, 'bookedView'])->middleware(['auth', 'verified','owner'])->name('owner.bookedView');
+
+Route::get('/owner/done/events', [OwnerAppointmentsPagesController::class, 'done'])->middleware(['auth', 'verified','owner'])->name('owner.done');
+Route::get('/owner/done/{appointment_id}/view', [OwnerAppointmentsPagesController::class, 'doneView'])->middleware(['auth', 'verified','owner'])->name('owner.doneView');
+
+
 Route::get('/ownerchat', [OwnerController::class, 'ownerchat'])->middleware(['auth', 'verified','owner'])->name('ownerchat');
 Route::get('/owner/logs', [OwnerController::class, 'logs'])->middleware(['auth', 'verified','owner'])->name('ownerlogs');
 Route::get('/owner/packages', [OwnerController::class, 'packages'])->middleware(['auth', 'verified','owner'])->name('ownerpackages');
 Route::get('/owner/reviews', [OwnerController::class, 'reviews'])->middleware(['auth', 'verified','owner'])->name('ownerreviews');
+
+Route::post('/owner/direct/save', [OwnerAppointmentsController::class, 'directsave'])->middleware(['auth', 'verified','owner'])->name('ownerdirectsave');
+
+
+Route::get('/owner/reviews/pending', [ReviewController::class, 'ownerpending'])->middleware(['auth', 'verified','owner'])->name('ownerreviewpending');
+Route::get('/owner/reviews/approved', [ReviewController::class, 'ownerapproved'])->middleware(['auth', 'verified','owner'])->name('ownerreviewapproved');
+Route::put('/owner/reviews/pending/to/approved/{review_id}', [ReviewController::class, 'ownerstatusApproved'])->middleware(['auth', 'verified','owner'])->name('ownerreviews.approve');
+Route::put('/owner/reviews/approved/to/pending/{review_id}', [ReviewController::class, 'ownerstatusPending'])->middleware(['auth', 'verified','owner'])->name('ownerreviews.pending');
+Route::put('/owner/reviews/response{review_id}', [ReviewController::class, 'ownerresponse'])->middleware(['auth', 'verified','owner'])->name('owner.reviews.response');
+
 
 
 //OWNER NOTIFICATIONS //OWNER NOTIFICATIONS //OWNER NOTIFICATIONS //OWNER NOTIFICATIONS 
@@ -915,7 +948,7 @@ Route::put('/manager/verify/{id}', [VerifyIdController::class, 'managerupdate'])
     ->name('managerverify.update');
 
 
-Route::get('/unread-message-count', [ChatController::class, 'fetchUnreadMessageCount'])->name('fetchUnreadMessageCount');
+
 
 
 require __DIR__.'/auth.php';
