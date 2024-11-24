@@ -10,6 +10,45 @@
             <form action="{{ route('usertype-update', $user->id) }}" method="post">
                 @csrf
                 @method("PUT")
+                    <!-- Display validation errors -->
+    <div id="errorModal" class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-11/12 max-w-md">
+            <div class="flex justify-between">
+                <h2 class="text-lg font-bold mb-4">Validation Errors</h2>
+                <button id="closeErrorModal" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Close</button>
+            </div>
+            <ul id="errorMessageList" class="text-gray-600">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Check if there are validation errors
+        var errors = @json($errors->any()); // Get the boolean status of errors
+        var errorModal = document.getElementById('errorModal');
+        var closeErrorModalButton = document.getElementById('closeErrorModal');
+
+        // Show the error modal if there are errors
+        if (errors) {
+            errorModal.classList.remove('hidden'); // Show the modal
+        }
+
+        // Close error modal event
+        closeErrorModalButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent any default action (if needed)
+            errorModal.classList.add('hidden'); // Hide the modal
+        });
+
+        // Optional: Close the modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            if (event.target === errorModal) {
+                errorModal.classList.add('hidden'); // Hide the modal
+            }
+        });
+    </script>
                 <label class="text-gray-900 mt-2" for="">Name</label>
                 <input class="text-gray-900 rounded-md h-12 w-full mb-1 dark:bg-gray-400 focus:border-yellow-500 focus:ring-yellow-500" type="text" name="name" value="{{$user->name}}">
 

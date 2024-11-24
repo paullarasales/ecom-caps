@@ -213,7 +213,7 @@ class UserController extends Controller
     {
         $appointment = Appointment::findOrFail($appointment_id);
 
-        $packages = Package::where('packagename', '!=', 'Custom')
+        $packages = Package::where('packagetype', '!=', 'Custom')
                    ->orderBy('created_at', 'desc')
                    ->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
@@ -280,6 +280,10 @@ class UserController extends Controller
     
         $user->save();
     
-        return redirect()->route('dashboard')->with('alert', 'Request for verification is submitted, wait for verification before you can request for appointmenrt');
+        // return redirect()->route('dashboard')->with('alert', 'Request for verification is submitted, wait for verification before you can request for appointmenrt');
+        return redirect()->back()->with([
+            'alert' => 'success',
+            'message' => 'Request for verification is submitted, wait for verification before you can request for appointmenrt.'
+        ]);
     }
 }

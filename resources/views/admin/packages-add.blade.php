@@ -75,7 +75,7 @@
     
                                 <div class="md:col-span-5">
                                     <label for="lastname">Package Price</label>
-                                    <input type="text" name="packagedesc" id="packagedesc" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
+                                    <input type="text" name="packageprice" id="packageprice" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
                                 </div>
     
                                 <div class="md:col-span-5">

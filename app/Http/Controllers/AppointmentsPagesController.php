@@ -144,6 +144,7 @@ class AppointmentsPagesController extends Controller
                     ->orWhere('reference', 'like', "%{$search}%");
                 });
             })
+            ->orderBy('edate', 'asc')
             ->paginate(10);
         
         return view('admin.booked', compact('appointments', 'search'));
@@ -188,6 +189,7 @@ class AppointmentsPagesController extends Controller
                     ->orWhere('reference', 'like', "%{$search}%");
                 });
             })
+            ->orderBy('edate', 'asc')
             ->paginate(10);
         
         return view('admin.pending', compact('appointments', 'search'));
@@ -245,6 +247,7 @@ class AppointmentsPagesController extends Controller
                     ->orWhere('reference', 'like', "%{$search}%");
                 });
             })
+            ->orderBy('edate', 'asc')
             ->paginate(10);
         
         return view('admin.cancelled', compact('appointments', 'search'));
@@ -288,6 +291,7 @@ class AppointmentsPagesController extends Controller
                     ->orWhere('reference', 'like', "%{$search}%");
                 });
             })
+            ->orderBy('edate', 'asc')
             ->paginate(10);
         
         return view('admin.cancelled-meeting', compact('appointments', 'search'));
@@ -335,6 +339,7 @@ class AppointmentsPagesController extends Controller
                     ->orWhere('reference', 'like', "%{$search}%");
                 });
             })
+            ->orderBy('edate', 'asc')
             ->paginate(10);
         
         return view('admin.done', compact('appointments', 'search'));

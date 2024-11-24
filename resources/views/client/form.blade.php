@@ -367,7 +367,7 @@
                             var selectedDate = new Date(this.value);
                             var formattedDate = selectedDate.toISOString().split('T')[0];
                 
-                            if (blockedDates.includes(formattedDate) || blockedApps.includes(formattedDate)) {
+                            if (blockedApps.includes(formattedDate)) {
                                 showModal('The selected meeting date is blocked. Please choose another date.');
                                 this.value = ''; // Clear the input
                             }

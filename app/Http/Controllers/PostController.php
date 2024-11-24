@@ -33,7 +33,7 @@ class PostController extends Controller
         // dd($request->all());
         $request->validate([
             'images.*' => 'required|image|mimes:png,jpg,jpeg,webp',
-            'description' => 'required',
+            'description' => 'nullable|string',
         ]);
         
         $imageData = [];

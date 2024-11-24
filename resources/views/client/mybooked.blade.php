@@ -8,11 +8,14 @@
 
     @if ($bookedAppointments->isEmpty()) 
 
-    <div class="text-center py-4 px-6">
-        <h2 class="font-heading bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-64 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
-            You have no booked events
-        </h2>
+    <div class="h-[50vh] flex items-center justify-center">
+        <div class="text-center py-2 px-6">
+            <h2 class="font-heading bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-64 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
+                You have no booked events
+            </h2>
+        </div>
     </div>
+    
     @else
         {{-- <div>
             <h1>Hello Client</h1>

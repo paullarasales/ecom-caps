@@ -61,7 +61,11 @@ class ManagerAppointmensController extends Controller
 
         if ($blockedDateExists) {
             // Redirect back with an error message if the date is blocked
-            return redirect()->route('managerdirect')->with('error', 'The selected date is blocked, please select another date.');
+            // return redirect()->route('managerdirect')->with('error', 'The selected date is blocked, please select another date.');
+            return redirect()->route('managerdirect')->with([
+                'alert' => 'error',
+                'message' => 'The selecrted date is unavailable, please choose other date.'
+            ]);
         }
 
         $existingAppointments = Appointment::where('edate', $request->edate)
@@ -70,7 +74,11 @@ class ManagerAppointmensController extends Controller
     
         if ($existingAppointments >= 3) {
             // Redirect back with an error message
-            return redirect()->route('managerdirect')->with('error', 'The selected date is fully booked, please select other date.');
+            // return redirect()->route('managerdirect')->with('error', 'The selected date is fully booked, please select other date.');
+            return redirect()->route('managerdirect')->with([
+                'alert' => 'error',
+                'message' => 'The selected event date is fully booked, please choose other date.'
+            ]);
         }
 
         // Create and save new user
@@ -105,7 +113,10 @@ class ManagerAppointmensController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->back()->with('alert', 'User and appointment created successfully.');
+        return redirect()->back()->with([
+            'alert' => 'success',
+            'message' => 'Event booked! reference number is ' . $appointment->reference
+        ]);
     }
 
 
@@ -115,7 +126,11 @@ class ManagerAppointmensController extends Controller
 
         // Check if package_id is null
         if (is_null($appointment->package_id)) {
-            return redirect()->route('manager.pending')->with('error', 'The appointment does not have a package assigned.');
+            // return redirect()->route('manager.pending')->with('error', 'The appointment does not have a package assigned.');
+            return redirect()->route('manager.pending')->with([
+                'alert' => 'error',
+                'message' => 'The appointment does not have a package assigned.'
+            ]);
         }
 
         // Get the date of the appointment
@@ -123,14 +138,22 @@ class ManagerAppointmensController extends Controller
 
         // Check if the appointment date is in the past
         if (Carbon::parse($appointmentDate)->isPast()) {
-            return redirect()->route('manager.pending')->with('error', 'The selected date is in the past. Please select a valid future date.');
+            // return redirect()->route('manager.pending')->with('error', 'The selected date is in the past. Please select a valid future date.');
+            return redirect()->route('manager.pending')->with([
+                'alert' => 'error',
+                'message' => 'The selected event date is in the past. Please select a valid future date.'
+            ]);
         }
 
         $blockedDateExists = BlockedDate::where('blocked_date', $appointmentDate)->exists();
 
         if ($blockedDateExists) {
             // Redirect back with an error message if the date is blocked
-            return redirect()->route('manager.pending')->with('error', 'The selected date is blocked, please select another date.');
+            // return redirect()->route('manager.pending')->with('error', 'The selected date is blocked, please select another date.');
+            return redirect()->route('manager.pending')->with([
+                'alert' => 'error',
+                'message' => 'The selected event date is blocked, please select another date.'
+            ]);
         }
 
         // Count the number of accepted appointments on the same date
@@ -141,12 +164,17 @@ class ManagerAppointmensController extends Controller
         // Check if the count is less than 3
         if ($acceptedAppointmentsCount >= 3) {
             // Redirect back with an error message
-            return redirect("admin/pending")->with('error', 'Date is Fully booked');
+            // return redirect("admin/pending")->with('error', 'Date is Fully booked');
+            return redirect()->route('manager.pending')->with([
+                'alert' => 'error',
+                'message' => 'Event date is Fully booked'
+            ]);
         }
 
         // Update appointment status to "accepted"
         $appointment->status = 'booked';
         $appointment->isread = "unread";
+        $appointment->ismanagerread = "read";
         $appointment->save();
 
         $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
@@ -205,12 +233,20 @@ class ManagerAppointmensController extends Controller
             Log::error('Email could not be sent: ' . $e->getMessage());
             
             // Redirect back with an error message
-            return redirect()->route('manager.pending')->with('error', 'Failed to send confirmation email.');
+            // return redirect()->route('manager.pending')->with('error', 'Failed to send confirmation email.');
+            return redirect()->route('manager.pending')->with([
+                'alert' => 'success',
+                'message' => 'Event Successfully Booked. However, we could not send a confirmation email at the moment.'
+            ]);
         }
 
         // Redirect back or to a specific route
         // session()->flash('alert', 'Event Successfully Booked');
-        return redirect()->route('manager.pending')->with('alert', 'Event Successfully Booked');
+        // return redirect()->route('manager.pending')->with('alert', 'Event Successfully Booked');
+        return redirect()->route('manager.pending')->with([
+            'alert' => 'success',
+            'message' => 'Event Successfully Booked.'
+        ]);
     }
 
 
@@ -220,14 +256,22 @@ class ManagerAppointmensController extends Controller
 
         // Check if package_id is null
         if (is_null($appointment->package_id)) {
-            return redirect()->route('manager.cancelled')->with('error', 'The appointment does not have a package assigned.');
+            // return redirect()->route('manager.cancelled')->with('error', 'The appointment does not have a package assigned.');
+            return redirect()->route('manager.cancelled')->with([
+                'alert' => 'error',
+                'message' => 'The event does not have a package assigned.'
+            ]);
         }
 
 
         // Check if essential fields (edate, etime, location, type) are not null
         if (is_null($appointment->edate) || is_null($appointment->etime) || 
             is_null($appointment->location) || is_null($appointment->type)) {
-            return redirect()->route('manager.cancelled')->with('error', 'Appointment details are incomplete. Please make sure all fields are filled.');
+            // return redirect()->route('manager.cancelled')->with('error', 'Appointment details are incomplete. Please make sure all fields are filled.');
+            return redirect()->route('manager.cancelled')->with([
+                'alert' => 'error',
+                'message' => 'Event details are incomplete. Please make sure all fields are filled.'
+            ]);
         }
         
         // Get the date of the appointment
@@ -235,14 +279,22 @@ class ManagerAppointmensController extends Controller
 
         // Check if the appointment date is in the past
         if (Carbon::parse($appointmentDate)->isPast()) {
-            return redirect()->route('manager.cancelled')->with('error', 'The selected date is in the past. Please select a valid future date.');
+            // return redirect()->route('manager.cancelled')->with('error', 'The selected date is in the past. Please select a valid future date.');
+            return redirect()->route('manager.cancelled')->with([
+                'alert' => 'error',
+                'message' => 'The selected date is in the past. Please select a valid future date.'
+            ]);
         }
 
         $blockedDateExists = BlockedDate::where('blocked_date', $appointmentDate)->exists();
 
         if ($blockedDateExists) {
             // Redirect back with an error message if the date is blocked
-            return redirect()->route('manager.cancelled')->with('error', 'The selected date is blocked, please select another date.');
+            // return redirect()->route('manager.cancelled')->with('error', 'The selected date is blocked, please select another date.');
+            return redirect()->route('manager.cancelled')->with([
+                'alert' => 'error',
+                'message' => 'The selected event date is blocked, please select another date.'
+            ]);
         }
 
         // Count the number of accepted appointments on the same date
@@ -253,7 +305,11 @@ class ManagerAppointmensController extends Controller
         // Check if the count is less than 3
         if ($acceptedAppointmentsCount >= 3) {
             // Redirect back with an error message
-            return redirect("manager/booked")->with('error', 'Date is Fully booked');
+            // return redirect("manager/booked")->with('error', 'Date is Fully booked');
+            return redirect()->route('manager.cancelled')->with([
+                'alert' => 'error',
+                'message' => 'Event date is Fully booked.'
+            ]);
         }
 
         // Update appointment status to "accepted"
@@ -317,11 +373,19 @@ class ManagerAppointmensController extends Controller
             Log::error('Email could not be sent: ' . $e->getMessage());
             
             // Redirect back with an error message
-            return redirect()->route('manager.cancelled')->with('error', 'Failed to send confirmation email.');
+            // return redirect()->route('manager.cancelled')->with('error', 'Failed to send confirmation email.');
+            return redirect()->route('manager.cancelled')->with([
+                'alert' => 'success',
+                'message' => 'Event Successfully Re-booked. However, could not send a confirmation email at the moment.'
+            ]);
         }
 
         // Redirect back or to a specific route
-        return redirect()->route('manager.cancelled')->with('alert', 'Event Successfully Re-booked');
+        // return redirect()->route('manager.cancelled')->with('alert', 'Event Successfully Re-booked');
+        return redirect()->route('manager.cancelled')->with([
+            'alert' => 'success',
+            'message' => 'Event Successfully Re-booked.'
+        ]);
     }
 
 
@@ -381,14 +445,26 @@ class ManagerAppointmensController extends Controller
                 Log::error('Email could not be sent: ' . $e->getMessage());
                 
                 // Redirect back with an error message
-                return redirect()->route('manager.booked')->with('error', 'Failed to send confirmation email.');
+                // return redirect()->route('manager.booked')->with('error', 'Failed to send confirmation email.');
+                return redirect()->route('manager.booked')->with([
+                    'alert' => 'success',
+                    'message' => 'Event moved to done. However, could not send a confirmation email at the moment.'
+                ]);
             }
     
             // Redirect back or to a specific route
-            return redirect("manager/booked")->with('alert', 'Event moved to done');
+            // return redirect("manager/booked")->with('alert', 'Event moved to done');
+            return redirect()->route('manager.booked')->with([
+                'alert' => 'success',
+                'message' => 'Event moved to done.'
+            ]);
         } else {
             // Redirect back or to a specific route with an error message
-            return redirect("manager/booked")->with('error', 'The event is not yet finished');
+            // return redirect("manager/booked")->with('error', 'The event is not yet finished');
+            return redirect()->route('manager.booked')->with([
+                'alert' => 'error',
+                'message' => 'The event is not yet finished.'
+            ]);
         }
     }
 
@@ -454,14 +530,26 @@ class ManagerAppointmensController extends Controller
                 Log::error('Email could not be sent: ' . $e->getMessage());
                 
                 // Redirect back with an error message
-                return redirect()->route('manager.booked')->with('error', 'Failed to send confirmation email.');
+                // return redirect()->route('manager.booked')->with('error', 'Failed to send confirmation email.');
+                return redirect()->route('manager.booked')->with([
+                    'alert' => 'success',
+                    'message' => 'Event canceled . However, could not send a confirmation email at the moment.'
+                ]);
             }
 
             // Redirect back or to a specific route
-            return redirect("manager/booked")->with('alert', 'Event has been canceled');
+            // return redirect("manager/booked")->with('alert', 'Event has been canceled');
+            return redirect()->route('manager.booked')->with([
+                'alert' => 'success',
+                'message' => 'Event has been canceled.'
+            ]);
         } else {
             // Redirect back or to a specific route with an error message
-            return redirect("manager/booked")->with('error', 'The event is not eligible for cancellation.');
+            // return redirect("manager/booked")->with('error', 'The event is not eligible for cancellation.');
+            return redirect()->route('manager.booked')->with([
+                'alert' => 'error',
+                'message' => 'The event is not eligible for cancellation.'
+            ]);
         }
     }
 
@@ -474,7 +562,7 @@ class ManagerAppointmensController extends Controller
 
 
             // Update appointment status to "cancelled"
-            $appointment->status = 'cancelled';
+            $appointment->status = 'mcancelled';
             $appointment->isread = "unread";
             $appointment->save();
 
@@ -519,11 +607,19 @@ class ManagerAppointmensController extends Controller
                 Log::error('Email could not be sent: ' . $e->getMessage());
                 
                 // Redirect back with an error message
-                return redirect()->route('manager.pending')->with('error', 'Failed to send confirmation email.');
+                // return redirect()->route('manager.pending')->with('error', 'Failed to send confirmation email.');
+                return redirect()->route('manager.pending')->with([
+                    'alert' => 'error',
+                    'message' => 'Event booked! reference number is ' . $appointment->reference . 'However, we could not send a confirmation email at the moment.'
+                ]);
             }
 
             // Redirect back or to a specific route
-            return redirect("manager/pending")->with('alert', 'Event has been canceled');
+            // return redirect("manager/pending")->with('alert', 'Event has been canceled');
+            return redirect()->route('manager.pending')->with([
+                'alert' => 'success',
+                'message' => 'Event booked! reference number is ' . $appointment->reference
+            ]);
     }
 
 
@@ -535,6 +631,20 @@ class ManagerAppointmensController extends Controller
 
         return view('manager.booked-edit', compact('packages', 'appointment'));
     }
+    public function detailspendingedit(string $appointment_id)
+    {
+        $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $appointment = Appointment::find($appointment_id);
+
+        return view('manager.pending-edit', compact('packages', 'appointment'));
+    }
+    public function detailscancellededit(string $appointment_id)
+    {
+        $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $appointment = Appointment::find($appointment_id);
+
+        return view('manager.cancelled-edit', compact('packages', 'appointment'));
+    }
     public function save(Request $request, string $appointment_id)
     {
         $request->validate([
@@ -544,6 +654,30 @@ class ManagerAppointmensController extends Controller
             'type' => 'required',
             'package_id' => 'required|exists:packages,package_id',
         ]);
+
+        // Check if the selected date is blocked
+        $blockedDateExists = BlockedDate::where('blocked_date', $request->edate)->exists();
+
+        if ($blockedDateExists) {
+            // Redirect back with an error message if the date is blocked
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The selected event date is blocked, please select another date.'
+            ]);
+        }
+
+        // Check if there are already 3 accepted event on the same date
+        $existingAppointments = Appointment::where('edate', $request->edate)
+                                            ->where('status', 'booked')
+                                            ->count();
+    
+        if ($existingAppointments >= 3) {
+            // Redirect back with an error message
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The selected event date is fully booked, please select other date.'
+            ]);
+        }
 
         $appointment = Appointment::findOrFail($appointment_id);
         
@@ -569,7 +703,10 @@ class ManagerAppointmensController extends Controller
 
 
         // Redirect back or to a success page
-        return redirect()->back()->with('alert', 'Event updated successfully!');
+        return redirect()->back()->with([
+            'alert' => 'success',
+            'message' => 'Event updated successfully!'
+        ]);
     }
 
     /**
@@ -607,7 +744,20 @@ class ManagerAppointmensController extends Controller
         // Optionally check if the status is something other than 'done' if necessary
         if ($appointment->status === 'done') {
             // You can redirect back or return an error message if deletion is not allowed
-            return redirect()->route('manager.pending')->with('error', 'Completed appointments cannot be deleted.');
+            // return redirect()->route('manager.pending')->with('error', 'Completed appointments cannot be deleted.');
+            return redirect()->route('manager.pending')->with([
+                'alert' => 'error',
+                'message' => 'Completed appointments cannot be deleted.'
+            ]);
+        }
+
+        // Check if the appointment date and time is in the past
+        if ($appointment->appointment_datetime > now()) {
+            // return redirect()->route('pending')->with('error', 'Future appointments cannot be deleted.');
+            return redirect()->route('manager.pending')->with([
+                'alert' => 'error',
+                'message' => 'Future appointments cannot be deleted.'
+            ]);
         }
 
         // Delete the appointment
@@ -617,13 +767,17 @@ class ManagerAppointmensController extends Controller
 
             $log = new ModelsLog();
             $log->user_id = Auth::id();
-            $log->action = 'Meeting Date Unblocked';
+            $log->action = 'Deleted';
             $log->description = $use->firstname . " " . $use->lastname . " Has deleted a meeting that either couldn't be completed or where the client did not attend. " ;
             $log->logdate = now();
             $log->save();
 
         // Redirect back or to another route with a success message
-        return redirect()->route('manager.pending')->with('success', 'Appointment deleted successfully.');
+        // return redirect()->route('manager.pending')->with('success', 'Appointment deleted successfully.');
+        return redirect()->route('manager.pending')->with([
+            'alert' => 'success',
+            'message' => 'Appointment deleted successfully.'
+        ]);
     }
 
     public function destroyMeeting(string $appointment_id)
@@ -634,7 +788,11 @@ class ManagerAppointmensController extends Controller
         // Optionally check if the status is something other than 'done' if necessary
         if ($appointment->status === 'done') {
             // You can redirect back or return an error message if deletion is not allowed
-            return redirect()->route('manager.cancelledMeeting')->with('error', 'Completed appointments cannot be deleted.');
+            // return redirect()->route('manager.cancelledMeeting')->with('error', 'Completed appointments cannot be deleted.');
+            return redirect()->route('manager.cancelledMeeting')->with([
+                'alert' => 'error',
+                'message' => 'Completed event cannot be deleted.'
+            ]);
         }
 
         // Delete the appointment
@@ -644,13 +802,17 @@ class ManagerAppointmensController extends Controller
 
             $log = new ModelsLog();
             $log->user_id = Auth::id();
-            $log->action = 'Meeting Date Unblocked';
+            $log->action = 'Deleted';
             $log->description = $use->firstname . " " . $use->lastname . " Has deleted a meeting that either couldn't be completed or where the client did not attend. " ;
             $log->logdate = now();
             $log->save();
 
         // Redirect back or to another route with a success message
-        return redirect()->route('manager.cancelledMeeting')->with('success', 'Appointment deleted successfully.');
+        // return redirect()->route('manager.cancelledMeeting')->with('success', 'Appointment deleted successfully.');
+        return redirect()->route('manager.cancelledMeeting')->with([
+            'alert' => 'success',
+            'message' => 'Appointment deleted successfully.'
+        ]);
     }
 
     public function block(Request $request)

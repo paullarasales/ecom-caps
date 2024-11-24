@@ -253,7 +253,7 @@
                             
                             <div class="md:col-span-5 text-right">
                                 <hr class="my-5 border-yellow-100">
-                                <input type="submit" name="submit" value="Submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                                <input type="submit" name="submit" value="Submit" class="bg-yellow-500 cursor-pointer hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
                             </div>
 
                             {{-- @foreach ($packages as $pk)
@@ -264,59 +264,60 @@
                     </div>
                 </div>
 
-                {{-- <hr class="my-5 border-yellow-100">
-
-                <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                    <div class="text-gray-600">
-                        <p class="font-medium text-lg">Meeting Details</p>
-                        <p>Please fill out all the fields.</p>
+                <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+                    <div class="flex flex-col items-center">
+                        <div id="loaderSpinner" class="loader border-t-4 border-yellow-500 rounded-full w-16 h-16 animate-spin"></div>
+                        <p class="text-white mt-4 font-semibold" id="loadingText">Your request is being processed</p>
                     </div>
-
-                    <div class="lg:col-span-2">
-                        <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-
-                            <div class="md:col-span-3">
-                                <label for="date">Meeting Date</label>
-                                <input type="date" name="adate" id="adate" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
-                            </div>
-                            <script>
-                                var today = new Date();
-                                var minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4);
-                                var minDateString = minDate.toISOString().split('T')[0];
-                                document.getElementById("adate").setAttribute('min', minDateString);
-                            </script>
-
-                            <div class="md:col-span-2">
-                                <label for="time">Meeting Time</label>
-                                <select name="atime" id="atime" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
-                                    <option value="10:00 am">10:00 am</option>
-                                    <option value="10:30 am">10:30 am</option>
-                                    <option value="11:00 am">11:00 am</option>
-                                    <option value="11:30 am">11:30 am</option>
-                                    <option value="12:00 pm">12:00 pm</option>
-                                    <option value="12:30 pm">12:30 pm</option>
-                                    <option value="1:00 pm">1:00 pm</option>
-                                    <option value="1:30 pm">1:30 pm</option>
-                                    <option value="2:00 pm">2:00 pm</option>
-                                    <option value="2:30 pm">2:30 pm</option>
-                                    <option value="3:00 pm">3:00 pm</option>
-                                    <option value="3:30 pm">3:30 pm</option>
-                                    <option value="4:00 pm">4:00 pm</option>
-                                    <option value="4:30 pm">4:30 pm</option>
-                                    <option value="5:00 pm">5:00 pm</option>
-                                    <option value="5:30 pm">5:30 pm</option>
-                                    <option value="6:00 pm">6:00 pm</option>
-                                    <option disabled selected></option>
-                                </select>
-                            </div>
-
-                            <div class="md:col-span-5 text-right">
-                                <input type="submit" name="submit" value="Submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-                            </div>
-
-                        </div>
-                    </div>
-                </div> --}}
+                </div>
+                
+                <!-- Styling for loading animation -->
+                <style>
+                    /* Spinner animation */
+                    .loader {
+                        border: 4px solid rgba(255, 255, 255, 0.3);
+                        border-top-color: #f59e0b; /* Yellow color */
+                        border-radius: 50%;
+                        width: 3rem;
+                        height: 3rem;
+                        animation: spin 1s linear infinite;
+                    }
+                
+                    @keyframes spin {
+                        0% {
+                            transform: rotate(0deg);
+                        }
+                        100% {
+                            transform: rotate(360deg);
+                        }
+                    }
+                </style>
+                
+                <!-- JavaScript to handle loading animation and form submission -->
+                <script>
+                    window.onload = function() {
+                        @if (session('alert'))
+                            // Show the loading overlay with the appropriate message
+                            document.getElementById('loadingOverlay').classList.remove('hidden');
+                            let alertType = "{{ session('alert') }}";
+                            let alertMessage = "{{ session('message') }}";
+                            
+                            // Set the message based on success or error
+                            if (alertType === 'success') {
+                                document.getElementById('loadingText').textContent = alertMessage;
+                                document.getElementById('loaderSpinner').classList.add('hidden');
+                            } else if (alertType === 'error') {
+                                document.getElementById('loadingText').textContent = alertMessage;
+                                document.getElementById('loaderSpinner').classList.add('hidden');
+                            }
+                
+                            // Hide the overlay after a few seconds
+                            setTimeout(function() {
+                                document.getElementById('loadingOverlay').classList.add('hidden');
+                            }, 3000); // Adjust time as needed
+                        @endif
+                    };
+                </script>
 
                 
             </div>
@@ -361,7 +362,7 @@
     }
 </script>
 
-@if(session('alert'))
+{{-- @if(session('alert'))
     <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
         <span>{{ session('alert') }}</span>
         <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
@@ -375,6 +376,6 @@
             <i class="fa-solid fa-times"></i>
         </button>
     </div>
-@endif
+@endif --}}
 
 </x-admin-layout>

@@ -100,6 +100,30 @@ class OwnerAppointmentsController extends Controller
             'package_id' => 'required|exists:packages,package_id',
         ]);
 
+        // Check if the selected date is blocked
+        $blockedDateExists = BlockedDate::where('blocked_date', $request->edate)->exists();
+
+        if ($blockedDateExists) {
+            // Redirect back with an error message if the date is blocked
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The selected event date is blocked, please select another date.'
+            ]);
+        }
+
+        // Check if there are already 3 accepted event on the same date
+        $existingAppointments = Appointment::where('edate', $request->edate)
+                                            ->where('status', 'booked')
+                                            ->count();
+    
+        if ($existingAppointments >= 3) {
+            // Redirect back with an error message
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The selected event date is fully booked, please select other date.'
+            ]);
+        }
+
         $appointment = Appointment::findOrFail($appointment_id);
         
         // Update appointment details
@@ -124,7 +148,10 @@ class OwnerAppointmentsController extends Controller
 
 
         // Redirect back or to a success page
-        return redirect()->back()->with('alert', 'Event updated successfully!');
+        return redirect()->back()->with([
+            'alert' => 'success',
+            'message' => 'Event updated successfully!'
+        ]);
     }
 
 

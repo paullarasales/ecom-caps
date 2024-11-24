@@ -1,7 +1,7 @@
 <x-manager-layout>
 
     <div class="flex ml-3">
-        <a href="javascript:window.history.back();">
+        <a href="{{route('manager.bookedView', $appointment->appointment_id)}}">
             <div class="text-xl">
                 <i class="fa-solid fa-arrow-left"></i>
             </div>
@@ -162,6 +162,70 @@
                                 <div class="md:col-span-5 text-right">
                                     <input type="submit" name="submit" value="Submit" class="bg-yellow-500 cursor-pointer hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
                                 </div>
+
+                                                <!-- Loading animation overlay -->
+                <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+                    <div class="flex flex-col items-center">
+                        <div id="loaderSpinner" class="loader border-t-4 border-yellow-500 rounded-full w-16 h-16 animate-spin"></div>
+                        <p class="text-white mt-4 font-semibold" id="loadingText">Your request is being processed</p>
+                    </div>
+                </div>
+
+
+                <!-- Styling for loading animation -->
+                <style>
+                    /* Spinner animation */
+                    .loader {
+                        border: 4px solid rgba(255, 255, 255, 0.3);
+                        border-top-color: #f59e0b; /* Yellow color */
+                        border-radius: 50%;
+                        width: 3rem;
+                        height: 3rem;
+                        animation: spin 1s linear infinite;
+                    }
+
+                    @keyframes spin {
+                        0% {
+                            transform: rotate(0deg);
+                        }
+                        100% {
+                            transform: rotate(360deg);
+                        }
+                    }
+                </style>
+
+                <script>
+                    // Show the loading overlay when the form is submitted
+                    function showLoadingOverlay() {
+                        document.getElementById('loadingOverlay').classList.remove('hidden');
+                    }
+
+                    window.onload = function() {
+                        @if (session('alert'))
+                            // Only show the overlay if there's an alert
+                            const alertType = "{{ session('alert') }}";
+                            const alertMessage = "{{ session('message') }}";
+
+                            // Ensure the overlay is visible
+                            document.getElementById('loadingOverlay').classList.remove('hidden');
+                            const loadingTextElement = document.getElementById('loadingText');
+                            const loaderSpinner = document.getElementById('loaderSpinner');
+
+                            // Set the alert message text
+                            loadingTextElement.textContent = alertMessage;
+
+                            // Hide the spinner if alert is success or error
+                            if (alertType === 'success' || alertType === 'error') {
+                                loaderSpinner.classList.add('hidden');
+                            }
+
+                            // Hide the overlay after 3 seconds
+                            setTimeout(function() {
+                                document.getElementById('loadingOverlay').classList.add('hidden');
+                            }, 3000); // Adjust the time as needed
+                        @endif
+                    };
+                </script>
                                 
                                 
     
@@ -223,12 +287,12 @@
     
 
     @if(session('alert'))
-    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
+    {{-- <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
         <span>{{ session('alert') }}</span>
         <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
             <i class="fa-solid fa-times"></i>
         </button>
-    </div>
+    </div> --}}
 @elseif(session('error'))
     <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
         <span>{{ session('error') }}</span>

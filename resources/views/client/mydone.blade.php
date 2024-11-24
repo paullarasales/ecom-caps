@@ -8,11 +8,14 @@
 
     @if ($doneAppointments->isEmpty()) 
 
-    <div class="text-center py-4 px-6">
-        <h2 class="font-heading bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-64 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
-            You have no done events
-        </h2>
+    <div class="h-[50vh] flex items-center justify-center">
+        <div class="text-center py-4 px-6">
+            <h2 class="font-heading bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-64 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
+                You have no done events
+            </h2>
+        </div>
     </div>
+    
     @else
         {{-- <div>
             <h1>Hello Client</h1>
@@ -132,7 +135,7 @@
         </div>           
         @endforeach
         <div class="flex justify-center">
-            <div class="mt-6 text-center lg:text-left">
+            <div class="mt-6 mb-20 text-center lg:text-left">
                 <a href="{{ route('book-form') }}" class="bg-yellow-200 rounded-3xl py-3 px-8 font-medium inline-block mr-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t">Book Again</a>
             </div>
         </div>

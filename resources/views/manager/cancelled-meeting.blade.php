@@ -132,6 +132,62 @@
         </nav>
     </div>
 
+                                <!-- Loading animation overlay -->
+<div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
+    <div class="flex flex-col items-center">
+        <div id="loaderSpinner" class="loader border-t-4 border-yellow-500 rounded-full w-16 h-16 animate-spin"></div>
+        <p class="text-white mt-4 font-semibold" id="loadingText">Your request is being processed</p>
+    </div>
+</div>
+
+<!-- Styling for loading animation -->
+<style>
+    .loader {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #f59e0b; /* Yellow color */
+        border-radius: 50%;
+        width: 3rem;
+        height: 3rem;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<script>
+
+    // Display overlay based on session messages
+    window.onload = function () {
+        @if (session('alert'))
+            const alertType = "{{ session('alert') }}"; // e.g., success, error
+            const alertMessage = "{{ session('message') }}";
+
+            // Make the overlay visible and update the message
+            loadingOverlay.classList.remove('hidden');
+            loadingText.textContent = alertMessage;
+
+            // Hide the spinner for success or error alerts
+            const loaderSpinner = document.getElementById('loaderSpinner');
+            if (alertType === 'success' || alertType === 'error') {
+                loaderSpinner.classList.add('hidden');
+            }
+
+            // Hide the overlay after 3 seconds
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+            }, 3000);
+        @endif
+    };
+</script>
+
+
 
 @if(session('alert'))
     {{-- <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">

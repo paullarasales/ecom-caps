@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('packages', function (Blueprint $table) {
             $table->id('package_id');
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('packagename')->nullable();
+            $table->string('packagename')->unique()->nullable();
             $table->string('packagedesc')->nullable();
             $table->string('packagephoto')->nullable();
             $table->string('packagetype')->nullable();

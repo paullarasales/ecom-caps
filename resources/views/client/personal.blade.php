@@ -140,19 +140,19 @@
     
                                 <div class="md:col-span-5">
                                     <label for="address">Any Valid ID</label>
-                                    <input id="picture" name="photo" required type="file" accept=".png, .jpg, .jpeg" class="mt-1 block w-full items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150" value="" />
+                                    <input id="picture" name="photo" required type="file" accept=".png, .jpg, .jpeg" class="mt-1 cursor-pointer block w-full items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition ease-in-out duration-150" value="" />
                                 </div>
 
                                 <br>
                                 <div class="flex items-center md:col-span-5">
-                                    <input id="link-checkbox" required type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <input id="link-checkbox" required type="checkbox" value="" class="w-4 h-4 cursor-pointer text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                     <label for="link-checkbox" class="ms-2 text-sm font-medium text-gray-900 ">I agree with the <a href="#" class="text-gray-800 dark:text-blue-500 hover:underline" id="terms-link">terms and conditions</a>.</label>
                                 </div>
 
                                 
     
                                 <div class="md:col-span-5 text-right">
-                                    <input type="submit" name="submit" value="Submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                                    <input type="submit" name="submit" value="Submit" onclick="showLoadingOverlay()" class="bg-yellow-500 cursor-pointer hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
                                 </div>
     
                             </div>
@@ -163,6 +163,70 @@
         </div>
     </div>
     </form>
+
+    <!-- Loading animation overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+        <div class="flex flex-col items-center">
+            <div id="loaderSpinner" class="loader border-t-4 border-yellow-500 rounded-full w-16 h-16 animate-spin"></div>
+            <p class="text-white mt-4 font-semibold" id="loadingText">Your request is being processed</p>
+        </div>
+    </div>
+
+
+    <!-- Styling for loading animation -->
+    <style>
+        /* Spinner animation */
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #f59e0b; /* Yellow color */
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    <script>
+        // Show the loading overlay when the form is submitted
+        function showLoadingOverlay() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        window.onload = function() {
+            @if (session('alert'))
+                // Only show the overlay if there's an alert
+                const alertType = "{{ session('alert') }}";
+                const alertMessage = "{{ session('message') }}";
+
+                // Ensure the overlay is visible
+                document.getElementById('loadingOverlay').classList.remove('hidden');
+                const loadingTextElement = document.getElementById('loadingText');
+                const loaderSpinner = document.getElementById('loaderSpinner');
+
+                // Set the alert message text
+                loadingTextElement.textContent = alertMessage;
+
+                // Hide the spinner if alert is success or error
+                if (alertType === 'success' || alertType === 'error') {
+                    loaderSpinner.classList.add('hidden');
+                }
+
+                // Hide the overlay after 3 seconds
+                setTimeout(function() {
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                }, 3000); // Adjust the time as needed
+            @endif
+        };
+    </script>
 
     <div id="terms-modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen">
@@ -225,4 +289,20 @@
             modal.classList.add("hidden");
         }
     </script>
+
+@if(session('alert'))
+{{-- <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
+    <span>{{ session('alert') }}</span>
+    <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
+        <i class="fa-solid fa-times"></i>
+    </button>
+</div> --}}
+@elseif(session('error'))
+<div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
+    <span>{{ session('error') }}</span>
+    <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
+        <i class="fa-solid fa-times"></i>
+    </button>
+</div>
+@endif
 </x-app-layout>

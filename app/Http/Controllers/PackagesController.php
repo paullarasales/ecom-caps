@@ -40,8 +40,8 @@ class PackagesController extends Controller
     {
         $request->validate([
             'packagephoto' => 'required|image|mimes:png,jpg,jpeg,webp',
-            'packagename' => 'required',
-            'packagedesc' => 'required|numeric',
+            'packagename' => 'required|unique:packages,packagename',
+            'packageprice' => 'required|numeric',
         ]);
 
         if ($file = $request->file('packagephoto')) {
@@ -53,7 +53,7 @@ class PackagesController extends Controller
         
             $package = new Package();
             $package->packagename = $request->packagename;
-            $package->packagedesc = $request->packagedesc;
+            $package->packagedesc = $request->packageprice;
             $package->user_id = Auth::id();
             $package->packagephoto = $path . $filename; // Save the image path
             $package->packagetype = "Normal";
@@ -292,8 +292,8 @@ class PackagesController extends Controller
     {
         $request->validate([
             'packagephoto' => 'nullable|image|mimes:png,jpg,jpeg,webp',
-            'packagename' => 'required',
-            'packagedesc' => 'required|numeric',
+            'packagename' => 'required|unique:packages,packagename',
+            'packageprice' => 'required|numeric',
         ]);
     
         // Find the package by ID
@@ -317,7 +317,7 @@ class PackagesController extends Controller
     
         // Update the other fields
         $package->packagename = $request->packagename;
-        $package->packagedesc = $request->packagedesc;
+        $package->packagedesc = $request->packageprice;
         $package->user_id = Auth::id();
     
         // Save the changes
@@ -338,8 +338,8 @@ class PackagesController extends Controller
     {
         $request->validate([
             'packagephoto' => 'nullable|image|mimes:png,jpg,jpeg,webp',
-            'packagename' => 'required',
-            'packagedesc' => 'required|numeric',
+            'packagename' => 'required|unique:packages,packagename',
+            'packageprice' => 'required|numeric',
         ]);
     
         // Find the package by ID
@@ -363,7 +363,7 @@ class PackagesController extends Controller
     
         // Update the other fields
         $package->packagename = $request->packagename;
-        $package->packagedesc = $request->packagedesc;
+        $package->packagedesc = $request->packageprice;
         $package->user_id = Auth::id();
     
         // Save the changes
@@ -385,8 +385,8 @@ class PackagesController extends Controller
     {
         $request->validate([
             'packagephoto' => 'nullable|image|mimes:png,jpg,jpeg,webp',
-            'packagename' => 'required',
-            'packagedesc' => 'required|numeric',
+            'packagename' => 'required|unique:packages,packagename',
+            'packageprice' => 'required|numeric',
         ]);
     
         // Find the package by ID
@@ -410,7 +410,7 @@ class PackagesController extends Controller
     
         // Update the other fields
         $package->packagename = $request->packagename;
-        $package->packagedesc = $request->packagedesc;
+        $package->packagedesc = $request->packageprice;
         $package->user_id = Auth::id();
     
         // Save the changes

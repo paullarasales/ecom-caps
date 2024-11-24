@@ -53,6 +53,7 @@ class CustomPackagesController extends Controller
             'foodpackitem' => 'required|array',
             'foodpackquantity' => 'required|array',
             'foodcartselected' => 'sometimes|array',
+            'packagename' => 'required|unique:packages,packagename',
         ]);
 
         // Log the request data for debugging

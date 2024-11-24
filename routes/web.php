@@ -683,15 +683,34 @@ Route::put('/appointment/client/{appointment_id}/cancel/meeting', [AppointmentCo
 
 
 //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT //DETAILS-EDIT 
-Route::get('/appointment/{appointment_id}/details-edit', [AppointmentController::class, 'detailsedit'])
+//ADMIN
+Route::get('/appointment/{appointment_id}/booked/details-edit', [AppointmentController::class, 'detailsedit'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('details.edit');
 
-Route::get('/appointment/manager/{appointment_id}/details-edit', [ManagerAppointmensController::class, 'detailsedit'])
+Route::get('/appointment/{appointment_id}/pending/details-edit', [AppointmentController::class, 'detailspendingedit'])
+    ->middleware(['auth', 'verified', 'admin'])
+    ->name('pending.details.edit');
+
+Route::get('/appointment/{appointment_id}/cancelled/details-edit', [AppointmentController::class, 'detailscancellededit'])
+    ->middleware(['auth', 'verified', 'admin'])
+    ->name('cancelled.details.edit');
+
+//MANAGER
+Route::get('/appointment/manager/{appointment_id}/booked/details-edit', [ManagerAppointmensController::class, 'detailsedit'])
     ->middleware(['auth', 'verified', 'manager'])
     ->name('manager.details.edit');
 
-Route::get('/appointment/owner/{appointment_id}/details-edit', [OwnerAppointmentsController::class, 'detailsedit'])
+Route::get('/appointment/manager/{appointment_id}/pending/details-edit', [ManagerAppointmensController::class, 'detailspendingedit'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.pending.details.edit');
+
+Route::get('/appointment/manager/{appointment_id}/cancelled/details-edit', [ManagerAppointmensController::class, 'detailscancellededit'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.cancelled.details.edit');
+
+//OWNER
+Route::get('/appointment/owner/{appointment_id}/booked/details-edit', [OwnerAppointmentsController::class, 'detailsedit'])
     ->middleware(['auth', 'verified', 'owner'])
     ->name('owner.details.edit');
 

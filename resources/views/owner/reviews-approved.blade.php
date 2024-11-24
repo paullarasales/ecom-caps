@@ -84,7 +84,7 @@
 
                             </div>
                             <div class="flex justify-end">
-                                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:outline-none focus:ring-4 focus:ring-yellow-300">
+                                <button type="submit" onclick="showLoadingOverlay()" class="px-4 py-2 text-sm font-medium text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:outline-none focus:ring-4 focus:ring-yellow-300">
                                     Submit Response
                                 </button>
                             </div>
@@ -98,6 +98,69 @@
         <p class="text-center text-gray-600">No approved reviews at the moment.</p>
     @endforelse
 
+    <!-- Loading animation overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+        <div class="flex flex-col items-center">
+            <div id="loaderSpinner" class="loader border-t-4 border-yellow-500 rounded-full w-16 h-16 animate-spin"></div>
+            <p class="text-white mt-4 font-semibold" id="loadingText">Your request is being processed</p>
+        </div>
+    </div>
+
+
+    <!-- Styling for loading animation -->
+    <style>
+        /* Spinner animation */
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #f59e0b; /* Yellow color */
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    <script>
+        // Show the loading overlay when the form is submitted
+        function showLoadingOverlay() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        window.onload = function() {
+            @if (session('alert'))
+                // Only show the overlay if there's an alert
+                const alertType = "{{ session('alert') }}";
+                const alertMessage = "{{ session('message') }}";
+
+                // Ensure the overlay is visible
+                document.getElementById('loadingOverlay').classList.remove('hidden');
+                const loadingTextElement = document.getElementById('loadingText');
+                const loaderSpinner = document.getElementById('loaderSpinner');
+
+                // Set the alert message text
+                loadingTextElement.textContent = alertMessage;
+
+                // Hide the spinner if alert is success or error
+                if (alertType === 'success' || alertType === 'error') {
+                    loaderSpinner.classList.add('hidden');
+                }
+
+                // Hide the overlay after 3 seconds
+                setTimeout(function() {
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                }, 3000); // Adjust the time as needed
+            @endif
+        };
+    </script>
 
     <!-- Modal -->
     <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden bg-gray-800 bg-opacity-50">

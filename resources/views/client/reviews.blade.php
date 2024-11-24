@@ -69,7 +69,10 @@
         
                 <footer class="flex items-center px-6 py-4 space-x-4 text-white bg-gray-500 justify-between">    
                     <div>
-                        <p class="text-md font-bold">{{ $review->user->firstname . ' ' . $review->user->lastname }}</p>
+                        <p class="text-md font-bold">
+                            {{ substr($review->user->firstname, 0, 1) . str_repeat('*', strlen($review->user->firstname) - 1) . ' ' . substr($review->user->lastname, 0, 1) . str_repeat('*', strlen($review->user->lastname) - 1) }}
+                        </p>
+                        
                         <a href="" rel="noopener" class="text-sm text-gray-200">
                             {{ $review->created_at->format('F d, Y') }}
                         </a>
@@ -88,7 +91,7 @@
                 <div class="flex items-center px-6 py-4 space-x-4 text-white bg-gray-500 justify-between">
                     <p class="text-sm text-gray-200">
                         <span class="text-gray-200">Event: </span>
-                        {{ \Carbon\Carbon::parse($review->appointment->edate)->format('F j, Y') . ' at ' . $review->appointment->location }}
+                        {{ \Carbon\Carbon::parse($review->appointment->edate)->format('F j, Y')}}
                     </p>
                     {{-- <form action="{{ route('reviews.pending', $review->review_id) }}" method="POST">
                         @csrf
@@ -100,15 +103,17 @@
                         </button>                          
                     </form> --}}
                 </div>
-                <div class="bg-gray-500">
-                    <div class="bg-gray-100 m-5 p-5 rounded-md">
-                        <h1 class="text-justify">
-                            <span class="text-md text-yellow-600 font-semibold">The Siblings Catering Services: </span>
-                            {!! nl2br(e($review->response)) !!}
-                        </h1>
-                        
+                @if(!empty($review->response))
+                    <div class="bg-gray-500">
+                        <div class="bg-gray-100 m-5 p-5 rounded-md">
+                            <h1 class="text-justify">
+                                <span class="text-md text-yellow-600 font-semibold">The Siblings Catering Services: </span>
+                                {!! nl2br(e($review->response)) !!}
+                            </h1>
+                        </div>
                     </div>
-                </div>
+                @endif
+
             </blockquote>
         </div>
     @empty

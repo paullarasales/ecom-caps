@@ -7,6 +7,8 @@ use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Appointment;
 use App\Models\Log as Modelslog;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class ReviewController extends Controller
 {
@@ -103,7 +105,11 @@ class ReviewController extends Controller
             ->first();
 
         if ($existingReview) {
-        return redirect()->back()->with('error', 'You have already submitted a review for this appointment.');
+        // return redirect()->back()->with('error', 'You have already submitted a review for this appointment.');
+        return redirect()->back()->with([
+            'alert' => 'error',
+            'message' => 'You have already submitted a review for this appointment.'
+        ]);
         }
 
 
@@ -131,7 +137,11 @@ class ReviewController extends Controller
         $review->appointment_id = $request->appointment_id; // Ensure you pass appointment_id in your form
         $review->save();
 
-        return redirect()->back()->with('alert', 'Review submitted successfully!');
+        // return redirect()->back()->with('alert', 'Review submitted successfully!');
+        return redirect()->back()->with([
+            'alert' => 'success',
+            'message' => 'Review submitted successfully!'
+        ]);
     }
 
 
@@ -150,12 +160,50 @@ class ReviewController extends Controller
 
             $log = new ModelsLog();
             $log->user_id = Auth::id();
-            $log->action = 'Event Date Blocked';
+            $log->action = 'Responded';
             $log->description =  $use->firstname . " " . $use->lastname . " Has responded to a client review ";
             $log->logdate = now();
             $log->save();
 
-        return redirect()->back()->with('alert', 'Response Submitted successfully!');
+        $user = $review->user;
+
+            // Create the email content
+        $emailContent = "
+        <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                    <h1 style='color: #333;'>The Siblings Catering Services responed to your review</h1>
+                    <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                    <p><strong>Response: </strong>{$review->response}</p>
+                    <p>Thank you for choosing The Siblings Catering Services. We look forward on making your next event wonderful.</p>
+                    <p style='color: #555;'>Thank you for choosing our service!</p>
+        </div>
+        ";
+
+        try {
+            // Send the email
+            if (!empty($user->email)) {
+                Mail::send([], [], function ($message) use ($user, $emailContent) {
+                    $message->to($user->email)
+                            ->subject('The Siblings Catering Services responed to your review')
+                            ->html($emailContent);
+                });
+            }
+        } catch (\Exception $e) {
+            // Log the error or handle it
+            Log::error('Email could not be sent: ' . $e->getMessage());
+            
+            // Redirect back with an error message
+            // return redirect()->route('pending')->with('error', 'Failed to send confirmation email.');
+            return redirect()->route('pending')->with([
+                'alert' => 'success',
+                'message' => 'Event Successfully Booked. However, we could not send a confirmation email at the moment.'
+            ]);
+        }
+
+        // return redirect()->back()->with('alert', 'Response Submitted successfully!');
+        return redirect()->back()->with([
+            'alert' => 'success',
+            'message' => 'Response Submitted successfully!'
+        ]);
     }
 
     public function managerresponse(Request $request, $review_id)
@@ -178,7 +226,46 @@ class ReviewController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->back()->with('alert', 'Response Submitted successfully!');
+            $user = $review->user;
+
+            // Create the email content
+        $emailContent = "
+        <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                    <h1 style='color: #333;'>The Siblings Catering Services responed to your review</h1>
+                    <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                    <p><strong>Response: </strong>{$review->response}</p>
+                    <p>Thank you for choosing The Siblings Catering Services. We look forward on making your next event wonderful.</p>
+                    <p style='color: #555;'>Thank you for choosing our service!</p>
+        </div>
+        ";
+
+        try {
+            // Send the email
+            if (!empty($user->email)) {
+                Mail::send([], [], function ($message) use ($user, $emailContent) {
+                    $message->to($user->email)
+                            ->subject('The Siblings Catering Services responed to your review')
+                            ->html($emailContent);
+                });
+            }
+        } catch (\Exception $e) {
+            // Log the error or handle it
+            Log::error('Email could not be sent: ' . $e->getMessage());
+            
+            // Redirect back with an error message
+            // return redirect()->route('pending')->with('error', 'Failed to send confirmation email.');
+            return redirect()->route('pending')->with([
+                'alert' => 'success',
+                'message' => 'Event Successfully Booked. However, we could not send a confirmation email at the moment.'
+            ]);
+        }
+
+        // return redirect()->back()->with('alert', 'Response Submitted successfully!');
+        return redirect()->back()->with([
+            'alert' => 'success',
+            'message' => 'Response Submitted successfully!'
+        ]);
+
     }
 
     public function ownerresponse(Request $request, $review_id)
@@ -201,7 +288,46 @@ class ReviewController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->back()->with('alert', 'Response Submitted successfully!');
+            $user = $review->user;
+
+            // Create the email content
+        $emailContent = "
+        <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                    <h1 style='color: #333;'>The Siblings Catering Services responed to your review</h1>
+                    <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                    <p><strong>Response: </strong>{$review->response}</p>
+                    <p>Thank you for choosing The Siblings Catering Services. We look forward on making your next event wonderful.</p>
+                    <p style='color: #555;'>Thank you for choosing our service!</p>
+        </div>
+        ";
+
+        try {
+            // Send the email
+            if (!empty($user->email)) {
+                Mail::send([], [], function ($message) use ($user, $emailContent) {
+                    $message->to($user->email)
+                            ->subject('The Siblings Catering Services responed to your review')
+                            ->html($emailContent);
+                });
+            }
+        } catch (\Exception $e) {
+            // Log the error or handle it
+            Log::error('Email could not be sent: ' . $e->getMessage());
+            
+            // Redirect back with an error message
+            // return redirect()->route('pending')->with('error', 'Failed to send confirmation email.');
+            return redirect()->route('pending')->with([
+                'alert' => 'success',
+                'message' => 'Event Successfully Booked. However, we could not send a confirmation email at the moment.'
+            ]);
+        }
+
+        // return redirect()->back()->with('alert', 'Response Submitted successfully!');
+        return redirect()->back()->with([
+            'alert' => 'success',
+            'message' => 'Response Submitted successfully!'
+        ]);
+
     }
 
 

@@ -54,10 +54,12 @@
                             Edit
                             <i class="fa-regular fa-pen-to-square ml-3"></i>
                         </a>
+                        @if ($user->usertype == 'user')
                         <a href="{{ route('verify.edit', $user->id) }}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Verify
                             <i class="fa-regular fa-circle-check ml-3"></i>
                         </a>
+                        @endif
                         {{-- <a href="{{route('usertype-edit', $user->id)}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3">Edit</a>
                         <a href="{{ route('verify.edit', $user->id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-10">Verify</a> --}}
                         {{-- <a href="" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Deactivate</a> --}}

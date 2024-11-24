@@ -253,7 +253,7 @@
                             
                             <div class="md:col-span-5 text-right">
                                 <hr class="my-5 border-yellow-100">
-                                <input type="submit" name="submit" value="Submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                                <input type="submit" name="submit" value="Submit" class="bg-yellow-500 cursor-pointer hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
                             </div>
 
                             {{-- @foreach ($packages as $pk)
