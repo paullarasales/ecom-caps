@@ -108,11 +108,12 @@
                     .forEach(user => {
                         const userElement = document.createElement('div');
                         userElement.className = 'relative user-list-item capitalize p-2 rounded-md cursor-pointer transition duration-300 ease-in-out hover:bg-gray-200';
-                        userElement.textContent = user.name;
-                        userElement.dataset.userId = user.id;
                         const displayName = (user.firstname && user.lastname) 
-                        ? `${user.firstname} ${user.lastname}` 
-                        : user.name;
+                            ? `${user.firstname} ${user.lastname}` 
+                            : user.name;
+
+                        userElement.textContent = displayName; // Use displayName here
+                        userElement.dataset.userId = user.id;
 
                         // Create the unread count badge
                         const unreadCount = unreadCountsMap[user.id] || 0;

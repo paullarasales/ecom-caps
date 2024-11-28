@@ -1,7 +1,7 @@
 <x-manager-layout>
 
     <div class="absolute">
-        <a href="javascript:window.history.back();">
+        <a href="{{route('managershowpackage', $sample->package_id)}}">
             <i class="fa-solid fa-arrow-left float-left ml-5 text-xl"></i>
         </a>
     </div>
@@ -14,17 +14,61 @@
 
     </div>
 
-    @if ($errors->any())
+    {{-- @if ($errors->any())
     <ul class="alert alert-warning">
         @foreach ($errors->all() as $error)
             <li>{{$error}}</li>
         @endforeach
     </ul>
-@endif
+@endif --}}
 
 <form action="{{route('manager.updatesample', $sample->sample_id)}}" method="POST" enctype="multipart/form-data">
     @csrf
     @method("PUT")
+    <script>
+        // Check if there are validation errors
+        var errors = @json($errors->any()); // Check if there are any errors
+        var errorMessages = @json($errors->all()); // Get the array of error messages
+    
+        // Show SweetAlert with validation errors if there are any
+        if (errors) {
+            Swal.fire({
+                title: 'Validation Errors',
+                icon: 'error',
+                html: `
+                    <ul style="text-align: left; color: #E07B39;">
+                        ${errorMessages.map(error => `<li>${error}</li>`).join('')}
+                    </ul>
+                `,
+                confirmButtonText: 'Close',
+                customClass: {
+                    popup: 'custom-popup-error',
+                    title: 'custom-title-error',
+                    confirmButton: 'custom-button-error'
+                }
+            });
+        }
+    </script>
+    
+    <style>
+        /* SweetAlert Error Popup Customization */
+        .custom-popup-error {
+            background-color: #FDEDEC; /* Light red background */
+            border: 2px solid #E07B39; /* Red border */
+        }
+        .custom-title-error {
+            color: #E07B39; /* Red title text */
+            font-weight: bold;
+        }
+        .custom-button-error {
+            background-color: #E07B39 !important; /* Red button background */
+            color: white !important; /* White button text */
+            border-radius: 5px;
+        }
+        .custom-button-error:hover {
+            background-color: #C0392B !important; /* Darker red on hover */
+        }
+    </style>
 <div class="p-6 flex items-center justify-center">
     <div class="container max-w-screen-lg mx-auto">
         <div>
@@ -45,11 +89,19 @@
                                 <script>
                                     function limitFiles(input, maxFiles) {
                                         if (input.files.length > maxFiles) {
-                                            alert("You can only select a maximum of " + maxFiles + " files.");
-                                            input.value = ''; // Clear the selected files
+                                            // Prevent further file selection
+                                            input.value = ''; 
+                                
+                                            // Show SweetAlert
+                                            Swal.fire({
+                                                icon: 'warning',
+                                                title: 'File Limit Exceeded',
+                                                text: 'You can only select a maximum of ' + maxFiles + ' files.',
+                                                confirmButtonText: 'OK'
+                                            });
                                         }
                                     }
-                                    </script>
+                                </script>
                             </div>
 
                             <div class="md:col-span-5 text-right">
@@ -65,20 +117,70 @@
 </div>
 </form>
     
-@if(session('alert'))
-<div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
-    <span>{{ session('alert') }}</span>
-    <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
-        <i class="fa-solid fa-times"></i>
-    </button>
-</div>
-@elseif(session('error'))
-<div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
-    <span>{{ session('error') }}</span>
-    <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
-        <i class="fa-solid fa-times"></i>
-    </button>
-</div>
+@if (session('success'))
+<script>
+    Swal.fire({
+        title: 'Success!',
+        text: '{{ session('success') }}',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        customClass: {
+        popup: 'custom-popup',
+        title: 'custom-title',
+        confirmButton: 'custom-button'
+    }
+    });
+</script>
 @endif
+
+@if (session('error'))
+<script>
+    Swal.fire({
+        title: 'Error!',
+        text: '{{ session('error') }}',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        customClass: {
+            popup: 'custom-popup-error',
+            title: 'custom-title-error',
+            confirmButton: 'custom-button-error'
+        }
+    });
+</script>
+@endif
+
+<style>
+/* Success Alert Button */
+.custom-button {
+        background-color: #FFCF81 !important; /* Orange button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button:hover {
+        background-color: #E07B39 !important; /* Darker orange on hover */
+    }
+
+    /* Error Alert Button */
+    .custom-button-error {
+        background-color: #E07B39 !important; /* Red button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button-error:hover {
+        background-color: #C0392B !important; /* Darker red on hover */
+    }
+
+    /* Customize Popup Background for Error */
+    .custom-popup-error {
+        background-color: #FDEDEC; /* Light red background */
+        border: 2px solid #E07B39; /* Red border */
+    }
+
+    /* Customize Title for Error */
+    .custom-title-error {
+        color: #E07B39; /* Red text for title */
+        font-weight: bold;
+    }
+</style>
 </x-manager-layout>
     

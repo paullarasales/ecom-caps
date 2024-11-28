@@ -16,16 +16,26 @@
     </div>
 
     <div class="flex justify-center">
-        <div class="w-full max-w-md  dark:bg-gray-700 p-5 rounded-2xl outline">
+        <div class="w-full max-w-md  dark:bg-gray-200 p-5 rounded-2xl outline">
             <form action="{{ route('verify.update', $user->id) }}" method="post" onsubmit="showLoadingOverlay()">
                 @csrf
                 @method("PUT")
 
-                <label class="text-gray-300 mt-2" for="">ID Verification</label>
+                <label class="text-gray-900 mt-2" for="">ID Verification</label>
+                
+                <div class="flex justify-center items-center">
+                    @if ($user->photo)
+                        {{-- <a href="{{ asset($user->photo) }}" target="_blank">
+                            <img src="{{ asset($user->photo) }}" alt="ID Photo" class="h-12 w-12 rounded-full">
+                        </a> --}}
+                        <img src="{{ asset($user->photo) }}" alt="Featured image" class="h-32 w-32 rounded-full cursor-pointer"
+                                            onclick="openModal('{{ asset($user->photo) }}')">
+                    @endif
+                </div>
 
-                <h1 class="text-gray-300 my-2 text-xl capitalize">{{ $user->firstname ?? 'N/A' }} {{$user->lastname}}</h1>
+                <h1 class="text-gray-900 my-2 text-xl capitalize">{{ $user->firstname ?? 'N/A' }} {{$user->lastname}}</h1>
 
-                <select name="verifystatus" id="verifystatus" class="text-gray-300 rounded-md h-12 w-full mb-1 dark:bg-gray-800 focus:border-yellow-500 focus:ring-yellow-500">
+                <select name="verifystatus" id="verifystatus" class="text-gray-900 rounded-md h-12 w-full mb-1 dark:bg-gray-400 focus:border-yellow-500 focus:ring-yellow-500">
                     <option value="unverified" {{ $user->verifystatus === 'unverified' ? 'selected' : '' }}>Unverified</option>
                     <option value="verified" {{ $user->verifystatus === 'verified' ? 'selected' : '' }}>Verified</option>
                 </select>
@@ -37,6 +47,45 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden bg-gray-800 bg-opacity-50">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="relative max-w-md max-h-[75vh] bg-white  rounded-lg shadow-lg">
+                <button class="absolute top-0 right-0 m-4 text-white" onclick="closeModal()">
+                    <i class="fa-solid text-black fa-xmark text-3xl"></i>
+                </button>
+                <div id="modal-content" class="border rounded-lg border-gray-700"></div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    </div>
+    <script>
+        function openModal(imageSrc) {
+            var modal = document.getElementById('modal');
+            var modalContent = document.getElementById('modal-content');
+            modalContent.innerHTML = '<img src="' + imageSrc + '" class="max-w-full max-h-full rounded-lg">';
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+    
+            // Close modal when clicked anywhere outside of the modal content
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+    
+        function closeModal() {
+            var modal = document.getElementById('modal');
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+    </script>
+
+    
                     <!-- Loading animation overlay -->
 <!-- Loading animation overlay -->
 <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">

@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Sample;
 use Illuminate\Http\Request;
 use App\Models\Post;
-use App\Models\Log;
+use App\Models\Log as ModelsLog;
 use App\Models\Package;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
@@ -45,10 +46,12 @@ class SampleController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'package_id' => 'required|exists:packages,package_id',
             'sampleimages.*' => 'required|image|mimes:png,jpg,jpeg,webp',
         ]);
+
 
         $imageData = [];
         if ($files = $request->file('sampleimages')) {
@@ -63,21 +66,23 @@ class SampleController extends Controller
             }
         }
 
+
         $sample = new Sample();
         $sample->package_id = $request->package_id;
         $sample->samplepath = $imageData; // Save all image paths as an array
         $sample->save();
 
+
         $user = Auth::user();
 
-            $log = new Log();
+            $log = new ModelsLog();
             $log->user_id = Auth::id();
             $log->action = 'Added Sample Photos';
             $log->description = $user->firstname . " " . $user->lastname . " added sample photos to a package";
             $log->logdate = now();
             $log->save();
 
-            return redirect()->back()->with('alert', 'Uploaded successfully!');
+            return redirect()->back()->with('success', 'Uploaded successfully!');
     }
 
     /**
@@ -146,14 +151,14 @@ class SampleController extends Controller
 
         $user = Auth::user();
 
-            $log = new Log();
+            $log = new ModelsLog();
             $log->user_id = Auth::id();
             $log->action = 'Updated Sample Photos';
             $log->description = $user->firstname . " " . $user->lastname . " added sample photos to a package";
             $log->logdate = now();
             $log->save();
 
-            return redirect()->back()->with('alert', 'Updated successfully!');
+            return redirect()->back()->with('success', 'Updated successfully!');
     }
 
     public function updatemanager(Request $request, string $sample_id)
@@ -192,14 +197,14 @@ class SampleController extends Controller
 
         $user = Auth::user();
 
-            $log = new Log();
+            $log = new ModelsLog();
             $log->user_id = Auth::id();
             $log->action = 'Updated Sample Photos';
             $log->description = $user->firstname . " " . $user->lastname . " added sample photos to a package";
             $log->logdate = now();
             $log->save();
 
-            return redirect()->back()->with('alert', 'Updated successfully!');
+            return redirect()->back()->with('success', 'Updated successfully!');
     }
 
     public function updateowner(Request $request, string $sample_id)
@@ -238,14 +243,14 @@ class SampleController extends Controller
 
         $user = Auth::user();
 
-            $log = new Log();
+            $log = new ModelsLog();
             $log->user_id = Auth::id();
             $log->action = 'Updated Sample Photos';
             $log->description = $user->firstname . " " . $user->lastname . " added sample photos to a package";
             $log->logdate = now();
             $log->save();
 
-            return redirect()->back()->with('alert', 'Updated successfully!');
+            return redirect()->back()->with('success', 'Updated successfully!');
     }
 
     /**

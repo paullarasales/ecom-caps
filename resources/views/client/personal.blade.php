@@ -145,15 +145,40 @@
 
                                 <br>
                                 <div class="flex items-center md:col-span-5">
-                                    <input id="link-checkbox" required type="checkbox" value="" class="w-4 h-4 cursor-pointer text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="link-checkbox" class="ms-2 text-sm font-medium text-gray-900 ">I agree with the <a href="#" class="text-gray-800 dark:text-blue-500 hover:underline" id="terms-link">terms and conditions</a>.</label>
+                                    <input id="link-checkbox" required type="checkbox" value="" 
+                                        class="w-4 h-4 cursor-pointer text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        onchange="toggleSubmitButton(this)">
+                                    <label for="link-checkbox" class="ms-2 text-sm font-medium text-gray-900">
+                                        I agree with the <a href="#" class="text-gray-800 dark:text-blue-500 hover:underline" id="terms-link">terms and conditions</a>.
+                                    </label>
                                 </div>
-
                                 
-    
                                 <div class="md:col-span-5 text-right">
-                                    <input type="submit" name="submit" value="Submit" onclick="showLoadingOverlay()" class="bg-yellow-500 cursor-pointer hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                                    <input type="submit" name="submit" value="Submit" 
+                                        onclick="showLoadingOverlay()" 
+                                        id="submit-button" 
+                                        class="cursor-not-allowed bg-gray-300 text-gray-500 font-bold py-2 px-4 rounded"
+                                        disabled
+                                        title="Terms must be checked">
                                 </div>
+                                
+                                <script>
+                                    function toggleSubmitButton(checkbox) {
+                                        const submitButton = document.getElementById('submit-button');
+                                        if (checkbox.checked) {
+                                            submitButton.disabled = false;
+                                            submitButton.classList.remove('cursor-not-allowed', 'bg-gray-300', 'text-gray-500');
+                                            submitButton.classList.add('cursor-pointer', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white');
+                                            submitButton.removeAttribute('title');
+                                        } else {
+                                            submitButton.disabled = true;
+                                            submitButton.classList.remove('cursor-pointer', 'bg-yellow-500', 'hover:bg-yellow-700', 'text-white');
+                                            submitButton.classList.add('cursor-not-allowed', 'bg-gray-300', 'text-gray-500');
+                                            submitButton.setAttribute('title', 'Terms must be checked');
+                                        }
+                                    }
+                                </script>
+                                
     
                             </div>
                         </div>

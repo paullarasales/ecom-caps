@@ -93,7 +93,7 @@
 
                 userList.innerHTML = '';
 
-                const filteredUsers = users.filter(user => user.usertype !== 'manager');
+                const filteredUsers = users;
 
                 // Fetch unread message counts for all users
                 const unreadCountsResponse = await fetch('/get-unread-message-counts');
@@ -175,51 +175,86 @@
         }
 
         async function fetchMessages() {
-            if (!currentReceiverId) return;
+    if (!currentReceiverId) return;
 
-            try {
-                const response = await fetch(`/get-messages-for-managers?receiver_id=${currentReceiverId}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const messages = await response.json();
-                const messageList = document.getElementById('message-list');
-
-                messageList.innerHTML = '';
-
-                messages.forEach(msg => {
-                    const msgElement = document.createElement('div');
-                    const senderName = document.createElement('div');
-
-                    const isSenderManager = msg.sender.usertype === 'manager';
-
-                    msgElement.className = `message p-2 rounded-md max-w-max break-words ${isSenderManager ? 'bg-green-200 text-right ml-auto' : 'bg-gray-200 text-left mr-auto border border-yellow-300'}`;
-                    msgElement.textContent = msg.content;
-
-                    senderName.className = `text-sm font-semibold ${isSenderManager ? 'text-right text-green-700' : 'text-left text-yellow-700'}`;
-                    let senderText = '';
-
-                    if (msg.sender.firstname && msg.sender.lastname) {
-                        senderText = `Sent by: ${msg.sender.firstname} ${msg.sender.lastname}`;
-                    } else if (msg.sender.firstname) {
-                        senderText = `Sent by: ${msg.sender.firstname}`;
-                    } else if (msg.sender.lastname) {
-                        senderText = `Sent by: ${msg.sender.lastname}`;
-                    } else {
-                        senderText = `Sent by: ${msg.sender.name}`;
-                    }
-
-                    senderName.textContent = senderText;
-
-                    messageList.appendChild(senderName);
-                    messageList.appendChild(msgElement);
-                });
-
-                messageList.scrollTop = messageList.scrollHeight;
-            } catch (error) {
-                console.error('Error fetching messages:', error);
-            }
+    try {
+        const response = await fetch(`/get-messages-for-managers?receiver_id=${currentReceiverId}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        const messages = await response.json();
+        const messageList = document.getElementById('message-list');
+
+        messageList.innerHTML = '';
+
+        messages.forEach(msg => {
+            const msgElement = document.createElement('div');
+            const senderName = document.createElement('div');
+
+            // Determine the sender type
+            const isSenderAuthManager = msg.sender.id === window.authUserId;
+            const isSenderFellowManager = msg.sender.usertype === 'manager' && !isSenderAuthManager;
+            const isChattingWithManager = currentReceiverId === msg.sender.id && msg.sender.usertype === 'manager';
+            const isSenderUser = msg.sender.id === currentReceiverId && msg.sender.usertype === 'user';
+            const isSenderadmin = msg.sender.id === currentReceiverId && msg.sender.usertype === 'admin';
+            const isSenderowner = msg.sender.id === currentReceiverId && msg.sender.usertype === 'owner';
+
+            // Style messages based on the sender
+            if (isSenderAuthManager) {
+                // Authenticated manager's messages
+                msgElement.className = 'message p-2 rounded-md max-w-max break-words bg-green-200 text-right ml-auto';
+            } else if (isChattingWithManager) {
+                // Messages from a fellow manager being chatted with
+                msgElement.className = 'message p-2 rounded-md max-w-max break-words bg-gray-200 text-left mr-auto border border-yellow-300';
+            } else if (isSenderFellowManager) {
+                // Messages from other fellow managers
+                msgElement.className = 'message p-2 rounded-md max-w-max break-words bg-green-200 text-left mr-auto';
+            } else if (isSenderUser) {
+                // Messages from the selected user
+                msgElement.className = 'message p-2 rounded-md max-w-max break-words bg-gray-200 text-left mr-auto border border-yellow-300';
+            } else if (isSenderadmin) {
+                // Messages from the selected user
+                msgElement.className = 'message p-2 rounded-md max-w-max break-words bg-gray-200 text-left mr-auto border border-yellow-300';
+            } else if (isSenderowner) {
+                // Messages from the selected user
+                msgElement.className = 'message p-2 rounded-md max-w-max break-words bg-gray-200 text-left mr-auto border border-yellow-300';
+            }
+
+            msgElement.textContent = msg.content;
+
+            // // Append sender name only if the selected person is a user
+            // if (isSenderUser) {
+            //     senderName.className = `text-sm font-semibold ${
+            //         isSenderAuthManager ? 'text-right text-green-700' : 'text-left text-yellow-700'
+            //     }`;
+
+            //     let senderText = '';
+            //     if (msg.sender.firstname && msg.sender.lastname) {
+            //         senderText = `Sent by: ${msg.sender.firstname} ${msg.sender.lastname}`;
+            //     } else if (msg.sender.firstname) {
+            //         senderText = `Sent by: ${msg.sender.firstname}`;
+            //     } else if (msg.sender.lastname) {
+            //         senderText = `Sent by: ${msg.sender.lastname}`;
+            //     } else {
+            //         senderText = `Sent by: ${msg.sender.name}`;
+            //     }
+
+            //     senderName.textContent = senderText;
+            //     messageList.appendChild(senderName);
+            // }
+
+            messageList.appendChild(msgElement);
+        });
+
+        // Scroll to the latest message
+        messageList.scrollTop = messageList.scrollHeight;
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+    }
+}
+
+
+
 
         async function sendMessage() {
             const messageInput = document.getElementById('message-input');

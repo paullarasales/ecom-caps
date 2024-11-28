@@ -367,10 +367,10 @@
             total += price;
         });
 
-        // Deduct ₱500 if three food carts are selected
-        if (checkedFoodCarts.length === 3) {
-            total -= 500; // Apply the discount
-        }
+        // // Deduct ₱500 if three food carts are selected
+        // if (checkedFoodCarts.length === 3) {
+        //     total -= 500; // Apply the discount
+        // }
 
             // Calculate total from lechon dropdown selection
             const lechonSelect = document.getElementById('lechonItem');

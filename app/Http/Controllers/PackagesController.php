@@ -14,6 +14,8 @@ use App\Models\Foodpack;
 use App\Models\Customitem;
 use App\Models\Custompackage;
 use App\Models\Log;
+use Illuminate\Validation\Rule;
+
 
 class PackagesController extends Controller
 {
@@ -291,8 +293,11 @@ class PackagesController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'packagephoto' => 'nullable|image|mimes:png,jpg,jpeg,webp',
-            'packagename' => 'required|unique:packages,packagename',
+            'packagephoto' => 'required|nullable|image|mimes:png,jpg,jpeg,webp',
+            'packagename' => [
+                'required',
+                Rule::unique('packages', 'packagename')->ignore($id, 'package_id'),
+            ],
             'packageprice' => 'required|numeric',
         ]);
     
@@ -332,13 +337,16 @@ class PackagesController extends Controller
             $log->logdate = now();
             $log->save();
     
-        return redirect()->route('viewpackage')->with('alert', 'Updated successfully!');
+        return redirect()->back()->with('success', 'Updated successfully! dasdasdsada');
     }
     public function managerupdate(Request $request, string $id)
     {
         $request->validate([
-            'packagephoto' => 'nullable|image|mimes:png,jpg,jpeg,webp',
-            'packagename' => 'required|unique:packages,packagename',
+            'packagephoto' => 'required|nullable|image|mimes:png,jpg,jpeg,webp',
+            'packagename' => [
+                'required',
+                Rule::unique('packages', 'packagename')->ignore($id, 'package_id'),
+            ],
             'packageprice' => 'required|numeric',
         ]);
     
@@ -384,8 +392,11 @@ class PackagesController extends Controller
     public function ownerupdate(Request $request, string $id)
     {
         $request->validate([
-            'packagephoto' => 'nullable|image|mimes:png,jpg,jpeg,webp',
-            'packagename' => 'required|unique:packages,packagename',
+            'packagephoto' => 'required|nullable|image|mimes:png,jpg,jpeg,webp',
+            'packagename' => [
+                'required',
+                Rule::unique('packages', 'packagename')->ignore($id, 'package_id'),
+            ],
             'packageprice' => 'required|numeric',
         ]);
     

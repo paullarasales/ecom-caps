@@ -30,6 +30,7 @@ use App\Http\Controllers\MgrCustomPackagesController;
 use App\Http\Controllers\SampleController;
 use App\Http\Controllers\OwnerCustomPackagesController;
 use App\Http\Controllers\OwnerCustomPackagesPagesController;
+use App\Http\Controllers\NewSampleController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -403,6 +404,8 @@ Route::get('/admin/packages/customize', [PackagesPagesController::class, 'custom
 Route::get('/admin/packages/new/customize', [PackagesPagesController::class, 'newcustomize'])->middleware(['auth', 'verified','admin'])->name('newcustomizepackage');
 Route::get('/admin/packages/add/sample/{package_id}', [SampleController::class, 'add'])->middleware(['auth', 'verified','admin'])->name('addsample');
 Route::post('/admin/packages/sample/store', [SampleController::class, 'store'])->middleware(['auth', 'verified','admin'])->name('storesample');
+// Route::post('/admin/packages/sample/store/new', [NewSampleController::class, 'store'])->middleware(['auth', 'verified','admin'])->name('storesample');
+
 Route::get('/admin/packages/sample/edit/{sample_id}', [SampleController::class, 'edit'])->middleware(['auth', 'verified','admin'])->name('editsample');
 Route::put('/admin/packages/sample/update/{sample_id}', [SampleController::class, 'update'])->middleware(['auth', 'verified','admin'])->name('updatesample');
 
@@ -437,7 +440,7 @@ Route::get('/manager/packages/customize', [PackagesPagesController::class, 'mana
 Route::post('/manager/custom/packages/add', [PackagesController::class, 'managercustom'])->middleware(['auth', 'verified','manager'])->name('manageraddcustom');
 Route::get('/manager/packages/new/customize', [PackagesPagesController::class, 'managernewcustomize'])->middleware(['auth', 'verified','manager'])->name('manager.newcustomizepackage');
 Route::get('/manager/packages/add/sample/{package_id}', [SampleController::class, 'addmanager'])->middleware(['auth', 'verified','manager'])->name('manager.addsample');
-Route::post('/manager/packages/sample/store', [SampleController::class, 'store'])->middleware(['auth', 'verified','manager'])->name('storesample');
+Route::post('/manager/packages/sample/store', [SampleController::class, 'store'])->middleware(['auth', 'verified','manager'])->name('manager.storesample');
 Route::get('/manager/packages/sample/edit/{sample_id}', [SampleController::class, 'editmanager'])->middleware(['auth', 'verified','manager'])->name('manager.editsample');
 Route::put('/manager/packages/sample/update/{sample_id}', [SampleController::class, 'updatemanager'])->middleware(['auth', 'verified','manager'])->name('manager.updatesample');
 
@@ -469,7 +472,7 @@ Route::get('/owner/packages/view', [PackagesPagesController::class, 'ownerview']
 Route::get('/owner/packages/customize', [PackagesPagesController::class, 'ownercustomize'])->middleware(['auth', 'verified','owner'])->name('ownercustomizepackage');
 Route::get('/owner/packages/new/customize', [PackagesPagesController::class, 'ownernewcustomize'])->middleware(['auth', 'verified','owner'])->name('owner.newcustomizepackage');
 Route::get('/owner/packages/add/sample/{package_id}', [SampleController::class, 'addowner'])->middleware(['auth', 'verified','owner'])->name('owner.addsample');
-Route::post('/owner/packages/sample/store', [SampleController::class, 'store'])->middleware(['auth', 'verified','owner'])->name('storesample');
+Route::post('/owner/packages/sample/store', [SampleController::class, 'store'])->middleware(['auth', 'verified','owner'])->name('owner.storesample');
 Route::get('/owner/packages/sample/edit/{sample_id}', [SampleController::class, 'editowner'])->middleware(['auth', 'verified','owner'])->name('owner.editsample');
 Route::put('/owner/packages/sample/update/{sample_id}', [SampleController::class, 'updateowner'])->middleware(['auth', 'verified','owner'])->name('owner.updatesample');
 

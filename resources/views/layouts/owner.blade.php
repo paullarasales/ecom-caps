@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Ordering System') }}</title>
+    <title>The Siblings Catering Services</title>
 
     <link rel="shortcut icon" href="{{ asset('logo/no-bg.png') }}">
 
@@ -21,6 +21,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         body {
@@ -129,7 +130,7 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 bg-gray-100 p-4">
+        <main class="flex-1 bg-gray-100 p-1">
             <!-- Top Navigation -->
             <nav class="bg-white shadow-sm">
                 <div class="mx-auto px-2 sm:px-6 lg:px-8">
@@ -215,7 +216,7 @@
             </script>
 
             <!-- Main Content Area -->
-            <div class="flex-1 p-4">
+            <div class="flex-1 py-1">
                 <div class="relative py-4 bg-white overflow-hidden shadow sm:rounded-lg">
                     {{ $slot }}
                 </div>

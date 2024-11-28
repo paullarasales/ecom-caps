@@ -142,6 +142,32 @@
     }
 </script>
 
+{{-- @if (session('success'))
+        <script>
+            Swal.fire({
+                title: 'Success!',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                customClass: {
+                popup: 'custom-popup',
+                title: 'custom-title',
+                confirmButton: 'custom-button'
+            }
+            });
+        </script>
+    @endif
+    <style>
+    .custom-button {
+        background-color: #FFCF81 !important; /* Blue button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button:hover {
+        background-color: #E07B39 !important; /* Darker blue on hover */
+    }
+</style> --}}
+
 @if(session('alert'))
     <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
         <span>{{ session('alert') }}</span>

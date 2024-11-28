@@ -89,7 +89,11 @@ class UsertypeController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect("users")->with('alert', 'User Successfully Updated');
+        // return redirect("users")->with('alert', 'User Successfully Updated');
+        return redirect()->back()->with([
+            'alert' => 'success',
+            'message' => 'User Successfully Updated.'
+        ]);
     }
 
     /**
