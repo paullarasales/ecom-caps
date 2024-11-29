@@ -70,18 +70,18 @@ class PackagesController extends Controller
             $log->logdate = now();
             $log->save();
 
-            // return redirect()->route('addpackage')->with('alert', 'Uploaded successfully!');
-            if (Auth::check()) {
-                $user = Auth::user();
+            return redirect()->back()->with('success', 'Package added successfully!');
+            // if (Auth::check()) {
+            //     $user = Auth::user();
             
-                if ($user->usertype === 'admin') {
-                    return redirect()->route('addpackage')->with('alert', 'Package added successfully!');
-                } elseif ($user->usertype === 'manager') {
-                    return redirect()->route('manageraddpackage')->with('alert', 'Package added successfully!');
-                } elseif ($user->usertype === 'owner') {
-                    return redirect()->route('owneraddpackage')->with('alert', 'Package added successfully!');
-                }
-            }
+            //     if ($user->usertype === 'admin') {
+            //         return redirect()->route('addpackage')->with('alert', 'Package added successfully!');
+            //     } elseif ($user->usertype === 'manager') {
+            //         return redirect()->route('manageraddpackage')->with('alert', 'Package added successfully!');
+            //     } elseif ($user->usertype === 'owner') {
+            //         return redirect()->route('owneraddpackage')->with('alert', 'Package added successfully!');
+            //     }
+            // }
         }
 
     }
@@ -337,7 +337,7 @@ class PackagesController extends Controller
             $log->logdate = now();
             $log->save();
     
-        return redirect()->back()->with('success', 'Updated successfully! dasdasdsada');
+        return redirect()->back()->with('success', 'Updated successfully!');
     }
     public function managerupdate(Request $request, string $id)
     {
@@ -386,7 +386,7 @@ class PackagesController extends Controller
             $log->logdate = now();
             $log->save();
     
-        return redirect()->route('managerviewpackage')->with('alert', 'Updated successfully!');
+            return redirect()->back()->with('success', 'Updated successfully!');
     }
 
     public function ownerupdate(Request $request, string $id)
@@ -436,7 +436,7 @@ class PackagesController extends Controller
             $log->logdate = now();
             $log->save();
     
-        return redirect()->route('ownerviewpackage')->with('alert', 'Updated successfully!');
+            return redirect()->back()->with('success', 'Updated successfully!');
     }
 
     /**
@@ -453,7 +453,7 @@ class PackagesController extends Controller
 
         // If an appointment is tied to this package, prevent deletion
         if ($appointment) {
-            return redirect()->route('viewpackage')->with('alert', 'Cannot delete package as it is tied to an existing appointment.');
+            return redirect()->route('viewpackage')->with('error', 'Cannot delete package as it is tied to an existing appointment.');
         }
 
         // Update any appointments with 'done' status to set package_id to null
@@ -486,7 +486,7 @@ class PackagesController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->route('viewpackage')->with('alert', 'Package deleted successfully!');
+        return redirect()->route('viewpackage')->with('success', 'Package deleted successfully!');
     }
 
     public function managerdestroy(string $package_id)
@@ -533,7 +533,7 @@ class PackagesController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->route('managerviewpackage')->with('alert', 'Package deleted successfully!');
+        return redirect()->route('managerviewpackage')->with('success', 'Package deleted successfully!');
     }
 
     public function ownerdestroy(string $package_id)
@@ -580,7 +580,7 @@ class PackagesController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->route('ownerviewpackage')->with('alert', 'Package deleted successfully!');
+        return redirect()->route('ownerviewpackage')->with('success', 'Package deleted successfully!');
     }
     
 }

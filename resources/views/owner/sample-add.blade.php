@@ -35,7 +35,7 @@
                 title: 'Validation Errors',
                 icon: 'error',
                 html: `
-                    <ul style="text-align: left; color: #E07B39;">
+                    <ul style="text-align: center; color: #E07B39;">
                         ${errorMessages.map(error => `<li>${error}</li>`).join('')}
                     </ul>
                 `,

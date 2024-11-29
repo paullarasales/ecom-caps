@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Package;
 use App\Models\Blockeddate;
 use App\Models\Blockedapp;
+use Illuminate\Support\Facades\DB;
 
 class AppointmentsPagesController extends Controller
 {
@@ -387,7 +388,13 @@ class AppointmentsPagesController extends Controller
 
         $packages = Package::orderBy('created_at', 'desc')->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray(); // Fetch all blocked dates
+        $bookedDates = Appointment::select('edate')
+        ->where('status', 'booked')
+        ->groupBy('edate')
+        ->having(DB::raw('COUNT(*)'), '=', 3)
+        ->pluck('edate')
+        ->toArray();
 
-        return view('admin.direct', compact('packages', 'blockedDates'));
+        return view('admin.direct', compact('packages', 'blockedDates', 'bookedDates'));
     }
 }

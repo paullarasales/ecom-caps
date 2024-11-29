@@ -161,6 +161,7 @@
                             
                                 // Blocked dates from the server
                                 var blockedDates = @json($blockedDates); // Convert PHP array to JavaScript array
+                                var bookedDates = @json($bookedDates);
                             
                                 // Modal elements
                                 var modal = document.getElementById('datemodal');
@@ -168,29 +169,59 @@
                             
                                 // Disable blocked dates in the input
                                 var dateInput = document.getElementById('edate');
+
                             
-                                dateInput.addEventListener('change', function() {
+                                dateInput.addEventListener('change', function () {
                                     var selectedDate = new Date(this.value);
-                                    var formattedDate = selectedDate.toISOString().split('T')[0];
-                            
+                                    var formattedDate = selectedDate.toISOString().split('T')[0]; // Format the date as YYYY-MM-DD
+
                                     if (blockedDates.includes(formattedDate)) {
-                                        showModal('The selected date is blocked. Please choose another date.');
+                                        showSweetAlert('The selected date is blocked due to scheduling restrictions. Please choose another date.');
+                                        this.value = ''; // Clear the input
+                                    } else if (bookedDates.includes(formattedDate)) {
+                                        showSweetAlert('The selected date is fully booked. Please choose another date.');
                                         this.value = ''; // Clear the input
                                     }
                                 });
-                            
-                                // Function to show the modal
-                                function showModal(message) {
-                                    document.getElementById('modalMessage').innerText = message;
-                                    modal.classList.remove('hidden'); // Show the modal
+
+                                // Function to show SweetAlert
+                                function showSweetAlert(message) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Invalid Date',
+                                        text: message,
+                                        confirmButtonText: 'OK',
+                                        customClass: {
+                                            popup: 'custom-popup-error',
+                                            title: 'custom-title-error',
+                                            confirmButton: 'custom-button-error'
+                                        }
+                                    });
+                                }
+                            </script>
+                            <style>
+                                /* Error Alert Button */
+                                .custom-button-error {
+                                    background-color: #E07B39 !important; /* Red button background */
+                                    color: white !important; /* White button text */
+                                    border-radius: 5px;
+                                }
+                                .custom-button-error:hover {
+                                    background-color: #C0392B !important; /* Darker red on hover */
                                 }
                             
-                                // Close modal event
-                                closeModalButton.addEventListener('click', function() {
-                                    event.preventDefault();
-                                    modal.classList.add('hidden'); // Hide the modal
-                                });
-                            </script>
+                                /* Customize Popup Background for Error */
+                                .custom-popup-error {
+                                    background-color: #FDEDEC; /* Light red background */
+                                    border: 2px solid #E07B39; /* Red border */
+                                }
+                            
+                                /* Customize Title for Error */
+                                .custom-title-error {
+                                    color: #E07B39; /* Red text for title */
+                                    font-weight: bold;
+                                }
+                            </style>
                             
                             
 

@@ -128,6 +128,7 @@
                             var timeSelect = document.getElementById('appointment_time');
                             var blockedApps = @json($blockedApps); // Convert PHP array to JavaScript array
                             // var blockedDates = @json($blockedDates); // Convert PHP array to JavaScript array
+                            var scheduledMeeting = @json($scheduledMeeting);
                             var modal = document.getElementById('datemodal');
                             var closeModalButton = document.getElementById('closeModal');
 
@@ -137,20 +138,33 @@
                                 startTime.setHours(9, 0); // 9 AM
                                 var endTime = new Date();
                                 endTime.setHours(18, 0); // 6 PM
-
+                    
                                 var options = '';
                                 var oldTime = "{{ old('appointment_time') }}"; // Get the old value from the server
                                 while (startTime <= endTime) {
                                     var hours = startTime.getHours();
                                     var minutes = startTime.getMinutes();
+                                    
+                                    // Format the time string for saving in 24-hour format (HH:mm)
                                     var timeString = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
-                                    var displayTime = hours + ':' + (minutes === 0 ? '00' : '30') + (hours < 12 ? ' AM' : ' PM');
+                                    
+                                    // Convert to 12-hour format for display (hh:mm AM/PM)
+                                    var displayHours = hours % 12 || 12; // Convert to 12-hour format
+                                    var displayMinutes = minutes === 0 ? '00' : '30'; // Display minutes as '00' or '30'
+                                    var ampm = hours < 12 ? 'AM' : 'PM'; // AM/PM suffix
+                                    var displayTime = displayHours + ':' + displayMinutes + ' ' + ampm;
 
+                                    // Compare old time to highlight the selected option
                                     var selected = (oldTime === timeString) ? 'selected' : '';
+                                    
+                                    // Append the option to the options string
                                     options += `<option value="${timeString}" ${selected}>${displayTime}</option>`;
+                                    
+                                    // Increment the time by 30 minutes
                                     startTime.setMinutes(startTime.getMinutes() + 30);
                                 }
-                                timeSelect.innerHTML += options;
+
+                            timeSelect.innerHTML += options;
                             }
 
                             // Ensure that the date input only allows future dates
@@ -161,34 +175,126 @@
                                 dateInput.setAttribute('min', minDateString);
                             }
 
+                            function checkScheduledMeeting(selectedDate, selectedTime) {
+                            // Format the selected date and time into 'YYYY-MM-DD HH:mm:ss' format
+                            var formattedDate = selectedDate.toISOString().split('T')[0]; // Get date as 'YYYY-MM-DD'
+                            var formattedTime = selectedTime.padStart(5, '0'); // Ensure time is in HH:mm format (e.g. 4:00 -> 04:00)
+                            
+                            var selectedDateTime = formattedDate + ' ' + formattedTime + ':00'; // Combine into full datetime (YYYY-MM-DD HH:mm:ss)
+
+                            // Check if the selected date-time combination already exists in the scheduled meetings
+                            if (scheduledMeeting.includes(selectedDateTime)) {
+                                return true; // Conflict found
+                            }
+                            return false; // No conflict
+                        }
+
+                        // Add event listener for the date input field
+                        dateInput.addEventListener('change', function () {
+                            var selectedDate = new Date(this.value);
+                            var selectedTime = timeSelect.value; // Get the selected time
+
+                            // Only check if both date and time are selected
+                            if (selectedDate && selectedTime) {
+                                // Check for conflict
+                                if (checkScheduledMeeting(selectedDate, selectedTime)) {
+                                    // Alert the user about the conflict
+                                    showSweetAlert('The selected appointment date and time is already scheduled by another client. Please choose another time.');
+
+                                    // Reset the inputs if conflict is found
+                                    this.value = ''; // Clear the date input
+                                    timeSelect.selectedIndex = 0; // Reset the time select
+                                }
+                            }
+                        });
+
+                        // Add event listener for the time input field
+                        timeSelect.addEventListener('change', function () {
+                            var selectedDate = new Date(dateInput.value); // Get the selected date
+                            var selectedTime = this.value; // Get the selected time
+
+                            // Only check if both date and time are selected
+                            if (selectedDate && selectedTime) {
+                                // Check for conflict
+                                if (checkScheduledMeeting(selectedDate, selectedTime)) {
+                                    // Alert the user about the conflict
+                                    showSweetAlert('The selected appointment date and time is already scheduled by another client. Please choose another time.');
+
+                                    // Reset the time select input if conflict is found
+                                    this.selectedIndex = 0; // Reset the time select
+                                }
+                            }
+                        });
+
+                        // Function to show the SweetAlert
+                        function showSweetAlert(message) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Invalid Appointment',
+                                text: message,
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                    popup: 'custom-popup-error',
+                                    title: 'custom-title-error',
+                                    confirmButton: 'custom-button-error'
+                                }
+                            });
+                        }
+
                             // Check if the selected date is blocked and show modal if it is
                             dateInput.addEventListener('change', function () {
                                 var selectedDate = new Date(this.value);
                                 var formattedDate = selectedDate.toISOString().split('T')[0];
 
                                 if ( blockedApps.includes(formattedDate)) {
-                                    showModal('The selected meeting date is blocked. Please choose another date.');
+                                    showSweetAlert('The selected meeting date is blocked. Please choose another date.');
                                     this.value = ''; // Clear the input
                                 }
                             });
 
-                            // Function to show the modal
-                            function showModal(message) {
-                                document.getElementById('modalMessage').innerText = message;
-                                modal.classList.remove('hidden'); // Show the modal
-                            }
-
-                            // Close modal event
-                            closeModalButton.addEventListener('click', function (event) {
-                                event.preventDefault();
-                                modal.classList.add('hidden'); // Hide the modal
-                            });
+                             // Function to show SweetAlert
+                            function showSweetAlert(message) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Invalid Date',
+                                            text: message,
+                                            confirmButtonText: 'OK',
+                                            customClass: {
+                                                popup: 'custom-popup-error',
+                                                title: 'custom-title-error',
+                                                confirmButton: 'custom-button-error'
+                                            }
+                                        });
+                                    }
 
                             // Initial setup
                             populateTimes();
                             setMinDate();
                         });
                     </script>
+                    <style>
+                        /* Error Alert Button */
+                        .custom-button-error {
+                            background-color: #E07B39 !important; /* Red button background */
+                            color: white !important; /* White button text */
+                            border-radius: 5px;
+                        }
+                        .custom-button-error:hover {
+                            background-color: #C0392B !important; /* Darker red on hover */
+                        }
+                    
+                        /* Customize Popup Background for Error */
+                        .custom-popup-error {
+                            background-color: #FDEDEC; /* Light red background */
+                            border: 2px solid #E07B39; /* Red border */
+                        }
+                    
+                        /* Customize Title for Error */
+                        .custom-title-error {
+                            color: #E07B39; /* Red text for title */
+                            font-weight: bold;
+                        }
+                    </style>
 
                 </div>
             </div>

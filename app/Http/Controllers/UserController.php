@@ -13,6 +13,7 @@ use App\Models\Blockedapp;
 use App\Models\Message;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -199,8 +200,17 @@ class UserController extends Controller
                    ->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $blockedApps = Blockedapp::pluck('blocked_app')->toArray(); 
+        $bookedDates = Appointment::select('edate')
+        ->where('status', 'booked')
+        ->groupBy('edate')
+        ->having(DB::raw('COUNT(*)'), '=', 3)
+        ->pluck('edate')
+        ->toArray();
+        $scheduledMeeting = Appointment::where('status', 'pending')
+        ->pluck('appointment_datetime')
+        ->toArray();
 
-        return view('client.book-form', compact('packages', 'blockedDates', 'blockedApps'));
+        return view('client.book-form', compact('packages', 'blockedDates', 'blockedApps', 'bookedDates', 'scheduledMeeting'));
         // return view('client.book-form');
     }
     public function form()
@@ -218,8 +228,12 @@ class UserController extends Controller
                    ->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $blockedApps = Blockedapp::pluck('blocked_app')->toArray(); 
+        $scheduledMeeting = Appointment::where('status', 'pending')
+        ->where('user_id', '!=', Auth::id())  // Exclude the appointment made by the current user
+        ->pluck('appointment_datetime')
+        ->toArray();
         
-        return view('client.form-edit', compact('appointment', 'packages', 'blockedDates', 'blockedApps'));
+        return view('client.form-edit', compact('appointment', 'packages', 'blockedDates', 'blockedApps', 'scheduledMeeting'));
     }
     public function formMeetingEdit($appointment_id) 
     {
@@ -230,15 +244,22 @@ class UserController extends Controller
                    ->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $blockedApps = Blockedapp::pluck('blocked_app')->toArray(); 
+        $scheduledMeeting = Appointment::where('status', 'pending')
+        ->where('user_id', '!=', Auth::id())  // Exclude the appointment made by the current user
+        ->pluck('appointment_datetime')
+        ->toArray();
         
-        return view('client.form-meeting-edit', compact('appointment', 'packages', 'blockedDates', 'blockedApps'));
+        return view('client.form-meeting-edit', compact('appointment', 'packages', 'blockedDates', 'blockedApps', 'scheduledMeeting'));
     }
     public function meetingform()
     {
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
-        $blockedApps = Blockedapp::pluck('blocked_app')->toArray(); 
+        $blockedApps = Blockedapp::pluck('blocked_app')->toArray();
+        $scheduledMeeting = Appointment::where('status', 'pending')
+        ->pluck('appointment_datetime')
+        ->toArray();
         
-        return view('client.form-meeting', compact('blockedDates', 'blockedApps'));
+        return view('client.form-meeting', compact('blockedDates', 'blockedApps', 'scheduledMeeting'));
     }
     public function idverify()
     {

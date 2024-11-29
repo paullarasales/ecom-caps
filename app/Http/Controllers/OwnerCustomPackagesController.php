@@ -217,7 +217,7 @@ class OwnerCustomPackagesController extends Controller
 
 
         // Return success message
-        return redirect()->back()->with('alert', 'Custom package created successfully!');
+        return redirect()->back()->with('success', 'Custom package created successfully!');
     }
 
 
@@ -244,7 +244,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customfood')->with('alert', 'Food item added successfully!');
+        return redirect()->back()->with('success', 'Food item added successfully!');
     }
     public function foodUpdate(Request $request, string $food_id)
     {
@@ -267,7 +267,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customfood.view')->with('alert', 'Food item updated successfully!');
+        return redirect()->back()->with('success', 'Food item updated successfully!');
     }
     public function foodDestroy(string $food_id)
     {
@@ -285,10 +285,10 @@ class OwnerCustomPackagesController extends Controller
             $log->logdate = now();
             $log->save();
 
-            return redirect()->route('owner.customfood')->with('alert', 'Food item deleted successfully!');
+            return redirect()->back()->with('success', 'Food item deleted successfully!');
         }
 
-        return redirect()->route('owner.customfood')->with('error', 'Food item not found.');
+        return redirect()->back()->with('error', 'Food item not found.');
     }
 
 
@@ -313,7 +313,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customfoodpack')->with('alert', 'Foodpack item added successfully!');
+        return redirect()->back()->with('success', 'Foodpack item added successfully!');
     }
     public function foodpackUpdate(Request $request, string $foodpack_id)
     {
@@ -336,7 +336,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customfoodpack.view')->with('alert', 'Foodcart item updated successfully!');
+        return redirect()->back()->with('success', 'Foodcart item updated successfully!');
     }
     public function foodpackDestroy(string $foodpack_id)
     {
@@ -354,10 +354,10 @@ class OwnerCustomPackagesController extends Controller
             $log->logdate = now();
             $log->save();
 
-            return redirect()->route('owner.customfoodpack')->with('alert', 'Foodpack item deleted successfully!');
+            return redirect()->back()->with('success', 'Foodpack item deleted successfully!');
         }
 
-        return redirect()->route('owner.customfoodpack')->with('error', 'Foodcart item not found.');
+        return redirect()->back()->with('error', 'Foodcart item not found.');
     }
 
 
@@ -382,7 +382,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customfoodcart')->with('alert', 'Foodcart item added successfully!');
+        return redirect()->back()->with('success', 'Foodcart item added successfully!');
     }
     public function foodcartUpdate(Request $request, string $foodcart_id)
     {
@@ -405,7 +405,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customfoodcart.view')->with('alert', 'Foodcart item updated successfully!');
+        return redirect()->back()->with('success', 'Foodcart item updated successfully!');
     }
     public function foodcartDestroy(string $foodcart_id)
     {
@@ -424,10 +424,10 @@ class OwnerCustomPackagesController extends Controller
             $log->save();
 
 
-            return redirect()->route('owner.customfoodcart')->with('alert', 'Foodcart item deleted successfully!');
+            return redirect()->back()->with('success', 'Foodcart item deleted successfully!');
         }
 
-        return redirect()->route('owner.customfoodcart')->with('error', 'Foodcart item not found.');
+        return redirect()->back()->with('error', 'Foodcart item not found.');
     }
 
 
@@ -452,7 +452,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customlechon')->with('alert', 'Lechon item added successfully!');
+        return redirect()->back()->with('success', 'Lechon item added successfully!');
     }
     public function lechonUpdate(Request $request, string $lechon_id)
     {
@@ -475,7 +475,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customlechon.view')->with('alert', 'Lechon item updated successfully!');
+        return redirect()->back()->with('success', 'Lechon item updated successfully!');
     }
     public function lechonDestroy(string $lechon_id)
     {
@@ -493,10 +493,10 @@ class OwnerCustomPackagesController extends Controller
             $log->logdate = now();
             $log->save();
 
-            return redirect()->route('owner.customlechon')->with('alert', 'Lechon item deleted successfully!');
+            return redirect()->back()->with('success', 'Lechon item deleted successfully!');
         }
 
-        return redirect()->route('owner.customlechon')->with('error', 'Lechon item not found.');
+        return redirect()->back()->with('error', 'Lechon item not found.');
     }
 
 
@@ -521,7 +521,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customcake')->with('alert', 'Cake item added successfully!');
+        return redirect()->back()->with('success', 'Cake item added successfully!');
     }
     public function cakeUpdate(Request $request, string $cake_id)
     {
@@ -544,7 +544,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customcake.view')->with('alert', 'Cake item updated successfully!');
+        return redirect()->back()->with('success', 'Cake item updated successfully!');
     }
     public function cakeDestroy(string $cake_id)
     {
@@ -562,10 +562,10 @@ class OwnerCustomPackagesController extends Controller
             $log->logdate = now();
             $log->save();
 
-            return redirect()->route('owner.customcake')->with('alert', 'Cake item deleted successfully!');
+            return redirect()->back()->with('success', 'Cake item deleted successfully!');
         }
 
-        return redirect()->route('owner.customcake')->with('error', 'Cake item not found.');
+        return redirect()->back()->with('error', 'Cake item not found.');
     }
 
 
@@ -590,7 +590,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customclown')->with('alert', 'Clown/Emcee item added successfully!');
+        return redirect()->back()->with('success', 'Clown/Emcee item added successfully!');
     }
     public function clownUpdate(Request $request, string $clown_id)
     {
@@ -613,7 +613,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customclown.view')->with('alert', 'Clown/Emcee item updated successfully!');
+        return redirect()->back()->with('success', 'Clown/Emcee item updated successfully!');
     }
     public function clownDestroy(string $clown_id)
     {
@@ -631,10 +631,10 @@ class OwnerCustomPackagesController extends Controller
             $log->logdate = now();
             $log->save();
             
-            return redirect()->route('owner.customclown')->with('alert', 'Clown/Emcee item deleted successfully!');
+            return redirect()->back()->with('success', 'Clown/Emcee item deleted successfully!');
         }
 
-        return redirect()->route('owner.customclown')->with('error', 'Clown/Emcee item not found.');
+        return redirect()->back()->with('error', 'Clown/Emcee item not found.');
     }
 
 
@@ -659,7 +659,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customsetup')->with('alert', 'Setup item added successfully!');
+        return redirect()->back()->with('success', 'Setup item added successfully!');
     }
     public function setupUpdate(Request $request, string $setup_id)
     {
@@ -682,7 +682,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customsetup.view')->with('alert', 'Setup item updated successfully!');
+        return redirect()->back()->with('success', 'Setup item updated successfully!');
     }
     public function setupDestroy(string $setup_id)
     {
@@ -700,10 +700,10 @@ class OwnerCustomPackagesController extends Controller
             $log->logdate = now();
             $log->save();
             
-            return redirect()->route('owner.customsetup')->with('alert', 'Setup item deleted successfully!');
+            return redirect()->back()->with('success', 'Setup item deleted successfully!');
         }
 
-        return redirect()->route('owner.customsetup')->with('error', 'Setup item not found.');
+        return redirect()->back()->with('error', 'Setup item not found.');
     }
 
 
@@ -728,7 +728,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customfacepaint')->with('alert', 'Facepaint item added successfully!');
+        return redirect()->back()->with('success', 'Setup item added successfully!');
     }
     public function facepaintUpdate(Request $request, string $facepaint_id)
     {
@@ -751,7 +751,7 @@ class OwnerCustomPackagesController extends Controller
         $log->logdate = now();
         $log->save();
 
-        return redirect()->route('owner.customfacepaint.view')->with('alert', 'Facepaint item updated successfully!');
+        return redirect()->back()->with('success', 'Facepaint item updated successfully!');
     }
     public function facepaintDestroy(string $facepaint_id)
     {
@@ -769,10 +769,10 @@ class OwnerCustomPackagesController extends Controller
             $log->logdate = now();
             $log->save();
 
-            return redirect()->route('owner.customfacepaint')->with('alert', 'Facepaint item deleted successfully!');
+            return redirect()->back()->with('success', 'Facepaint item deleted successfully!');
         }
 
-        return redirect()->route('owner.customfacepaint')->with('error', 'Facepaint item not found.');
+        return redirect()->back()->with('error', 'Facepaint item not found.');
     }
 
     /**

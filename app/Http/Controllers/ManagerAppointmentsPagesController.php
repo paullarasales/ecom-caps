@@ -9,6 +9,7 @@ use App\Models\Package;
 use App\Models\Blockeddate;
 use App\Models\Blockedapp;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class ManagerAppointmentsPagesController extends Controller
 {
@@ -370,7 +371,13 @@ class ManagerAppointmentsPagesController extends Controller
 
         $packages = Package::orderBy('created_at', 'desc')->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray(); // Fetch all blocked dates
+        $bookedDates = Appointment::select('edate')
+        ->where('status', 'booked')
+        ->groupBy('edate')
+        ->having(DB::raw('COUNT(*)'), '=', 3)
+        ->pluck('edate')
+        ->toArray();
 
-        return view('manager.direct', compact('packages', 'blockedDates'));
+        return view('manager.direct', compact('packages', 'blockedDates', 'bookedDates'));
     }
 }

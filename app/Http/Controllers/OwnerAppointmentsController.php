@@ -40,7 +40,7 @@ class OwnerAppointmentsController extends Controller
         }
 
         $existingAppointments = Appointment::where('edate', $request->edate)
-                                            ->where('status', 'accepted')
+                                            ->where('status', 'booked')
                                             ->count();
     
         if ($existingAppointments >= 3) {

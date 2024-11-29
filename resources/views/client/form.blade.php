@@ -90,6 +90,7 @@
                             
                                 // Blocked dates from the server
                                 var blockedDates = @json($blockedDates); // Convert PHP array to JavaScript array
+                                var bookedDates = @json($bookedDates);
                             
                                 // Modal elements
                                 var modal = document.getElementById('datemodal');
@@ -98,28 +99,57 @@
                                 // Disable blocked dates in the input
                                 var dateInput = document.getElementById('edate');
                             
-                                dateInput.addEventListener('change', function() {
+                                dateInput.addEventListener('change', function () {
                                     var selectedDate = new Date(this.value);
-                                    var formattedDate = selectedDate.toISOString().split('T')[0];
-                            
+                                    var formattedDate = selectedDate.toISOString().split('T')[0]; // Format the date as YYYY-MM-DD
+
                                     if (blockedDates.includes(formattedDate)) {
-                                        showModal('The selected event date is blocked. Please choose another date.');
+                                        showSweetAlert('The selected date is blocked due to scheduling restrictions. Please choose another date.');
+                                        this.value = ''; // Clear the input
+                                    } else if (bookedDates.includes(formattedDate)) {
+                                        showSweetAlert('The selected date is fully booked. Please choose another date.');
                                         this.value = ''; // Clear the input
                                     }
                                 });
-                            
-                                // Function to show the modal
-                                function showModal(message) {
-                                    document.getElementById('modalMessage').innerText = message;
-                                    modal.classList.remove('hidden'); // Show the modal
+
+                                // Function to show SweetAlert
+                                function showSweetAlert(message) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Invalid Date',
+                                        text: message,
+                                        confirmButtonText: 'OK',
+                                        customClass: {
+                                            popup: 'custom-popup-error',
+                                            title: 'custom-title-error',
+                                            confirmButton: 'custom-button-error'
+                                        }
+                                    });
+                                }
+                            </script>
+                            <style>
+                                /* Error Alert Button */
+                                .custom-button-error {
+                                    background-color: #E07B39 !important; /* Red button background */
+                                    color: white !important; /* White button text */
+                                    border-radius: 5px;
+                                }
+                                .custom-button-error:hover {
+                                    background-color: #C0392B !important; /* Darker red on hover */
                                 }
                             
-                                // Close modal event
-                                closeModalButton.addEventListener('click', function() {
-                                    event.preventDefault();
-                                    modal.classList.add('hidden'); // Hide the modal
-                                });
-                            </script>
+                                /* Customize Popup Background for Error */
+                                .custom-popup-error {
+                                    background-color: #FDEDEC; /* Light red background */
+                                    border: 2px solid #E07B39; /* Red border */
+                                }
+                            
+                                /* Customize Title for Error */
+                                .custom-title-error {
+                                    color: #E07B39; /* Red text for title */
+                                    font-weight: bold;
+                                }
+                            </style>
 
                             <div class="md:col-span-2">
                                 <label for="time">Event Time</label>
@@ -284,7 +314,7 @@
                 </script>
 
 
-                <!-- Modal Structure -->
+                {{-- <!-- Modal Structure -->
                 <div id="datemodal" class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
                     <div class="bg-white rounded-lg p-6 w-11/12 max-w-md">
                         <div class="flex justify-between">
@@ -293,7 +323,7 @@
                         </div>
                         <p id="modalMessage">The selected date is blocked. Please choose another date.</p>
                     </div>
-                </div>
+                </div> --}}
                 
                 
                 <script>
@@ -303,6 +333,7 @@
                         var eventDateInput = document.getElementById('edate'); // Reference to event date
                         var blockedApps = @json($blockedApps); // Convert PHP array to JavaScript array
                         var blockedDates = @json($blockedDates); // Convert PHP array to JavaScript array
+                        var scheduledMeeting = @json($scheduledMeeting);
                         var modal = document.getElementById('datemodal');
                         var closeModalButton = document.getElementById('closeModal');
                 
@@ -361,6 +392,73 @@
                                 timeSelect.selectedIndex = 0; // Reset the time select
                             }
                         }
+
+                        // Function to check if the selected date and time combination is already scheduled
+                        function checkScheduledMeeting(selectedDate, selectedTime) {
+                            // Format the selected date and time into 'YYYY-MM-DD HH:mm:ss' format
+                            var formattedDate = selectedDate.toISOString().split('T')[0]; // Get date as 'YYYY-MM-DD'
+                            var formattedTime = selectedTime.padStart(5, '0'); // Ensure time is in HH:mm format (e.g. 4:00 -> 04:00)
+                            
+                            var selectedDateTime = formattedDate + ' ' + formattedTime + ':00'; // Combine into full datetime (YYYY-MM-DD HH:mm:ss)
+
+                            // Check if the selected date-time combination already exists in the scheduled meetings
+                            if (scheduledMeeting.includes(selectedDateTime)) {
+                                return true; // Conflict found
+                            }
+                            return false; // No conflict
+                        }
+
+                        // Add event listener for the date input field
+                        dateInput.addEventListener('change', function () {
+                            var selectedDate = new Date(this.value);
+                            var selectedTime = timeSelect.value; // Get the selected time
+
+                            // Only check if both date and time are selected
+                            if (selectedDate && selectedTime) {
+                                // Check for conflict
+                                if (checkScheduledMeeting(selectedDate, selectedTime)) {
+                                    // Alert the user about the conflict
+                                    showSweetAlert('The selected appointment date and time is already scheduled by another client. Please choose another time.');
+
+                                    // Reset the inputs if conflict is found
+                                    this.value = ''; // Clear the date input
+                                    timeSelect.selectedIndex = 0; // Reset the time select
+                                }
+                            }
+                        });
+
+                        // Add event listener for the time input field
+                        timeSelect.addEventListener('change', function () {
+                            var selectedDate = new Date(dateInput.value); // Get the selected date
+                            var selectedTime = this.value; // Get the selected time
+
+                            // Only check if both date and time are selected
+                            if (selectedDate && selectedTime) {
+                                // Check for conflict
+                                if (checkScheduledMeeting(selectedDate, selectedTime)) {
+                                    // Alert the user about the conflict
+                                    showSweetAlert('The selected appointment date and time is already scheduled by another client. Please choose another time.');
+
+                                    // Reset the time select input if conflict is found
+                                    this.selectedIndex = 0; // Reset the time select
+                                }
+                            }
+                        });
+
+                        // Function to show the SweetAlert
+                        function showSweetAlert(message) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Invalid Appointment',
+                                text: message,
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                    popup: 'custom-popup-error',
+                                    title: 'custom-title-error',
+                                    confirmButton: 'custom-button-error'
+                                }
+                            });
+                        }
                 
                         // Check if the selected date is blocked and show modal if it is
                         dateInput.addEventListener('change', function () {
@@ -368,22 +466,25 @@
                             var formattedDate = selectedDate.toISOString().split('T')[0];
                 
                             if (blockedApps.includes(formattedDate)) {
-                                showModal('The selected meeting date is blocked. Please choose another date.');
+                                showSweetAlert('The selected meeting date is blocked. Please choose another date.');
                                 this.value = ''; // Clear the input
                             }
                         });
                 
-                        // Function to show the modal
-                        function showModal(message) {
-                            document.getElementById('modalMessage').innerText = message;
-                            modal.classList.remove('hidden'); // Show the modal
-                        }
-                
-                        // Close modal event
-                        closeModalButton.addEventListener('click', function (event) {
-                            event.preventDefault();
-                            modal.classList.add('hidden'); // Hide the modal
-                        });
+                        // Function to show SweetAlert
+                        function showSweetAlert(message) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Invalid Date',
+                                        text: message,
+                                        confirmButtonText: 'OK',
+                                        customClass: {
+                                            popup: 'custom-popup-error',
+                                            title: 'custom-title-error',
+                                            confirmButton: 'custom-button-error'
+                                        }
+                                    });
+                                }
                 
                         // Event listener for event date input change
                         eventDateInput.addEventListener('change', updateMeetingDetailsState);
@@ -395,6 +496,29 @@
                         setMinDate();
                     });
                 </script>
+                <style>
+                    /* Error Alert Button */
+                    .custom-button-error {
+                        background-color: #E07B39 !important; /* Red button background */
+                        color: white !important; /* White button text */
+                        border-radius: 5px;
+                    }
+                    .custom-button-error:hover {
+                        background-color: #C0392B !important; /* Darker red on hover */
+                    }
+                
+                    /* Customize Popup Background for Error */
+                    .custom-popup-error {
+                        background-color: #FDEDEC; /* Light red background */
+                        border: 2px solid #E07B39; /* Red border */
+                    }
+                
+                    /* Customize Title for Error */
+                    .custom-title-error {
+                        color: #E07B39; /* Red text for title */
+                        font-weight: bold;
+                    }
+                </style>
                 
 
 <script>

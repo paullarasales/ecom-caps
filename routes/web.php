@@ -394,7 +394,11 @@ Route::get('/owner/custom/packages/facepaint/destroy/{facepaint_id}', [OwnerCust
 
 
 //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES 
-Route::resource('package', PackagesController::class);
+// Route::resource('package', PackagesController::class);
+Route::post('/admin/packages/store', [PackagesController::class, 'store'])->middleware(['auth', 'verified','admin'])->name('admin.package.store');
+Route::post('/manager/packages/store', [PackagesController::class, 'store'])->middleware(['auth', 'verified','manager'])->name('manager.package.store');
+Route::post('/owner/packages/store', [PackagesController::class, 'store'])->middleware(['auth', 'verified','owner'])->name('owner.package.store');
+
 
 //ADMIN PACKAGES
 Route::get('/admin/packages/add', [PackagesPagesController::class, 'add'])->middleware(['auth', 'verified','admin'])->name('addpackage');
