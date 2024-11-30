@@ -14,6 +14,7 @@ use App\Models\Blockeddate;
 use App\Models\Log as ModelsLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 class AppointmentController extends Controller
 {
@@ -518,6 +519,7 @@ class AppointmentController extends Controller
         $user->phone = $request->input('phone');
         $user->address = $request->input('address');
         $user->city = $request->input('city');
+        $user->submitisadminread = "read";
         $user->save();
 
         // Create and save new appointment
@@ -530,6 +532,7 @@ class AppointmentController extends Controller
         $appointment->package_id = $request->input('package_id');
         $appointment->reference = strtoupper(uniqid('REF'));
         $appointment->status = 'booked'; // Consider using null instead of 'null' if you want it to be a database NULL
+        $appointment->isadminread = "read";
         $appointment->save();
 
         $DateFormatted = Carbon::parse($request->edate)->format('F j, Y');
@@ -1073,7 +1076,7 @@ class AppointmentController extends Controller
                     <h1 style='color: #333;'>You canceled the meeting on {$appointmentDateFormatted} for the event {$appointment->type}</h1>
                     <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
                     <p>We look forward on making your next event wonderful.</p>
-                    <p style='color: #555;'>Message us on our Facebook page or on our Website if you want your event to be re-booked</p>
+                    <p style='color: #555;'>Message us on our Facebook page or on our Website for more details</p>
                 </div>
             ";
 
@@ -1104,24 +1107,45 @@ class AppointmentController extends Controller
         $packages = Package::orderBy('created_at', 'desc')->paginate(30);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
+        $bookedDates = Appointment::select('edate')
+        ->where('status', 'booked')
+        ->where('appointment_id', '!=', $appointment_id)
+        ->groupBy('edate')
+        ->having(DB::raw('COUNT(*)'), '=', 3)
+        ->pluck('edate')
+        ->toArray();
 
-        return view('admin.booked-edit', compact('packages', 'appointment', 'blockedDates'));
+        return view('admin.booked-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates'));
     }
     public function detailspendingedit(string $appointment_id)
     {
         $packages = Package::orderBy('created_at', 'desc')->paginate(30);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
+        $bookedDates = Appointment::select('edate')
+        ->where('status', 'booked')
+        ->where('appointment_id', '!=', $appointment_id)
+        ->groupBy('edate')
+        ->having(DB::raw('COUNT(*)'), '=', 3)
+        ->pluck('edate')
+        ->toArray();
 
-        return view('admin.pending-edit', compact('packages', 'appointment', 'blockedDates'));
+        return view('admin.pending-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates'));
     }
     public function detailscancellededit(string $appointment_id)
     {
         $packages = Package::orderBy('created_at', 'desc')->paginate(30);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
+        $bookedDates = Appointment::select('edate')
+        ->where('status', 'booked')
+        ->where('appointment_id', '!=', $appointment_id)
+        ->groupBy('edate')
+        ->having(DB::raw('COUNT(*)'), '=', 3)
+        ->pluck('edate')
+        ->toArray();
 
-        return view('admin.cancelled-edit', compact('packages', 'appointment', 'blockedDates'));
+        return view('admin.cancelled-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates'));
     }
 
     public function save(Request $request, string $appointment_id)
@@ -1139,25 +1163,26 @@ class AppointmentController extends Controller
 
         if ($blockedDateExists) {
             // Redirect back with an error message if the date is blocked
-            // return redirect()->back()->with('error', 'The selected date is blocked, please select another date.');
-            return redirect()->back()->with([
-                'alert' => 'error',
-                'message' => 'The selected event date is blocked, please select another date.'
-            ]);
+            return redirect()->back()->with('error', 'The selected date is blocked, please select another date.');
+            // return redirect()->back()->with([
+            //     'alert' => 'error',
+            //     'message' => 'The selected event date is blocked, please select another date.'
+            // ]);
         }
 
         // Check if there are already 3 accepted event on the same date
         $existingAppointments = Appointment::where('edate', $request->edate)
                                             ->where('status', 'booked')
+                                            ->where('appointment_id', '!=', $appointment_id)
                                             ->count();
     
         if ($existingAppointments >= 3) {
             // Redirect back with an error message
-            // return redirect()->back()->with('error', 'The selected event date is fully booked, please select other date.');
-            return redirect()->back()->with([
-                'alert' => 'error',
-                'message' => 'The selected event date is fully booked, please select other date.'
-            ]);
+            return redirect()->back()->with('error', 'The selected event date is fully booked, please select other date.');
+            // return redirect()->back()->with([
+            //     'alert' => 'error',
+            //     'message' => 'The selected event date is fully booked, please select other date.'
+            // ]);
         }
 
         $appointment = Appointment::findOrFail($appointment_id);
@@ -1182,12 +1207,45 @@ class AppointmentController extends Controller
                 $log->logdate = now();
                 $log->save();
 
+        // Get the user who made the appointment
+        $user = $appointment->user; // Assuming you have a relation between Appointment and User models
+
+        // Format the appointment date and time
+        $appointmentDateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+
+        // Create the email content
+        $emailContent = "
+            <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                <h1 style='color: #333;'>The details of your event: {$appointment->type} on {$appointmentDateFormatted} have been updated</h1>
+                <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                <p>We look forward on making your next event wonderful.</p>
+                <p style='color: #555;'>Message us on our Facebook page or on our Website for more details</p>
+            </div>
+        ";
+
+        try {
+            // Send the email
+            if (!empty($user->email)) {
+                Mail::send([], [], function ($message) use ($user, $emailContent) {
+                    $message->to($user->email)
+                            ->subject('Event details changes')
+                            ->html($emailContent);
+                });
+            }
+        } catch (\Exception $e) {
+            // Log the error or handle it
+            Log::error('Email could not be sent: ' . $e->getMessage());
+            
+            // Redirect back with an error message
+            return redirect()->back()->with('error', 'Failed to send confirmation email.');
+        }
+
         // Redirect back or to a success page
-        // return redirect()->back()->with('alert', 'Event updated successfully!');
-        return redirect()->back()->with([
-            'alert' => 'success',
-            'message' => 'Event updated successfully!'
-        ]);
+        return redirect()->back()->with('success', 'Event updated successfully!');
+        // return redirect()->back()->with([
+        //     'alert' => 'success',
+        //     'message' => 'Event updated successfully!'
+        // ]);
     }
 
     

@@ -228,12 +228,18 @@ class UserController extends Controller
                    ->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $blockedApps = Blockedapp::pluck('blocked_app')->toArray(); 
+        $bookedDates = Appointment::select('edate')
+        ->where('status', 'booked')
+        ->groupBy('edate')
+        ->having(DB::raw('COUNT(*)'), '=', 3)
+        ->pluck('edate')
+        ->toArray();
         $scheduledMeeting = Appointment::where('status', 'pending')
         ->where('user_id', '!=', Auth::id())  // Exclude the appointment made by the current user
         ->pluck('appointment_datetime')
         ->toArray();
         
-        return view('client.form-edit', compact('appointment', 'packages', 'blockedDates', 'blockedApps', 'scheduledMeeting'));
+        return view('client.form-edit', compact('appointment', 'packages', 'blockedDates', 'blockedApps', 'scheduledMeeting', 'bookedDates'));
     }
     public function formMeetingEdit($appointment_id) 
     {

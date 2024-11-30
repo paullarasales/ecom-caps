@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Package;
 use App\Models\Blockeddate;
 use App\Models\Log as ModelsLog;
+use Illuminate\Support\Facades\DB;
 
 class OwnerAppointmentsController extends Controller
 {
@@ -67,7 +68,8 @@ class OwnerAppointmentsController extends Controller
         $appointment->type = $request->input('type');
         $appointment->package_id = $request->input('package_id');
         $appointment->reference = strtoupper(uniqid('REF'));
-        $appointment->status = 'booked'; // Consider using null instead of 'null' if you want it to be a database NULL
+        $appointment->status = 'booked';
+        $appointment->isownerread = "read";
         $appointment->save();
 
         $DateFormatted = Carbon::parse($request->edate)->format('F j, Y');
@@ -86,9 +88,17 @@ class OwnerAppointmentsController extends Controller
     public function detailsedit(string $appointment_id)
     {
         $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
+        $bookedDates = Appointment::select('edate')
+        ->where('status', 'booked')
+        ->where('appointment_id', '!=', $appointment_id)
+        ->groupBy('edate')
+        ->having(DB::raw('COUNT(*)'), '=', 3)
+        ->pluck('edate')
+        ->toArray();
 
-        return view('owner.booked-edit', compact('packages', 'appointment'));
+        return view('owner.booked-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates'));
     }
     public function save(Request $request, string $appointment_id)
     {
@@ -114,6 +124,7 @@ class OwnerAppointmentsController extends Controller
         // Check if there are already 3 accepted event on the same date
         $existingAppointments = Appointment::where('edate', $request->edate)
                                             ->where('status', 'booked')
+                                            ->where('appointment_id', '!=', $appointment_id)
                                             ->count();
     
         if ($existingAppointments >= 3) {

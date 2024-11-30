@@ -7,45 +7,50 @@
 
 <form action="/appointment" method="POST" id="appointmentForm">
     @csrf
-    <!-- Display validation errors -->
-    <div id="errorModal" class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-        <div class="bg-white rounded-lg p-6 w-11/12 max-w-md">
-            <div class="flex justify-between">
-                <h2 class="text-lg font-bold mb-4">Validation Errors</h2>
-                <button id="closeErrorModal" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Close</button>
-            </div>
-            <ul id="errorMessageList" class="text-gray-600">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    </div>
-
     <script>
         // Check if there are validation errors
-        var errors = @json($errors->any()); // Get the boolean status of errors
-        var errorModal = document.getElementById('errorModal');
-        var closeErrorModalButton = document.getElementById('closeErrorModal');
-
-        // Show the error modal if there are errors
+        var errors = @json($errors->any()); // Check if there are any errors
+        var errorMessages = @json($errors->all()); // Get the array of error messages
+    
+        // Show SweetAlert with validation errors if there are any
         if (errors) {
-            errorModal.classList.remove('hidden'); // Show the modal
+            Swal.fire({
+                title: 'Validation Errors',
+                icon: 'error',
+                html: `
+                    <ul style="text-align: center; color: #E07B39;">
+                        ${errorMessages.map(error => `<li>${error}</li>`).join('')}
+                    </ul>
+                `,
+                confirmButtonText: 'Close',
+                customClass: {
+                    popup: 'custom-popup-error',
+                    title: 'custom-title-error',
+                    confirmButton: 'custom-button-error'
+                }
+            });
         }
-
-        // Close error modal event
-        closeErrorModalButton.addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent any default action (if needed)
-            errorModal.classList.add('hidden'); // Hide the modal
-        });
-
-        // Optional: Close the modal when clicking outside of it
-        window.addEventListener('click', function(event) {
-            if (event.target === errorModal) {
-                errorModal.classList.add('hidden'); // Hide the modal
-            }
-        });
     </script>
+    
+    <style>
+        /* SweetAlert Error Popup Customization */
+        .custom-popup-error {
+            background-color: #FDEDEC; /* Light red background */
+            border: 2px solid #E07B39; /* Red border */
+        }
+        .custom-title-error {
+            color: #E07B39; /* Red title text */
+            font-weight: bold;
+        }
+        .custom-button-error {
+            background-color: #E07B39 !important; /* Red button background */
+            color: white !important; /* White button text */
+            border-radius: 5px;
+        }
+        .custom-button-error:hover {
+            background-color: #C0392B !important; /* Darker red on hover */
+        }
+    </style>
 <div class="min-h-screen p-6 flex items-center justify-center">
     <div class="container max-w-screen-lg mx-auto">
         <div>
@@ -196,7 +201,7 @@
                                 <label for="package" class="uppercase bg-yellow-100 my-10 rounded-xl py-1 px-2">Available Packages</label>
                                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4"> <!-- Grid layout for images -->
                                     @foreach ($packages as $pk)
-                                        <a href="#" class="block relative w-[155px] h-[200px] overflow-hidden rounded-lg mx-auto transition-transform duration-300 transform  hover:scale-105">
+                                        <a href="#" class="block relative w-[150px] h-[200px] overflow-hidden rounded-lg mx-auto transition-transform duration-300 transform  hover:scale-105">
                                             @if ($pk->packagephoto)
                                             <p class="uppercase">{{$pk->packagename}}</p>
                                             <p class="uppercase">₱{{ $pk->packagedesc }}.00</p>

@@ -19,45 +19,50 @@
     <form id="acceptForm" action="{{  route('appointment.save', $appointment->appointment_id) }}" method="POST">
         @method("PUT")
         @csrf
-        <!-- Display validation errors -->
-    <div id="errorModal" class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-        <div class="bg-white rounded-lg p-6 w-11/12 max-w-md">
-            <div class="flex justify-between">
-                <h2 class="text-lg font-bold mb-4">Validation Errors</h2>
-                <button id="closeErrorModal" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Close</button>
-            </div>
-            <ul id="errorMessageList" class="text-gray-600">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    </div>
-
-    <script>
-        // Check if there are validation errors
-        var errors = @json($errors->any()); // Get the boolean status of errors
-        var errorModal = document.getElementById('errorModal');
-        var closeErrorModalButton = document.getElementById('closeErrorModal');
-
-        // Show the error modal if there are errors
-        if (errors) {
-            errorModal.classList.remove('hidden'); // Show the modal
-        }
-
-        // Close error modal event
-        closeErrorModalButton.addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent any default action (if needed)
-            errorModal.classList.add('hidden'); // Hide the modal
-        });
-
-        // Optional: Close the modal when clicking outside of it
-        window.addEventListener('click', function(event) {
-            if (event.target === errorModal) {
-                errorModal.classList.add('hidden'); // Hide the modal
+        <script>
+            // Check if there are validation errors
+            var errors = @json($errors->any()); // Check if there are any errors
+            var errorMessages = @json($errors->all()); // Get the array of error messages
+        
+            // Show SweetAlert with validation errors if there are any
+            if (errors) {
+                Swal.fire({
+                    title: 'Validation Errors',
+                    icon: 'error',
+                    html: `
+                        <ul style="text-align: center; color: #E07B39;">
+                            ${errorMessages.map(error => `<li>${error}</li>`).join('')}
+                        </ul>
+                    `,
+                    confirmButtonText: 'Close',
+                    customClass: {
+                        popup: 'custom-popup-error',
+                        title: 'custom-title-error',
+                        confirmButton: 'custom-button-error'
+                    }
+                });
             }
-        });
-    </script>
+        </script>
+        
+        <style>
+            /* SweetAlert Error Popup Customization */
+            .custom-popup-error {
+                background-color: #FDEDEC; /* Light red background */
+                border: 2px solid #E07B39; /* Red border */
+            }
+            .custom-title-error {
+                color: #E07B39; /* Red title text */
+                font-weight: bold;
+            }
+            .custom-button-error {
+                background-color: #E07B39 !important; /* Red button background */
+                color: white !important; /* White button text */
+                border-radius: 5px;
+            }
+            .custom-button-error:hover {
+                background-color: #C0392B !important; /* Darker red on hover */
+            }
+        </style>
     <div class="min-h-screen p-6 flex items-center justify-center">
         <div class="container max-w-screen-lg mx-auto">
             <div>
@@ -101,6 +106,7 @@
                             
                                 // Blocked dates from the server
                                 var blockedDates = @json($blockedDates); // Convert PHP array to JavaScript array
+                                var bookedDates = @json($bookedDates);
                             
                                 // Modal elements
                                 var modal = document.getElementById('datemodal');
@@ -109,28 +115,57 @@
                                 // Disable blocked dates in the input
                                 var dateInput = document.getElementById('edate');
                             
-                                dateInput.addEventListener('change', function() {
+                                dateInput.addEventListener('change', function () {
                                     var selectedDate = new Date(this.value);
-                                    var formattedDate = selectedDate.toISOString().split('T')[0];
-                            
+                                    var formattedDate = selectedDate.toISOString().split('T')[0]; // Format the date as YYYY-MM-DD
+
                                     if (blockedDates.includes(formattedDate)) {
-                                        showModal('The selected date is blocked. Please choose another date.');
+                                        showSweetAlert('The selected date is blocked due to scheduling restrictions. Please choose another date.');
+                                        this.value = ''; // Clear the input
+                                    } else if (bookedDates.includes(formattedDate)) {
+                                        showSweetAlert('The selected date is fully booked. Please choose another date.');
                                         this.value = ''; // Clear the input
                                     }
                                 });
                             
-                                // Function to show the modal
-                                function showModal(message) {
-                                    document.getElementById('modalMessage').innerText = message;
-                                    modal.classList.remove('hidden'); // Show the modal
+                                // Function to show SweetAlert
+                                function showSweetAlert(message) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Invalid Date',
+                                        text: message,
+                                        confirmButtonText: 'OK',
+                                        customClass: {
+                                            popup: 'custom-popup-error',
+                                            title: 'custom-title-error',
+                                            confirmButton: 'custom-button-error'
+                                        }
+                                    });
+                                }
+                            </script>
+                            <style>
+                                /* Error Alert Button */
+                                .custom-button-error {
+                                    background-color: #E07B39 !important; /* Red button background */
+                                    color: white !important; /* White button text */
+                                    border-radius: 5px;
+                                }
+                                .custom-button-error:hover {
+                                    background-color: #C0392B !important; /* Darker red on hover */
                                 }
                             
-                                // Close modal event
-                                closeModalButton.addEventListener('click', function() {
-                                    event.preventDefault();
-                                    modal.classList.add('hidden'); // Hide the modal
-                                });
-                            </script>
+                                /* Customize Popup Background for Error */
+                                .custom-popup-error {
+                                    background-color: #FDEDEC; /* Light red background */
+                                    border: 2px solid #E07B39; /* Red border */
+                                }
+                            
+                                /* Customize Title for Error */
+                                .custom-title-error {
+                                    color: #E07B39; /* Red text for title */
+                                    font-weight: bold;
+                                }
+                            </style>
     
                                 <div class="md:col-span-2">
                                     <label for="etime">Event Time</label>
@@ -191,7 +226,7 @@
                                     <label for="package" class="uppercase bg-yellow-100 my-10 rounded-xl py-1 px-2">Available Packages</label>
                                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4"> <!-- Grid layout for images -->
                                         @foreach ($packages as $pk)
-                                            <a href="#" class="block relative w-[155px] h-[200px] overflow-hidden rounded-lg mx-auto transition-transform duration-300 transform  hover:scale-105">
+                                            <a href="#" class="block relative w-[150px] h-[200px] overflow-hidden rounded-lg mx-auto transition-transform duration-300 transform  hover:scale-105">
                                                 @if ($pk->packagephoto)
                                                 <p class="uppercase">{{$pk->packagename}}</p>
                                                 <p class="uppercase">₱{{ $pk->packagedesc }}.00</p>
@@ -328,19 +363,69 @@
     </script>
     
 
-    @if(session('alert'))
-    {{-- <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
-        <span>{{ session('alert') }}</span>
-        <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div> --}}
-@elseif(session('error'))
-    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
-        <span>{{ session('error') }}</span>
-        <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div>
-@endif
+    @if (session('success'))
+    <script>
+        Swal.fire({
+            title: 'Success!',
+            text: '{{ session('success') }}',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: {
+            popup: 'custom-popup',
+            title: 'custom-title',
+            confirmButton: 'custom-button'
+        }
+        });
+    </script>
+    @endif
+    
+    @if (session('error'))
+    <script>
+        Swal.fire({
+            title: 'Error!',
+            text: '{{ session('error') }}',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+                popup: 'custom-popup-error',
+                title: 'custom-title-error',
+                confirmButton: 'custom-button-error'
+            }
+        });
+    </script>
+    @endif
+    
+    <style>
+    /* Success Alert Button */
+    .custom-button {
+            background-color: #FFCF81 !important; /* Orange button background */
+            color: white !important; /* White button text */
+            border-radius: 5px;
+        }
+        .custom-button:hover {
+            background-color: #E07B39 !important; /* Darker orange on hover */
+        }
+    
+        /* Error Alert Button */
+        .custom-button-error {
+            background-color: #E07B39 !important; /* Red button background */
+            color: white !important; /* White button text */
+            border-radius: 5px;
+        }
+        .custom-button-error:hover {
+            background-color: #C0392B !important; /* Darker red on hover */
+        }
+    
+        /* Customize Popup Background for Error */
+        .custom-popup-error {
+            background-color: #FDEDEC; /* Light red background */
+            border: 2px solid #E07B39; /* Red border */
+        }
+    
+        /* Customize Title for Error */
+        .custom-title-error {
+            color: #E07B39; /* Red text for title */
+            font-weight: bold;
+        }
+    </style>
 </x-admin-layout>

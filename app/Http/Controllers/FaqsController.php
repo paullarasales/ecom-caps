@@ -48,19 +48,7 @@ class FaqsController extends Controller
             $log->logdate = now();
             $log->save();
 
-        // return redirect()->route('addfaqs')->with('alert', 'Request Submitted');
-        if (Auth::check()) {
-            $user = Auth::user();
-        
-            if ($user->usertype === 'admin') {
-                return redirect()->route('addfaqs')->with('alert', 'Uploaded successfully!');
-            } elseif ($user->usertype === 'owner') {
-                return redirect()->route('owneraddfaqs')->with('alert', 'Uploaded successfully!');
-            }
-            else {
-                return redirect()->route('manageraddfaqs')->with('alert', 'Uploaded successfully!');
-            }
-        }
+            return redirect()->back()->with('success', 'Uploaded successfully!');
     }
 
     /**
@@ -109,7 +97,7 @@ class FaqsController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->route('viewfaqs')->with('alert', 'Faqs Successfully Updated');
+            return redirect()->back()->with('success', 'Updated successfully!');
     }
     public function ownerupdate(Request $request, string $faq_id)
     {
@@ -127,7 +115,7 @@ class FaqsController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->route('ownerviewfaqs')->with('alert', 'Faqs Successfully Updated');
+            return redirect()->back()->with('success', 'Updated successfully!');
     }
     public function managerupdate(Request $request, string $faq_id)
     {
@@ -145,7 +133,7 @@ class FaqsController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->route('managerviewfaqs')->with('alert', 'Faqs Successfully Updated');
+            return redirect()->back()->with('success', 'Updated successfully!');
     }
 
     /**
@@ -167,7 +155,7 @@ class FaqsController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->route('viewfaqs')->with('alert', 'Faqs deleted successfully!');
+        return redirect()->route('viewfaqs')->with('success', 'Deleted successfully!');
     }
     public function ownerdestroy(string $faq_id)
     {
@@ -185,7 +173,7 @@ class FaqsController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->route('ownerviewfaqs')->with('alert', 'Faqs deleted successfully!');
+        return redirect()->route('ownerviewfaqs')->with('success', 'Deleted successfully!');
     }
     public function managerdestroy(string $faq_id)
     {

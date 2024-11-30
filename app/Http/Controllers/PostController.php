@@ -32,9 +32,12 @@ class PostController extends Controller
     {
         // dd($request->all());
         $request->validate([
-            'images.*' => 'required|image|mimes:png,jpg,jpeg,webp',
-            'description' => 'nullable|string',
+            'images.*' => 'nullable|image|mimes:png,jpg,jpeg,webp', // Images are optional but must be valid
+            'description' => 'nullable|string', // Description is optional
+            'images' => 'required_without:description|array', // At least one image is required if description is not provided
+            'description' => 'required_without:images|string', // Description is required if no images are provided
         ]);
+        
         
         $imageData = [];
         if ($files = $request->file('images')) {
@@ -63,19 +66,8 @@ class PostController extends Controller
             $log->description = "new Post Created by " . $user->firstname . " " . $user->lastname;
             $log->logdate = now();
             $log->save();
-    
-        if (Auth::check()) {
-            $user = Auth::user();
-        
-            if ($user->usertype === 'admin') {
-                return redirect()->route('adminpost')->with('alert', 'Uploaded successfully!');
-            } elseif ($user->usertype === 'owner') {
-                return redirect()->route('ownerpost')->with('alert', 'Uploaded successfully!');
-            }
-            else {
-                return redirect()->route('managerpost')->with('alert', 'Uploaded successfully!');
-            }
-        }
+
+            return redirect()->back()->with('success', 'Uploaded successfully!');
     }
 
     /**
@@ -111,10 +103,13 @@ class PostController extends Controller
     public function update(Request $request, string $id)
     {
         // Validate the request
-    $request->validate([
-        'images.*' => 'image|mimes:png,jpg,jpeg,webp',
-        'description' => 'required',
-    ]);
+        $request->validate([
+            'images.*' => 'nullable|image|mimes:png,jpg,jpeg,webp', // Images are optional but must be valid
+            'description' => 'nullable|string', // Description is optional
+            'images' => 'required_without:description|array', // At least one image is required if description is not provided
+            'description' => 'required_without:images|string', // Description is required if no images are provided
+        ]);
+        
 
     // Find the existing post
     $post = Post::findOrFail($id);
@@ -159,18 +154,7 @@ class PostController extends Controller
             $log->logdate = now();
             $log->save();
 
-        if (Auth::check()) {
-            $user = Auth::user();
-        
-            if ($user->usertype === 'admin') {
-                return redirect()->route('viewpost')->with('alert', 'Updated successfully!');
-            } elseif ($user->usertype === 'owner') {
-                return redirect()->route('ownerviewpost')->with('alert', 'Updated successfully!');
-            }
-            else {
-                return redirect()->route('managerviewpost')->with('alert', 'Updated successfully!');
-            }
-        }
+            return redirect()->back()->with('success', 'Updated successfully!');
     }
 
     /**
@@ -201,7 +185,7 @@ class PostController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->route('viewpost')->with('alert', 'Post deleted successfully!');
+        return redirect()->route('viewpost')->with('success', 'Post deleted successfully!');
     }
     public function ownerdestroy(string $post_id)
     {
@@ -228,7 +212,7 @@ class PostController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->route('ownerviewpost')->with('alert', 'Post deleted successfully!');
+        return redirect()->route('ownerviewpost')->with('success', 'Post deleted successfully!');
     }
     public function managerdestroy(string $post_id)
     {
@@ -255,6 +239,6 @@ class PostController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->route('managerviewpost')->with('alert', 'Post deleted successfully!');
+        return redirect()->route('managerviewpost')->with('success', 'Post deleted successfully!');
     }
 }

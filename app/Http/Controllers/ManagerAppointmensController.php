@@ -14,6 +14,7 @@ use App\Models\Blockedapp;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Log as ModelsLog;
+use Illuminate\Support\Facades\DB;
 
 class ManagerAppointmensController extends Controller
 {
@@ -89,6 +90,7 @@ class ManagerAppointmensController extends Controller
         $user->phone = $request->input('phone');
         $user->address = $request->input('address');
         $user->city = $request->input('city');
+        $user->submitismanagerread = "read";
         $user->save();
 
         // Create and save new appointment
@@ -100,7 +102,8 @@ class ManagerAppointmensController extends Controller
         $appointment->type = $request->input('type');
         $appointment->package_id = $request->input('package_id');
         $appointment->reference = strtoupper(uniqid('REF'));
-        $appointment->status = 'booked'; // Consider using null instead of 'null' if you want it to be a database NULL
+        $appointment->status = 'booked'; 
+        $appointment->ismanagerread = "read";
         $appointment->save();
 
         $DateFormatted = Carbon::parse($request->edate)->format('F j, Y');
@@ -627,23 +630,47 @@ class ManagerAppointmensController extends Controller
     public function detailsedit(string $appointment_id)
     {
         $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
+        $bookedDates = Appointment::select('edate')
+        ->where('status', 'booked')
+        ->where('appointment_id', '!=', $appointment_id)
+        ->groupBy('edate')
+        ->having(DB::raw('COUNT(*)'), '=', 3)
+        ->pluck('edate')
+        ->toArray();
 
-        return view('manager.booked-edit', compact('packages', 'appointment'));
+        return view('manager.booked-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates'));
     }
     public function detailspendingedit(string $appointment_id)
     {
         $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
+        $bookedDates = Appointment::select('edate')
+        ->where('status', 'booked')
+        ->where('appointment_id', '!=', $appointment_id)
+        ->groupBy('edate')
+        ->having(DB::raw('COUNT(*)'), '=', 3)
+        ->pluck('edate')
+        ->toArray();
 
-        return view('manager.pending-edit', compact('packages', 'appointment'));
+        return view('manager.pending-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates'));
     }
     public function detailscancellededit(string $appointment_id)
     {
         $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
+        $bookedDates = Appointment::select('edate')
+        ->where('status', 'booked')
+        ->where('appointment_id', '!=', $appointment_id)
+        ->groupBy('edate')
+        ->having(DB::raw('COUNT(*)'), '=', 3)
+        ->pluck('edate')
+        ->toArray();
 
-        return view('manager.cancelled-edit', compact('packages', 'appointment'));
+        return view('manager.cancelled-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates'));
     }
     public function save(Request $request, string $appointment_id)
     {
@@ -669,6 +696,7 @@ class ManagerAppointmensController extends Controller
         // Check if there are already 3 accepted event on the same date
         $existingAppointments = Appointment::where('edate', $request->edate)
                                             ->where('status', 'booked')
+                                            ->where('appointment_id', '!=', $appointment_id)
                                             ->count();
     
         if ($existingAppointments >= 3) {

@@ -22,7 +22,7 @@
                         <!-- Display the sample photos if they exist -->
                         <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
                             @foreach ($samplePhotos as $photo)
-                                <div class="relative overflow-hidden w-48 h-48 sm:w-32 sm:h-32" >
+                                <div class="relative overflow-hidden w-36 h-36 sm:w-32 sm:h-32" >
                                     <img src="{{ asset($photo) }}" alt="Sample Photos" class="absolute inset-0 w-full h-full object-cover cursor-pointer" 
                                         onclick="openModal('{{ asset($photo) }}')"/>
                                 </div>
