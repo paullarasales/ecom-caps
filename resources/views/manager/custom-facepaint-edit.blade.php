@@ -128,7 +128,7 @@
     </div>
 
 
-    @if(session('alert'))
+
     @if (session('success'))
     <script>
         Swal.fire({

@@ -46,7 +46,7 @@
                     <th scope="row" class="px-6 py-4 capitalize">{{ $app->user->firstname ?? 'N/A' }} {{ $app->user->lastname ?? '' }} </th>
                     
                     
-                    <td class="px-6 py-4">{{ \Carbon\Carbon::parse($app->appointment_datetime)->format('F j, Y g:i A') }}</td>
+                    <td class="px-6 py-4">{{ \Carbon\Carbon::parse($app->appointment_datetime)->format('F j, Y') }}</td>
                     <td class="px-6 py-4">{{ $app->reference}}</td>
                     <td class="px-6 py-4">
                         {{-- <a href="" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">

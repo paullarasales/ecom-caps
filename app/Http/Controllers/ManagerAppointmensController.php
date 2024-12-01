@@ -960,7 +960,7 @@ class ManagerAppointmensController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->back()->with('alert', 'Date blocked successfully!');
+        return redirect()->back()->with('success', 'Date blocked successfully!');
     }
     public function unblock(Request $request)
     {
@@ -987,7 +987,7 @@ class ManagerAppointmensController extends Controller
             $log->save();
 
         // Optional: Return a response or redirect with a success message
-        return redirect()->back()->with('alert', 'Date unblocked successfully!');
+        return redirect()->back()->with('success', 'Date unblocked successfully!');
     }
 
     public function appblock(Request $request)
@@ -1014,7 +1014,7 @@ class ManagerAppointmensController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->back()->with('alert', 'Date blocked successfully!');
+        return redirect()->back()->with('success', 'Date blocked successfully!');
     }
     public function appunblock(Request $request)
     {
@@ -1042,6 +1042,6 @@ class ManagerAppointmensController extends Controller
             $log->save();
 
         // Optional: Return a response or redirect with a success message
-        return redirect()->back()->with('alert', 'Date unblocked successfully!');
+        return redirect()->back()->with('success', 'Date unblocked successfully!');
     }
 }

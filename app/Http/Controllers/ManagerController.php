@@ -185,6 +185,7 @@ class ManagerController extends Controller
         })
         ->orderBy('created_at', 'desc')
         ->whereIn('usertype', ['user'])
+        ->whereNotNull('firstname')
         ->whereNotNull('email')
         ->paginate(10);
 

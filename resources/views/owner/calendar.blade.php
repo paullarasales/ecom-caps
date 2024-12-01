@@ -53,49 +53,6 @@
 
     </div>
 
-    {{-- <div>
-        <form action="" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PATCH')
-        <div class=" p-6 flex items-center justify-center">
-            <div class="container max-w-screen-lg mx-auto">
-                <div>
-                    <div class="bg-white rounded shadow-lg shadow-yellow-100 p-4 px-4 md:p-8 mb-6">
-                        <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                                <div class="text-gray-600">
-                                    <p class="font-medium text-lg">Personal Details</p>
-                                    <p>Please fill out all the fields.</p>
-                                </div>
-        
-                            <div class="lg:col-span-2">
-                                <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-                                    <div class="md:col-span-3">
-                                        <label for="firstname">First Name</label>
-                                        <input type="text" name="firstname" id="firstname" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
-                                    </div>
-        
-                                    <div class="md:col-span-2">
-                                        <label for="lastname">Last Name</label>
-                                        <input type="text" name="lastname" id="lastname" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
-                                    </div>
-        
-                                    
-    
-                                    
-        
-                                    <div class="md:col-span-5 text-right">
-                                        <input type="submit" name="submit" value="Submit" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-                                    </div>
-        
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </form>
-    </div> --}}
     
 
 
@@ -208,6 +165,50 @@
             <!-- Form for blocking a date -->
             <form id="blockDateForm" action="{{ route('owner.block') }}" method="POST" class="hidden mt-4">
                 @csrf
+                <script>
+                    // Check if there are validation errors
+                    var errors = @json($errors->any()); // Check if there are any errors
+                    var errorMessages = @json($errors->all()); // Get the array of error messages
+                
+                    // Show SweetAlert with validation errors if there are any
+                    if (errors) {
+                        Swal.fire({
+                            title: 'Validation Errors',
+                            icon: 'error',
+                            html: `
+                                <ul style="text-align: center; color: #E07B39;">
+                                    ${errorMessages.map(error => `<li>${error}</li>`).join('')}
+                                </ul>
+                            `,
+                            confirmButtonText: 'Close',
+                            customClass: {
+                                popup: 'custom-popup-error',
+                                title: 'custom-title-error',
+                                confirmButton: 'custom-button-error'
+                            }
+                        });
+                    }
+                </script>
+                
+                <style>
+                    /* SweetAlert Error Popup Customization */
+                    .custom-popup-error {
+                        background-color: #FDEDEC; /* Light red background */
+                        border: 2px solid #E07B39; /* Red border */
+                    }
+                    .custom-title-error {
+                        color: #E07B39; /* Red title text */
+                        font-weight: bold;
+                    }
+                    .custom-button-error {
+                        background-color: #E07B39 !important; /* Red button background */
+                        color: white !important; /* White button text */
+                        border-radius: 5px;
+                    }
+                    .custom-button-error:hover {
+                        background-color: #C0392B !important; /* Darker red on hover */
+                    }
+                </style>
                 <input type="hidden" name="blocked_date" id="blocked_date" value="">
                 
                 <label for="reason" class="block text-gray-700">Reason for blocking:</label>
@@ -219,6 +220,50 @@
             <!-- Form for unblocking a date -->
             <form id="unblockDateForm" action="{{ route('owner.unblock') }}" method="POST" class="hidden mt-4">
                 @csrf
+                <script>
+                    // Check if there are validation errors
+                    var errors = @json($errors->any()); // Check if there are any errors
+                    var errorMessages = @json($errors->all()); // Get the array of error messages
+                
+                    // Show SweetAlert with validation errors if there are any
+                    if (errors) {
+                        Swal.fire({
+                            title: 'Validation Errors',
+                            icon: 'error',
+                            html: `
+                                <ul style="text-align: center; color: #E07B39;">
+                                    ${errorMessages.map(error => `<li>${error}</li>`).join('')}
+                                </ul>
+                            `,
+                            confirmButtonText: 'Close',
+                            customClass: {
+                                popup: 'custom-popup-error',
+                                title: 'custom-title-error',
+                                confirmButton: 'custom-button-error'
+                            }
+                        });
+                    }
+                </script>
+                
+                <style>
+                    /* SweetAlert Error Popup Customization */
+                    .custom-popup-error {
+                        background-color: #FDEDEC; /* Light red background */
+                        border: 2px solid #E07B39; /* Red border */
+                    }
+                    .custom-title-error {
+                        color: #E07B39; /* Red title text */
+                        font-weight: bold;
+                    }
+                    .custom-button-error {
+                        background-color: #E07B39 !important; /* Red button background */
+                        color: white !important; /* White button text */
+                        border-radius: 5px;
+                    }
+                    .custom-button-error:hover {
+                        background-color: #C0392B !important; /* Darker red on hover */
+                    }
+                </style>
                 <input type="hidden" name="unblocked_date" id="unblocked_date" value="">
                 <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-2">Unblock Date</button>
             </form>
@@ -229,21 +274,71 @@
 
 
 
-@if(session('alert'))
-    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
-        <span>{{ session('alert') }}</span>
-        <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div>
-@elseif(session('error'))
-    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
-        <span>{{ session('error') }}</span>
-        <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div>
+@if (session('success'))
+<script>
+    Swal.fire({
+        title: 'Success!',
+        text: '{{ session('success') }}',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        customClass: {
+        popup: 'custom-popup',
+        title: 'custom-title',
+        confirmButton: 'custom-button'
+    }
+    });
+</script>
 @endif
+
+@if (session('error'))
+<script>
+    Swal.fire({
+        title: 'Error!',
+        text: '{{ session('error') }}',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        customClass: {
+            popup: 'custom-popup-error',
+            title: 'custom-title-error',
+            confirmButton: 'custom-button-error'
+        }
+    });
+</script>
+@endif
+
+<style>
+/* Success Alert Button */
+.custom-button {
+        background-color: #FFCF81 !important; /* Orange button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button:hover {
+        background-color: #E07B39 !important; /* Darker orange on hover */
+    }
+
+    /* Error Alert Button */
+    .custom-button-error {
+        background-color: #E07B39 !important; /* Red button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button-error:hover {
+        background-color: #C0392B !important; /* Darker red on hover */
+    }
+
+    /* Customize Popup Background for Error */
+    .custom-popup-error {
+        background-color: #FDEDEC; /* Light red background */
+        border: 2px solid #E07B39; /* Red border */
+    }
+
+    /* Customize Title for Error */
+    .custom-title-error {
+        color: #E07B39; /* Red text for title */
+        font-weight: bold;
+    }
+</style>
 
 
 </x-owner-layout>

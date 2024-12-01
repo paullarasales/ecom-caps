@@ -95,8 +95,8 @@ class ManagerAppointmentsPagesController extends Controller
 
         return [
             'id' => $event->appointment_id,
-            'title' => $event->type,
-            'info' => $event->user->firstname . '  ' . $event->user->lastname ,
+            'title' => $event->user->firstname . '  ' . $event->user->lastname,
+            'info' => $event->type,
             'start' => $event->appointment_datetime,
             'color' => $color,  // Include the color in the event data
         ];
