@@ -1039,7 +1039,7 @@ class AppointmentController extends Controller
                 // return redirect()->route('pending')->with('error', 'Failed to send confirmation email.');
                 return redirect()->route('pending')->with([
                     'alert' => 'error',
-                    'message' => 'Event booked! reference number is ' . $appointment->reference . 'However, we could not send a confirmation email at the moment.'
+                    'message' => 'Meeting cancelled!'
                 ]);
             }
 
@@ -1047,7 +1047,7 @@ class AppointmentController extends Controller
             // return redirect("admin/pending")->with('alert', 'Event has been canceled');
             return redirect()->route('pending')->with([
                 'alert' => 'success',
-                'message' => 'Event booked! reference number is ' . $appointment->reference
+                'message' => 'Meeting cancelled!'
             ]);
     }
 
@@ -1104,7 +1104,9 @@ class AppointmentController extends Controller
     //Details Edit
     public function detailsedit(string $appointment_id)
     {
-        $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $packages = Package::orderBy('created_at', 'desc')
+        ->where('packagestatus', 'active')
+        ->paginate(30);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
         $bookedDates = Appointment::select('edate')
@@ -1119,7 +1121,9 @@ class AppointmentController extends Controller
     }
     public function detailspendingedit(string $appointment_id)
     {
-        $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $packages = Package::orderBy('created_at', 'desc')
+        ->where('packagestatus', 'active')
+        ->paginate(30);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
         $bookedDates = Appointment::select('edate')
@@ -1134,7 +1138,9 @@ class AppointmentController extends Controller
     }
     public function detailscancellededit(string $appointment_id)
     {
-        $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $packages = Package::orderBy('created_at', 'desc')
+        ->where('packagestatus', 'active')
+        ->paginate(30);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
         $bookedDates = Appointment::select('edate')
@@ -1465,6 +1471,90 @@ class AppointmentController extends Controller
         return redirect()->route('cancelledMeeting')->with([
             'alert' => 'success',
             'message' => 'Appointment deleted successfully.'
+        ]);
+    }
+
+    public function archive(string $appointment_id)
+    {
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        if ($appointment->status === 'done') {
+            return redirect()->route('cancelledMeeting')->with([
+                'alert' => 'error',
+                'message' => 'Completed event cannot be archived.'
+            ]);
+        }
+
+        $appointment->status = "archived";
+        $appointment->save();
+
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Archived';
+            $log->description = $use->firstname . " " . $use->lastname . " Has archived an appointment. " ;
+            $log->logdate = now();
+            $log->save();
+
+        // Redirect back or to another route with a success message
+        // return redirect()->route('cancelledMeeting')->with('success', 'Appointment deleted successfully.');
+        return redirect()->route('cancelledMeeting')->with([
+            'alert' => 'success',
+            'message' => 'Appointment archived successfully.'
+        ]);
+    }
+    public function archivePending(string $appointment_id)
+    {
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        if ($appointment->status === 'done') {
+            return redirect()->route('pending')->with([
+                'alert' => 'error',
+                'message' => 'Completed event cannot be archived.'
+            ]);
+        }
+
+        $appointment->status = "archived";
+        $appointment->save();
+
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Archived';
+            $log->description = $use->firstname . " " . $use->lastname . " Has archived an appointment. " ;
+            $log->logdate = now();
+            $log->save();
+
+        // Redirect back or to another route with a success message
+        // return redirect()->route('cancelledMeeting')->with('success', 'Appointment deleted successfully.');
+        return redirect()->route('pending')->with([
+            'alert' => 'success',
+            'message' => 'Appointment archived successfully.'
+        ]);
+    }
+    public function unarchive(string $appointment_id)
+    {
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        $appointment->status = "mcancelled";
+        $appointment->save();
+
+        $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Archived';
+            $log->description = $use->firstname . " " . $use->lastname . " Has unarchived an appointment. " ;
+            $log->logdate = now();
+            $log->save();
+
+        // Redirect back or to another route with a success message
+        // return redirect()->route('cancelledMeeting')->with('success', 'Appointment deleted successfully.');
+        return redirect()->route('archived')->with([
+            'alert' => 'success',
+            'message' => 'Appointment unarchived successfully.'
         ]);
     }
 

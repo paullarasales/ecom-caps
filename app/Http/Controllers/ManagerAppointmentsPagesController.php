@@ -363,6 +363,63 @@ class ManagerAppointmentsPagesController extends Controller
             // return view('admin.pending-view');
     }
 
+
+    public function archived()
+    {
+        $search = request('search');
+
+        $appointments = Appointment::with('user')
+            ->where('status', 'archived')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('firstname', 'like', "%{$search}%")
+                        ->orWhere('lastname', 'like', "%{$search}%");
+                    })
+                    ->orWhere('reference', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('edate', 'asc')
+            ->paginate(10);
+        
+        return view('manager.archived', compact('appointments', 'search'));
+        // return view('admin.done');
+    }
+    public function archivedView(string $app)
+    {
+        // $appointment = Appointment::with(['user', 'package'])
+        // ->where('status', 'done')
+        // ->where('appointment_id', $app)
+        // ->first();
+
+        // if (!$appointment) {
+        //     return redirect()->route('adminappointments')->with('error', 'Appointment not found or not pending.');
+        // }
+
+        // return view('admin.done-view', compact('appointment'));
+
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'archived')
+            ->where('appointment_id', $app)
+            ->first();
+
+        if (!$appointment) {
+            return redirect()->route('managerappointments')->with('error', 'Appointment not found or not pending.');
+        }
+
+        // Pass the appointment and its related data (package, custom package with items) to the view
+
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
+
+        return view('manager.archived-view')->with([
+            'appointment' => $appointment,
+            'package' => $appointment->package,  // Directly access the package related to the appointment
+            'customPackage' => $customPackage,  // Access the custom package related to the package
+        ]);
+
+            // return view('admin.pending-view');
+    }
+
     
 
     public function direct()

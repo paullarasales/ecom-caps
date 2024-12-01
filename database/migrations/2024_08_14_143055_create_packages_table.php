@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('packagedesc')->nullable();
             $table->string('packagephoto')->nullable();
             $table->string('packagetype')->nullable();
+            $table->string('packagestatus')->default('active');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

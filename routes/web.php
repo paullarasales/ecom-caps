@@ -84,6 +84,8 @@ Route::get('/admin/calendar', [AppointmentsPagesController::class, 'calendarView
 Route::get('/admin/meetingCalendar', [AppointmentsPagesController::class, 'meetingCalendarView'])->middleware(['auth', 'verified','admin'])->name('meetingCalendarView');
 Route::get('/admin/meetingCalendar/data', [AppointmentsPagesController::class, 'meetingCalendar'])->middleware(['auth', 'verified','admin'])->name('meetingCalendar');
 
+Route::get('/admin/archived/{appointment_id}/view', [AppointmentsPagesController::class, 'archivedView'])->middleware(['auth', 'verified','admin'])->name('archivedView');
+Route::get('/admin/archived', [AppointmentsPagesController::class, 'archived'])->middleware(['auth', 'verified','admin'])->name('archived');
 Route::get('/admin/booked', [AppointmentsPagesController::class, 'booked'])->middleware(['auth', 'verified','admin'])->name('booked');
 Route::get('/admin/booked/{appointment_id}/view', [AppointmentsPagesController::class, 'bookedView'])->middleware(['auth', 'verified','admin'])->name('bookedView');
 Route::get('/admin/pending', [AppointmentsPagesController::class, 'pending'])->middleware(['auth', 'verified','admin'])->name('pending');
@@ -437,6 +439,22 @@ Route::get('/package/{package_id}/destroycustom', [CustomPackagesController::cla
     ->middleware('auth', 'admin')
     ->name('destroycustom');
 
+
+
+Route::get('/admin/packages/view/archived', [PackagesPagesController::class, 'viewArchived'])->middleware(['auth', 'verified','admin'])->name('admin.view.archive');
+
+Route::get('/package/{package_id}/archive', [PackagesController::class, 'archive'])
+    ->middleware(['auth', 'verified'])
+    ->middleware('auth', 'admin')
+    ->name('admin.packages.archive');
+
+Route::get('/package/{package_id}/unarchive', [PackagesController::class, 'unarchive'])
+    ->middleware(['auth', 'verified'])
+    ->middleware('auth', 'admin')
+    ->name('admin.packages.unarchive');
+
+
+
 //MANAGER PACKAGES
 Route::get('/manager/packages/add', [PackagesPagesController::class, 'manageradd'])->middleware(['auth', 'verified','manager'])->name('manageraddpackage');
 Route::get('/manager/packages/view', [PackagesPagesController::class, 'managerview'])->middleware(['auth', 'verified','manager'])->name('managerviewpackage');
@@ -470,6 +488,19 @@ Route::get('/manager/package/{package_id}/destroycustom', [MgrCustomPackagesCont
     ->name('manager.destroycustom');
 
 
+Route::get('/manager/packages/view/archived', [PackagesPagesController::class, 'managerviewArchived'])->middleware(['auth', 'verified','manager'])->name('manager.view.archive');
+
+Route::get('/manager/package/{package_id}/archive', [PackagesController::class, 'archive'])
+    ->middleware(['auth', 'verified'])
+    ->middleware('auth', 'manager')
+    ->name('manager.packages.archive');
+    
+Route::get('/manager/package/{package_id}/unarchive', [PackagesController::class, 'unarchive'])
+    ->middleware(['auth', 'verified'])
+    ->middleware('auth', 'manager')
+    ->name('manager.packages.unarchive');
+
+
 //OWNER PACKAGES
 Route::get('/owner/packages/add', [PackagesPagesController::class, 'owneradd'])->middleware(['auth', 'verified','owner'])->name('owneraddpackage');
 Route::get('/owner/packages/view', [PackagesPagesController::class, 'ownerview'])->middleware(['auth', 'verified','owner'])->name('ownerviewpackage');
@@ -500,6 +531,23 @@ Route::get('/owner/package/{package_id}/destroycustom', [OwnerCustomPackagesCont
     ->middleware(['auth', 'verified'])
     ->middleware('auth', 'owner')
     ->name('owner.destroycustom');
+
+
+
+Route::get('/owner/packages/view/archived', [PackagesPagesController::class, 'ownerviewArchived'])->middleware(['auth', 'verified','owner'])->name('owner.view.archive');
+
+Route::get('/owner/package/{package_id}/archive', [PackagesController::class, 'archive'])
+    ->middleware(['auth', 'verified'])
+    ->middleware('auth', 'owner')
+    ->name('owner.packages.archive');
+    
+Route::get('/owner/package/{package_id}/unarchive', [PackagesController::class, 'unarchive'])
+    ->middleware(['auth', 'verified'])
+    ->middleware('auth', 'owner')
+    ->name('owner.packages.unarchive');
+
+
+
 //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES 
 
 
@@ -766,6 +814,33 @@ Route::delete('/appointment/manager/{appointment_id}/delete/meeting', [ManagerAp
     ->middleware(['auth', 'verified', 'manager'])
     ->name('manager.appointment.delete.meeting');
 
+
+
+Route::get('/appointment/{appointment_id}/archive', [AppointmentController::class, 'archive'])
+    ->middleware(['auth', 'verified', 'admin'])
+    ->name('appointment.archive');
+
+Route::get('/appointment/{appointment_id}/archive/pending', [AppointmentController::class, 'archivePending'])
+    ->middleware(['auth', 'verified', 'admin'])
+    ->name('appointment.archive.pending');
+
+Route::get('/appointment/{appointment_id}/unarchive', [AppointmentController::class, 'unarchive'])
+    ->middleware(['auth', 'verified', 'admin'])
+    ->name('appointment.unarchive');
+
+//MANAGER
+    Route::get('/appointment./manager/{appointment_id}/archive', [ManagerAppointmensController::class, 'archive'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.appointment.archive');
+
+Route::get('/appointment/{appointment_id}/manager/archive/pending', [ManagerAppointmensController::class, 'archivePending'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.appointment.archive.pending');
+
+Route::get('/appointment/{appointment_id}/manager/unarchive', [ManagerAppointmensController::class, 'unarchive'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.appointment.unarchive');
+
 //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE 
 
 //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT 
@@ -835,6 +910,8 @@ Route::get('/manager/done/{appointment_id}/view', [ManagerAppointmentsPagesContr
 Route::get('/manager/cancelled/meeting', [ManagerAppointmentsPagesController::class, 'cancelledMeeting'])->middleware(['auth', 'verified','manager'])->name('manager.cancelledMeeting');
 Route::get('/manager/cancelled/meeting/{appointment_id}/view', [ManagerAppointmentsPagesController::class, 'cancelledmeetingView'])->middleware(['auth', 'verified','manager'])->name('manager.cancelledMeetingView');
 
+Route::get('/manager/archived', [ManagerAppointmentsPagesController::class, 'archived'])->middleware(['auth', 'verified','manager'])->name('manager.archived');
+Route::get('/manager/archived/{appointment_id}/view', [ManagerAppointmentsPagesController::class, 'archivedView'])->middleware(['auth', 'verified','manager'])->name('manager.archivedView');
 
 
 //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS //MANAGER NTOIFICATIONS 

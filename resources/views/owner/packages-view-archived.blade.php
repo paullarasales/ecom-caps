@@ -1,7 +1,7 @@
-<x-manager-layout>
+<x-owner-layout>
     
     <div class="absolute">
-        <a href="{{route('managerpackages')}}">
+        <a href="{{route('ownerviewpackage')}}">
             <i class="fa-solid fa-arrow-left float-left ml-5 text-xl"></i>
         </a>
     </div>
@@ -9,7 +9,7 @@
     <div class="text-center py-2 my-2">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Event <span class="text-yellow-600">Packages</span>
+            Archived <span class="text-yellow-600">Packages</span>
         </h3>
 
     </div>
@@ -31,11 +31,9 @@
             <h5 class="mb-2 text-lg font-bold uppercase tracking-tight text-gray-900 dark:text-white">{{ $pk->packagename }}</h5>
         </a>
         
-        <a href="{{route('managershowpackage', $pk->package_id)}}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-            Read more
-            <svg class="rtl:rotate-180 w-3 h-3 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-            </svg>
+        <a href="{{route('owner.packages.unarchive', $pk->package_id)}}" class="inline-flex w-24 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+            Unarchive
+            <i class="fa-solid fa-arrow-right ml-3"></i>
         </a>
     </div>
 </div>
@@ -57,10 +55,9 @@
 
 
 
-
 </div>
 
-<a href="{{route('manager.view.archive')}}">
+{{-- <a href="">
     <div class="text-center">
 
         <h2 class="font-heading mb-4 bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-80 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
@@ -69,8 +66,7 @@
         </h2>
 
     </div>
-</a>
-
+</a> --}}
 
 <div class="py-4 px-4">
     <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
@@ -153,6 +149,32 @@
     }
 </script>
 
+{{-- @if (session('success'))
+        <script>
+            Swal.fire({
+                title: 'Success!',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                customClass: {
+                popup: 'custom-popup',
+                title: 'custom-title',
+                confirmButton: 'custom-button'
+            }
+            });
+        </script>
+    @endif
+    <style>
+    .custom-button {
+        background-color: #FFCF81 !important; /* Blue button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button:hover {
+        background-color: #E07B39 !important; /* Darker blue on hover */
+    }
+</style> --}}
+
 @if (session('success'))
 <script>
     Swal.fire({
@@ -219,4 +241,4 @@
     }
 </style>
 
-</x-manager-layout>
+</x-owner-layout>

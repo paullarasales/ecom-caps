@@ -21,6 +21,7 @@
                 <h5 class="mb-2 text-2xl uppercase font-bold tracking-tight text-gray-900 dark:text-white">{{ $package->packagename }}</h5>
                 <p class="mb-3 text-xl font-normal uppercase dark:text-gray-100">₱ {{ number_format($package->packagedesc, 2) }}</p>
 
+                @if($package->packagestatus === 'active')
                 @if ($package->packagetype === 'Normal')
                     @if ($samplePhotos && count($samplePhotos) > 0)
                         <!-- Display the sample photos if they exist -->
@@ -45,6 +46,7 @@
                             </a>
                     @endif
                 
+                @endif
                 @endif
 
                 @if($package->packagetype === 'Custom' && $customPackage)
@@ -155,21 +157,33 @@
                 <div>
                     @if($package->packagetype === 'Custom')
                         <div class="flex justify-start">
-                            <a href="{{ route('owner.destroycustom', $package->package_id) }}" class="inline-flex w-20 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            {{-- <a href="{{ route('owner.destroycustom', $package->package_id) }}" class="inline-flex w-20 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                                 Delete
                                 <i class="fa-solid fa-trash ml-3"></i>
+                            </a> --}}
+                            @if($package->packagestatus === 'active')
+                            <a href="{{ route('owner.packages.archive', $package->package_id ) }}" class="inline-flex w-24 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                Archive
+                                <i class="fa-solid fa-arrow-right ml-3"></i>
                             </a>
+                            @endif
                         </div>
                     @else
                         <div class="flex justify-start gap-2">
+                            @if($package->packagestatus === 'active')
                             <a href="{{ route('ownereditpackage', $package->package_id) }}" class="inline-flex w-16 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                                 Edit
                                 <i class="fa-solid fa-arrow-right ml-3"></i>
                             </a>
-                            <a href="{{ route('ownerdestroypackage', $package->package_id) }}" class="inline-flex w-20 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            {{-- <a href="{{ route('ownerdestroypackage', $package->package_id) }}" class="inline-flex w-20 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                                 Delete
                                 <i class="fa-solid fa-trash ml-3"></i>
+                            </a> --}}
+                            <a href="{{ route('owner.packages.archive', $package->package_id ) }}" class="inline-flex w-24 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                Archive
+                                <i class="fa-solid fa-arrow-right ml-3"></i>
                             </a>
+                            @endif
                         </div>
                     @endif
                 </div>

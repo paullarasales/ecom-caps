@@ -1,7 +1,7 @@
-<x-manager-layout>
+<x-admin-layout>
 
     <div class="flex ml-3">
-        <a href="{{route('managerappointments')}}">
+        <a href="{{route('cancelledMeeting')}}">
             <div class="text-xl">
                 <i class="fa-solid fa-arrow-left"></i>
             </div>
@@ -11,13 +11,14 @@
     <div class="text-center py-2 my-2">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Cancelled <span class="text-yellow-600">Meetings</span>
+            Archived <span class="text-yellow-600">Appointments</span>
         </h3>
 
     </div>
 
+
     <div class="lg:mx-10 lg:my-5">
-        <form method="GET" action="{{ route('manager.cancelledMeeting') }}">
+        <form method="GET" action="{{ route('archived') }}">
             <div class="flex items-center justify-center mb-4">
                 <input type="text" name="search" class="border-2 border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 rounded-lg py-2 px-4 w-full lg:w-1/3"
                     placeholder="Search by name/reference..." value="{{ $search }}">
@@ -28,14 +29,15 @@
         </form>
     </div>
 
+
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg lg:mx-10 lg:my-5">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3">Name</th>
                     
-                    
-                    <th scope="col" class="px-6 py-3">Meeting Date</th>
+                    {{-- <th scope="col" class="px-6 py-3">Location</th> --}}
+                    <th scope="col" class="px-6 py-3">Date</th>
                     <th scope="col" class="px-6 py-3">Reference</th>
                     <th scope="col" class="px-6 py-3">Actions</th>
                 </tr>
@@ -45,18 +47,18 @@
                 <tr class="bg-white border-b dark:bg-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 hover:text-gray-200">
                     <th scope="row" class="px-6 py-4 capitalize">{{ $app->user->firstname ?? 'N/A' }} {{ $app->user->lastname ?? '' }} </th>
                     
-                    
-                    <td class="px-6 py-4">{{ \Carbon\Carbon::parse($app->appointment_datetime)->format('F j, Y g:i A') }}</td>
-                    <td class="px-6 py-4">{{ $app->reference}}</td>
+                    {{-- <td class="px-6 py-4">{{ $app->location }}</td> --}}
+                    <td class="px-6 py-4">{{\Carbon\Carbon::parse($app->edate)->format('F j, Y') ? : 'No Event Date Assigned'}}</td>
+                    <td class="px-6 py-4">{{ $app->reference }}</td>
                     <td class="px-6 py-4">
-                        {{-- <a href="" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                            Edit
-                            <i class="fa-regular fa-pen-to-square ml-3"></i>
-                        </a> --}}
-                        <a href="{{route('manager.cancelledMeetingView', $app->appointment_id)}}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        <a href="{{route('archivedView', $app->appointment_id)}}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             View
                             <i class="fa-regular fa-eye ml-3"></i>
                         </a>
+                        {{-- <a href="{{route('appointment.unarchive', $app->appointment_id)}}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            Unarchive
+                            <i class="fa-solid fa-arrow-right ml-3"></i>
+                        </a> --}}
                         {{-- <a href="{{route('usertype-edit', $user->id)}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3">Edit</a>
                         <a href="{{ route('verify.edit', $user->id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-10">Verify</a> --}}
                         {{-- <a href="" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Deactivate</a> --}}
@@ -64,7 +66,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="3">No users found.</td>
+                    <td colspan="3">No data found.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -73,17 +75,6 @@
         
         
     </div>
-
-    <a href="{{route('manager.archived')}}">
-        <div class="text-center">
-    
-            <h2 class="font-heading mb-4 bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-80 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
-                        See archived appointments
-                        <i class="fa-solid fa-arrow-right ml-3"></i>
-            </h2>
-    
-        </div>
-    </a>
 
     <div class="py-4 px-4">
         <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
@@ -144,7 +135,8 @@
         </nav>
     </div>
 
-                                <!-- Loading animation overlay -->
+
+                        <!-- Loading animation overlay -->
 <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
     <div class="flex flex-col items-center">
         <div id="loaderSpinner" class="loader border-t-4 border-yellow-500 rounded-full w-16 h-16 animate-spin"></div>
@@ -199,9 +191,7 @@
     };
 </script>
 
-
-
-@if(session('alert'))
+    @if(session('alert'))
     {{-- <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
         <span>{{ session('alert') }}</span>
         <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
@@ -216,4 +206,8 @@
         </button>
     </div>
 @endif
-</x-manager-layout>
+    {{-- @foreach ($appointments as $app)
+        <h1>{{$app->firstname}}</h1>
+        <h1>{{$app->location}}</h1>
+    @endforeach --}}
+</x-admin-layout>

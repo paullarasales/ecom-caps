@@ -439,6 +439,62 @@ class PackagesController extends Controller
             return redirect()->back()->with('success', 'Updated successfully!');
     }
 
+    //ARCHIVE
+    public function archive(string $package_id)
+    {
+        $package = Package::findOrFail($package_id);
+
+        $appointment = Appointment::where('package_id', $package->package_id)
+        ->whereIn('status', ['pending', 'booked'])
+        ->first();
+
+        if ($appointment) {
+            return redirect()->back()->with('error', 'Cannot archive package as it is tied to an existing appointment or event.');
+        }
+
+        // Update the other fields
+        $package->packagestatus = "archived";
+    
+        // Save the changes
+        $package->save();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Package Deleted';
+            $log->description = $package->packagename . " package archived by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
+            $log->save();
+
+        return redirect()->back()->with('success', 'Package archived successfully!');
+    }
+    public function unarchive(string $package_id)
+    {
+        $package = Package::findOrFail($package_id);
+
+        // Update the other fields
+        $package->packagestatus = "active";
+    
+        // Save the changes
+        $package->save();
+
+            $user = Auth::user();
+
+            $log = new Log();
+            $log->user_id = Auth::id();
+            $log->action = 'Package Deleted';
+            $log->description = $package->packagename . " package unarchived by " . $user->firstname . " " . $user->lastname;
+            $log->logdate = now();
+            $log->save();
+
+        return redirect()->back()->with('success', 'Package archived successfully!');
+    }
+
+
+
+
+
     /**
      * Remove the specified resource from storage.
      */

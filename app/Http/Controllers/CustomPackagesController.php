@@ -216,7 +216,7 @@ class CustomPackagesController extends Controller
 
 
         // Return success message
-        return redirect()->back()->with('alert', 'Custom package created successfully!');
+        return redirect()->back()->with('success', 'Custom package created successfully!');
     }
 
 

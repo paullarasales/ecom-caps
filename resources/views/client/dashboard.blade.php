@@ -2,7 +2,7 @@
     
     <div class="text-gray-800 mt-10 lg:mt-44 lg:mb-60 max-w-lg mx-auto lg:ml-40">
         <h1 class="text-3xl lg:text-6xl font-semibold leading-normal text-center lg:text-left">The Siblings <br class="lg:hidden"> Catering Services</h1>
-        <p class="text-center lg:text-left lg:mt-4">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Deleniti, in!</p>
+        <p class="text-center lg:text-left lg:mt-4">We Create, We Innovate, We Do.</p>
         <div class="mt-6 lg:mt-10 text-center lg:text-left">
             <a href="{{ route('book-form') }}" class="bg-yellow-200 text-gray-700 rounded-3xl py-3 px-8 font-medium inline-block mr-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t">
                 Get Started
@@ -17,7 +17,7 @@
 
 
 
-    <main class="pt-8 mx-5 pb-16 lg:pt-16 lg:pb-24 bg-white antialiased">
+    <main class="pt-8 mx-3 pb-16 lg:pt-16 lg:pb-24 bg-white antialiased">
         <div class="text-center">
 
             <h2 class="font-heading mb-4 bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-80 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
@@ -29,7 +29,7 @@
             </h3> --}}
 
         </div>
-        <div class="flex justify-between px-4  mx-auto max-w-screen-xl border border-yellow-700">
+        <div class="flex justify-between px-2  mx-auto max-w-screen-xl border border-yellow-700">
             <article class="mx-auto w-full max-w-6xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
                 @forelse ($post as $pt)
                 <div>

@@ -28,6 +28,7 @@ class UserController extends Controller
         $package = Package::with('sample')
         ->orderBy('created_at', 'desc')
         ->where('packagetype', 'normal')
+        ->where('packagestatus', 'active')
         ->get();
         return view('client.packages', compact('package'));
     }
@@ -173,6 +174,7 @@ class UserController extends Controller
 
         $appointments = $user->appointment()
                             ->with('review')
+                            ->where('status', '!=', 'archived')
                             ->orderBy('created_at', 'desc')
                             ->get();
                             
@@ -196,6 +198,7 @@ class UserController extends Controller
     public function book()
     {
         $packages = Package::where('packagetype', '!=', 'Custom')
+                    ->where('packagestatus', 'active')
                    ->orderBy('created_at', 'desc')
                    ->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
@@ -224,6 +227,7 @@ class UserController extends Controller
         $appointment = Appointment::findOrFail($appointment_id);
 
         $packages = Package::where('packagetype', '!=', 'Custom')
+                    ->where('packagestatus', 'active')
                    ->orderBy('created_at', 'desc')
                    ->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
@@ -246,6 +250,7 @@ class UserController extends Controller
         $appointment = Appointment::findOrFail($appointment_id);
 
         $packages = Package::where('packagename', '!=', 'Custom')
+                    ->where('packagestatus', 'active')
                    ->orderBy('created_at', 'desc')
                    ->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();

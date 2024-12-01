@@ -57,10 +57,19 @@
 
 
 
-
-
-
 </div>
+
+<a href="{{route('admin.view.archive')}}">
+    <div class="text-center">
+
+        <h2 class="font-heading mb-4 bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-80 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
+                    See archived packages
+                    <i class="fa-solid fa-arrow-right ml-3"></i>
+        </h2>
+
+    </div>
+</a>
+
 <div class="py-4 px-4">
     <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
         <span class="text-sm font-normal text-gray-900 mb-4 md:mb-0 block w-full md:inline md:w-auto">

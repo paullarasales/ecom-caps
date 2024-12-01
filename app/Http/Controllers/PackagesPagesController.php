@@ -49,21 +49,58 @@ class PackagesPagesController extends Controller
     public function view()
     {
         // return view('admin.packages-view');
-        $package = Package::orderBy('created_at', 'desc')->paginate(10);
+        $package = Package::orderBy('created_at', 'desc')
+        ->where('packagestatus', 'active')
+        ->paginate(10);
         return view('admin.packages-view', compact('package'));
     }
     public function managerview()
     {
         // return view('admin.packages-view');
-        $package = Package::orderBy('created_at', 'desc')->paginate(10);
+        $package = Package::orderBy('created_at', 'desc')
+        ->where('packagestatus', 'active')
+        ->paginate(10);
         return view('manager.packages-view', compact('package'));
     }
     public function ownerview()
     {
         // return view('admin.packages-view');
-        $package = Package::orderBy('created_at', 'desc')->paginate(10);
+        $package = Package::orderBy('created_at', 'desc')
+        ->where('packagestatus', 'active')
+        ->paginate(10);
         return view('owner.packages-view', compact('package'));
     }
+
+    public function viewArchived()
+    {
+        // return view('admin.packages-view');
+        $package = Package::orderBy('created_at', 'desc')
+        ->where('packagestatus', 'archived')
+        ->paginate(10);
+        return view('admin.packages-view-archived', compact('package'));
+    }
+    public function managerviewArchived()
+    {
+        // return view('admin.packages-view');
+        $package = Package::orderBy('created_at', 'desc')
+        ->where('packagestatus', 'archived')
+        ->paginate(10);
+        return view('manager.packages-view-archived', compact('package'));
+    }
+    public function ownerviewArchived()
+    {
+        // return view('admin.packages-view');
+        $package = Package::orderBy('created_at', 'desc')
+        ->where('packagestatus', 'archived')
+        ->paginate(10);
+        return view('owner.packages-view-archived', compact('package'));
+    }
+
+
+
+
+
+
     // public function eye()
     // {
     //     // return view('admin.packages-view');

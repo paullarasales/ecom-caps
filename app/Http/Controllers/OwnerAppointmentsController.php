@@ -87,7 +87,9 @@ class OwnerAppointmentsController extends Controller
 
     public function detailsedit(string $appointment_id)
     {
-        $packages = Package::orderBy('created_at', 'desc')->paginate(30);
+        $packages = Package::orderBy('created_at', 'desc')
+        ->where('packagestatus', 'active')
+        ->paginate(30);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $appointment = Appointment::find($appointment_id);
         $bookedDates = Appointment::select('edate')

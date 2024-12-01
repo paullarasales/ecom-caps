@@ -149,7 +149,7 @@
 
                     @if($appointment->edate && $appointment->etime)
                         @if(\Carbon\Carbon::parse($appointment->edate)->isPast())
-                            <form id="deleteForm" action="{{ route('manager.appointment.delete', $appointment->appointment_id) }}" method="POST">
+                            {{-- <form id="deleteForm" action="{{ route('manager.appointment.delete', $appointment->appointment_id) }}" method="POST">
                                 @csrf
                                 @method("DELETE")
                                 <input type="hidden" name="status" value="{{ $appointment->status }}">
@@ -157,7 +157,11 @@
                                     Delete
                                     <i class="fa-solid fa-trash ml-3"></i>
                                 </button>                          
-                            </form>
+                            </form> --}}
+                            <a href="{{ route('manager.appointment.archive.pending', $appointment->appointment_id ) }}" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                Archive
+                                <i class="fa-solid fa-arrow-right ml-3"></i>
+                            </a>
                         @else
                         <form id="acceptForm" action="{{ route('manager.appointment.accept', $appointment->appointment_id) }}" method="POST">
                             @csrf

@@ -1,7 +1,7 @@
-<x-admin-layout>
+<x-manager-layout>
 
     <div class="flex ml-3">
-        <a href="{{route('cancelledMeeting')}}">
+        <a href="{{route('manager.archived')}}">
             <div class="text-xl">
                 <i class="fa-solid fa-arrow-left"></i>
             </div>
@@ -11,7 +11,7 @@
     <div class="text-center py-2 my-2">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Cancelled <span class="text-yellow-600">Meeting</span>
+            Archived <span class="text-yellow-600">Appointment</span>
         </h3>
 
     </div>
@@ -138,25 +138,25 @@
             </table>
             <div class="flex justify-end gap-3 my-5">
 
-                {{-- <form id="acceptForm" action="{{  route('appointment.delete.meeting', $appointment->appointment_id) }}" method="POST">
+                {{-- <form id="acceptForm" action="{{  route('appointment.rebook', $appointment->appointment_id) }}" method="POST">
                     @csrf
-                    @method("DELETE")
+                    @method("PUT")
                     <input type="hidden" name="status" value="{{$appointment->status}}">
                     <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                        Delete
-                        <i class="fa-solid fa-trash ml-3"></i>
+                        Re-book
+                        <i class="fa-solid fa-check ml-3"></i>
                     </button>                        
-                </form> --}}
-                <a href="{{ route('appointment.archive', $appointment->appointment_id ) }}" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                    Archive
-                    <i class="fa-solid fa-arrow-right ml-3"></i>
-                </a>
+                </form>
+                <a href="{{ route('cancelled.details.edit', $appointment->appointment_id) }}" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                    Edit
+                    <i class="fa-regular fa-pen-to-square ml-3"></i>
+                </a> --}}
             </div>
         </div>
     </div>
 
 
-                    <!-- Loading animation overlay -->
+                                    <!-- Loading animation overlay -->
 <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
     <div class="flex flex-col items-center">
         <div id="loaderSpinner" class="loader border-t-4 border-yellow-500 rounded-full w-16 h-16 animate-spin"></div>
@@ -197,9 +197,9 @@
         loadingOverlay.classList.remove('hidden');
         // Update text based on the form being submitted
         if (event.target === acceptForm) {
-            loadingText.textContent = 'Deleting the meeting';
+            loadingText.textContent = 'Re-booking the event';
         } else if (event.target === cancelForm) {
-            loadingText.textContent = 'Canceling the event';
+            loadingText.textContent = 'Canceling the meeting';
         } else if (event.target === deleteForm) {
             loadingText.textContent = 'Deleting the request';
         }
@@ -234,7 +234,8 @@
     };
 </script>
 
-<!-- Modal Structure -->
+
+    <!-- Modal Structure -->
 <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden bg-gray-800 bg-opacity-50">
     <div class="flex items-center justify-center min-h-screen">
         <div id="modal-container" class="relative max-w-lg max-h-[75vh] bg-gray-100 rounded-xl shadow-lg overflow-auto p-4">
@@ -325,25 +326,6 @@
 
 
 
-        
-    
-    @if(session('alert'))
-    {{-- <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
-        <span>{{ session('alert') }}</span>
-        <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div> --}}
-@elseif(session('error'))
-    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
-        <span>{{ session('error') }}</span>
-        <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div>
-@endif
 
-    {{-- <h1>{{ $appointment->user->firstname }}</h1>
-    <h1>{{ $appointment->location }}</h1> --}}
 
-</x-admin-layout>
+</x-manager-layout>
