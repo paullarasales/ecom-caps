@@ -128,20 +128,135 @@
                                 {{$appointment->type ? : 'No Event Type Assigned'}}
                             </td>
                         </tr>
-                        <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 ">
+                        <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
                                 Package
                             </th>
                             <td class="px-6 py-4">
                                 @if ($appointment->package)
-                                    <a href="javascript:void(0);" onclick="openModal({{ $appointment->package->packagetype === 'Custom' ? json_encode($appointment->package->custompackage) : json_encode(asset($appointment->package->packagephoto)) }}, {{ $appointment->package->packagetype === 'Custom' ? 'true' : 'false' }})">
-                                        {{ $appointment->package->packagename }} (₱ {{ number_format($appointment->package->packagedesc, 2) }})
-                                    </a>
+                                <button type="button" onclick="toggleModal({{ json_encode($appointment->package->package_id) }})"
+                                        class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700">
+                                    @if($appointment->package && $appointment->package->packagetype == 'Custom')
+                                    {{ $appointment->package->customPackage->target }} 
+                                    @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
+                                    {{ $appointment->package->packagename }} 
+                                    @endif
+                                    (₱{{ number_format($appointment->package->packagedesc, 2) }})
+                                </button>
                                 @else
-                                    No package assigned
+                                    {{-- No package assigned --}}
+                                    <a href="{{route('manager.custom.add.direct', $appointment->appointment_id)}}" class="inline-flex w-28 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                        Customize
+                                        <i class="fa-solid fa-pen-to-square ml-3"></i>
+                                    </a>
                                 @endif
                             </td>
                         </tr>
+                        <div id="modal-{{ $appointment->package->package_id ?? 'default' }}" 
+                            class="hidden fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-50">
+                            <div class="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-y-auto">
+                                <div class="flex justify-between items-center">
+                                    <h2 class="text-2xl font-semibold capitalize text-gray-800 dark:text-gray-900">
+                                        {{ $appointment->package->customPackage->target ?? 'Package Details' }}
+                                    </h2>
+                                    <!-- Close Button -->
+                                    <button type="button" 
+                                            onclick="toggleModal('{{ $appointment->package->package_id ?? 'default' }}')" 
+                                            class="text-gray-600 hover:text-gray-900 font-bold text-xl">&times;</button>
+                                </div>
+                                <p class="mt-2 text-gray-700 dark:text-gray-700">
+                                    @if($appointment->package && $appointment->package->packagetype == 'Custom')
+                                    <strong class="capitalize">{{$appointment->package->packagename}}</strong>
+                                    <br>
+                                    <strong>Package Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
+                                    @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
+                                    <strong>Estimated Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
+                                    @endif
+                                </p>
+                                @if($appointment->package && $appointment->package->packagetype == 'Custom')
+                                <p class="mt-2 text-gray-700 dark:text-gray-700">
+                                    <strong>Pax:</strong> 
+                                    {{ $customPackage->person ?? 'Not specified' }}
+                                </p>
+                                @endif
+                                <div class="mt-4">
+                                    <h3 class="text-lg font-bold text-gray-700">Inclusions</h3>
+                                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                                        @if($appointment->package && $appointment->package->packagetype == 'Normal')
+                                            <!-- Normal Package Inclusions -->
+                                            @if (isset($appointment->package->packageinclusion))
+                                                @foreach (json_decode($appointment->package->packageinclusion) as $inclusion)
+                                                    <li>{{ $inclusion }}</li>
+                                                @endforeach
+                                            @else
+                                                <li>No inclusions available</li>
+                                            @endif
+                                            <br>
+                                            <hr>
+                                            <p class="text-center">This is just preferred package type</p>
+                                            <div class="flex justify-center">
+                                                <a href="{{route('manager.custom.add.direct', $appointment->appointment_id)}}" class="inline-flex w-28 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                                    Customize
+                                                    <i class="fa-solid fa-pen-to-square ml-3"></i>
+                                                </a>
+                                            </div>
+                                        @elseif($appointment->package && $appointment->package->packagetype == 'Custom')
+                                            <!-- Custom Package Items -->
+                                            @if (isset($appointment->package->customPackage->items) && count($appointment->package->customPackage->items) > 0)
+                                                @php
+                                                    // Group items by item_type
+                                                    $groupedItems = collect($appointment->package->customPackage->items)->groupBy(function ($item) {
+                                                        // Check if the item type is 'service_fee' and replace it with 'transportation_fee'
+                                                        $itemType = $item->item_type;
+                                                        // if ($itemType === 'service_fee') {
+                                                        //     $itemType = 'transportation_fee';  // Replace here
+                                                        // }
+
+                                                        // Consolidate item types into 'dishes'
+                                                        return in_array($itemType, ['beef', 'pork', 'chicken', 'veggie', 'others']) ? 'dishes' : $itemType;
+                                                    });
+                                                @endphp
+
+                                                @foreach ($groupedItems as $itemType => $items)
+                                                    <h4 class="mt-2 text-md capitalize font-semibold text-gray-800">
+                                                        {{ str_replace('_', ' ', $itemType) }}
+                                                    </h4>
+                                                    <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                                        @foreach ($items as $item)
+                                                            <li>
+                                                                {{ $item->item_name }}
+                                                                @if ($item->item_type === 'food_pack')
+                                                                    ({{ $item->quantity ?? 'N/A' }})
+                                                                @endif
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                @endforeach
+                                                <div class="flex justify-end">
+                                                    <a href="{{ route('manager.custom.editpackage.booked', $appointment->package->package_id) }}" class="inline-flex w-16 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                                        Edit
+                                                        <i class="fa-solid fa-pen-to-square ml-3"></i>
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <p class="text-gray-700">No custom items available</p>
+                                            @endif
+                                        @endif
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <script>
+                            function toggleModal(packageId) {
+                                const modal = document.getElementById('modal-' + packageId);
+                                if (modal) {
+                                    modal.classList.toggle('hidden'); // Show or hide the modal
+                                } else {
+                                    console.error('Modal not found for package ID:', packageId);
+                                }
+                            }
+                        </script>
                         
                     </tbody>
                 </table>
@@ -163,15 +278,83 @@
                                 <i class="fa-solid fa-arrow-right ml-3"></i>
                             </a>
                         @else
-                        <form id="acceptForm" action="{{ route('manager.appointment.accept', $appointment->appointment_id) }}" method="POST">
+                        <button 
+                            type="button" 
+                            class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+                            id="acceptButton">
+                            Accept
+                            <i class="fa-solid fa-check ml-3"></i>
+                        </button>
+
+                        <form id="acceptForm" action="{{ route('manager.appointment.accept', $appointment->appointment_id) }}" method="POST" style="display: none;">
                             @csrf
                             @method("PUT")
                             <input type="hidden" name="status" value="{{ $appointment->status }}">
-                            <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                                Accept
-                                <i class="fa-solid fa-check ml-3"></i>
-                            </button>                          
+                            <input type="hidden" id="depositInput" name="deposit">
                         </form>
+                        <script>
+                            document.getElementById('acceptButton').addEventListener('click', function () {
+                                // Get the package description from the Blade variable
+                                var packageDesc = parseFloat("{{ $appointment->package->packagedesc ?? '' }}");
+
+                                // Calculate the minimum deposit (20% of package price)
+                                var minDeposit = (packageDesc * 0.20).toFixed(2); // 20% of package price with 2 decimals
+
+                                // Format the package price and minimum deposit for display
+                                var formattedPackageDesc = new Intl.NumberFormat().format(packageDesc);
+                                var formattedMinDeposit = new Intl.NumberFormat().format(minDeposit);
+
+
+                                // Create the modal
+                                Swal.fire({
+                                    title: 'Enter Deposit Amount',
+                                    html: `
+                                        <p><strong>Package Price:</strong> ₱${formattedPackageDesc}</p>
+                                        <p><strong>Minimum Deposit 20% :</strong> ₱${formattedMinDeposit}</p>
+                                        <input type="text" id="deposit" class="swal2-input" placeholder="Enter deposit amount">
+                                    `,
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Submit',
+                                    cancelButtonText: 'Close',
+                                    customClass: {
+                                        confirmButton: 'custom-button'
+                                    },
+                                    preConfirm: () => {
+                                        // Validate input here
+                                        var depositValue = document.getElementById('deposit').value;
+                                        if (!depositValue) {
+                                            Swal.showValidationMessage('You need to enter a deposit amount!');
+                                            return false;
+                                        } else if (!/^\d+(\.\d{1,2})?$/.test(depositValue)) {
+                                            Swal.showValidationMessage('Please enter a valid number (up to 2 decimal places).');
+                                            return false;
+                                        } else if (parseFloat(depositValue) <= 0) {
+                                            Swal.showValidationMessage('Deposit must be a positive number!');
+                                            return false;
+                                        }
+                                        return depositValue;
+                                    }
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // Set the deposit value in the hidden input field
+                                        document.getElementById('depositInput').value = result.value;
+
+                                        // Submit the form
+                                        document.getElementById('acceptForm').submit();
+                                    }
+                                });
+                            });
+                        </script>
+                        <style>
+                            .custom-button {
+                                background-color: #dabf25 !important; /* Orange button background */
+                                color: white !important; /* White button text */
+                                border-radius: 5px;
+                            }
+                            .custom-button:hover {
+                                background-color: #dea407 !important; /* Darker orange on hover */
+                            }
+                        </style>
                         @endif
                     @endif
 
@@ -181,16 +364,71 @@
                         </a>
 
                     
-                        <form id="cancelForm" action="{{  route('manager.appointment.cancel.meeting', $appointment->appointment_id) }}" method="POST">
+                        <button 
+                            type="button" 
+                            class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+                            id="cancelButton">
+                            Cancel
+                            <i class="fa-solid fa-ban ml-3"></i>
+                        </button>
+
+                        <form id="cancelForm" action="{{ route('manager.appointment.cancel.meeting', $appointment->appointment_id) }}" method="POST" style="display: none;">
                             @csrf
                             @method("PUT")
-                            <input type="hidden" name="status" value="{{$appointment->status}}">
-                            {{-- <input type="submit" name="submit" value="Cancel" class="inline-flex cursor-pointer items-center px-2 py-2 text-xs sm:text-sm md:text-base font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"></input> --}}
-                            <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                                Cancel
-                                <i class="fa-solid fa-ban ml-3"></i>
-                            </button> 
+                            <input type="hidden" name="status" value="{{ $appointment->status }}">
+                            <input type="hidden" id="reasonInput" name="reason">
                         </form>
+
+                        <script>
+                            document.getElementById('cancelButton').addEventListener('click', function () {
+                                // Create the modal for inputting the cancellation reason
+                                Swal.fire({
+                                    title: 'Enter Cancellation Reason',
+                                    html: `
+                                        <select id="reason" class="swal2-select border-yellow-200 focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" style="width: 70%;">
+                                            <option value="" disabled selected>Select a reason</option>
+                                            <option value="Payment issue">Payment issue</option>
+                                            <option value="Client request">Client request</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    `,
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Submit',
+                                    cancelButtonText: 'Close',
+                                    customClass: {
+                                        confirmButton: 'custom-button'
+                                    },
+                                    preConfirm: () => {
+                                        // Validate input here
+                                        var reasonValue = document.getElementById('reason').value.trim();
+                                        if (!reasonValue) {
+                                            Swal.showValidationMessage('You need to enter a reason for cancellation!');
+                                            return false;
+                                        }
+                                        return reasonValue;
+                                    }
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // Set the reason value in the hidden input field
+                                        document.getElementById('reasonInput').value = result.value;
+
+                                        // Submit the form
+                                        document.getElementById('cancelForm').submit();
+                                    }
+                                });
+                            });
+                        </script>
+
+                        <style>
+                            .custom-button {
+                                background-color: #dabf25 !important; /* Red button background */
+                                color: white !important; /* White button text */
+                                border-radius: 5px;
+                            }
+                            .custom-button:hover {
+                                background-color: #dea407 !important; /* Darker red on hover */
+                            }
+                        </style>
                         
                 </div>
             </div>
@@ -367,23 +605,71 @@
 </script>
 
 
-@if(session('alert'))
-    {{-- <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
-        <span>{{ session('alert') }}</span>
-        <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div> --}}
-@elseif(session('error'))
-    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
-        <span>{{ session('error') }}</span>
-        <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div>
+@if (session('success'))
+<script>
+    Swal.fire({
+        title: 'Success!',
+        text: '{{ session('success') }}',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        customClass: {
+        popup: 'custom-popup',
+        title: 'custom-title',
+        confirmButton: 'custom-button'
+    }
+    });
+</script>
 @endif
-    {{-- <h1>{{ $appointment->user->firstname }}</h1>
-    <h1>{{ $appointment->location }}</h1> --}}
+
+@if (session('error'))
+<script>
+    Swal.fire({
+        title: 'Error!',
+        text: '{{ session('error') }}',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        customClass: {
+            popup: 'custom-popup-error',
+            title: 'custom-title-error',
+            confirmButton: 'custom-button-error'
+        }
+    });
+</script>
+@endif
+
+<style>
+/* Success Alert Button */
+.custom-button {
+        background-color: #FFCF81 !important; /* Orange button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button:hover {
+        background-color: #E07B39 !important; /* Darker orange on hover */
+    }
+
+    /* Error Alert Button */
+    .custom-button-error {
+        background-color: #E07B39 !important; /* Red button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button-error:hover {
+        background-color: #C0392B !important; /* Darker red on hover */
+    }
+
+    /* Customize Popup Background for Error */
+    .custom-popup-error {
+        background-color: #FDEDEC; /* Light red background */
+        border: 2px solid #E07B39; /* Red border */
+    }
+
+    /* Customize Title for Error */
+    .custom-title-error {
+        color: #E07B39; /* Red text for title */
+        font-weight: bold;
+    }
+</style>
 
 
 </x-admin-layout>

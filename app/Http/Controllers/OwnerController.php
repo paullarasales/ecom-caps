@@ -27,7 +27,7 @@ class OwnerController extends Controller
 
         // Count the total number of users, packages, posts, and FAQs
         $userCount = User::where('usertype', 'user')->has('appointment')->count();
-        $packageCount = Package::count();
+        $packageCount = Package::where('packagetype', 'Normal')->count() + 1;
         $postCount = Post::count();
         $faqCount = Faqs::count();
         

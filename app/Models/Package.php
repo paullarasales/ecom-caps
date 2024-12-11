@@ -17,6 +17,7 @@ class Package extends Model
         'packagename', 
         'packagedesc',
         'packagephoto',
+        'packageinclusion',
     ];
 
     protected $primaryKey = 'package_id';
@@ -27,7 +28,7 @@ class Package extends Model
     }
     public function appointment(): HasMany
     {
-        return $this->hasMany(Appointment::class);
+        return $this->hasMany(Appointment::class, 'package_id', 'package_id');
     }
     public function custom(): HasMany
     {

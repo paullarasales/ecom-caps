@@ -51,6 +51,7 @@ class PackagesPagesController extends Controller
         // return view('admin.packages-view');
         $package = Package::orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
+        ->where('packagetype', 'normal')
         ->paginate(10);
         return view('admin.packages-view', compact('package'));
     }
@@ -59,6 +60,7 @@ class PackagesPagesController extends Controller
         // return view('admin.packages-view');
         $package = Package::orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
+        ->where('packagetype', 'normal')
         ->paginate(10);
         return view('manager.packages-view', compact('package'));
     }
@@ -67,6 +69,7 @@ class PackagesPagesController extends Controller
         // return view('admin.packages-view');
         $package = Package::orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
+        ->where('packagetype', 'Normal')
         ->paginate(10);
         return view('owner.packages-view', compact('package'));
     }
@@ -94,6 +97,37 @@ class PackagesPagesController extends Controller
         ->where('packagestatus', 'archived')
         ->paginate(10);
         return view('owner.packages-view-archived', compact('package'));
+    }
+
+    public function viewCustom()
+    {
+        // return view('admin.packages-view');
+        $package = Package::with(['custompackage', 'appointment.user'])
+        ->orderBy('created_at', 'desc')
+        ->where('packagestatus', 'active')
+        ->where('packagetype', 'Custom')
+        ->paginate(10);
+        return view('admin.packages-view-custom', compact('package'));
+    }
+    public function managerviewCustom()
+    {
+        // return view('admin.packages-view');
+        $package = Package::with('custompackage')
+        ->orderBy('created_at', 'desc')
+        ->where('packagestatus', 'active')
+        ->where('packagetype', 'Custom')
+        ->paginate(10);
+        return view('manager.packages-view-custom', compact('package'));
+    }
+    public function ownerviewCustom()
+    {
+        // return view('admin.packages-view');
+        $package = Package::with('custompackage')
+        ->orderBy('created_at', 'desc')
+        ->where('packagestatus', 'active')
+        ->where('packagetype', 'Custom')
+        ->paginate(10);
+        return view('owner.packages-view-custom', compact('package'));
     }
 
 

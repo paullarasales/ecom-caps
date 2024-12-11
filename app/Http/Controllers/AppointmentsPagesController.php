@@ -446,7 +446,10 @@ class AppointmentsPagesController extends Controller
 
         $packages = Package::orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
+        ->where('packagetype', 'Custom')
+        ->whereDoesntHave('appointment')
         ->paginate(50);
+
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray(); // Fetch all blocked dates
         $bookedDates = Appointment::select('edate')
         ->where('status', 'booked')

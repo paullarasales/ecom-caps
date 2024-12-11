@@ -119,51 +119,402 @@
                             {{$appointment->type ? : 'No Event Type Assigned'}}
                         </td>
                     </tr>
-                    <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 ">
+                    <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
                             Package
                         </th>
                         <td class="px-6 py-4">
                             @if ($appointment->package)
-                                <a href="javascript:void(0);" onclick="openModal({{ $appointment->package->packagetype === 'Custom' ? json_encode($appointment->package->custompackage) : json_encode(asset($appointment->package->packagephoto)) }}, {{ $appointment->package->packagetype === 'Custom' ? 'true' : 'false' }})">
-                                    {{ $appointment->package->packagename }} (₱ {{ number_format($appointment->package->packagedesc, 2) }})
-                                </a>
+                            <button type="button" onclick="toggleModal({{ json_encode($appointment->package->package_id) }})"
+                                    class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700">
+                                    @if($appointment->package && $appointment->package->packagetype == 'Custom')
+                                    {{ $appointment->package->customPackage->target }} 
+                                    @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
+                                    {{ $appointment->package->packagename }} 
+                                    @endif
+                                (₱{{ number_format($appointment->package->packagedesc, 2) }})
+                            </button>
                             @else
                                 No package assigned
                             @endif
                         </td>
-                        
                     </tr>
+                    <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 ">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
+                            Deposit
+                        </th>
+                        <td class="px-6 py-4">
+                            ₱{{ number_format($appointment->deposit, 2) }}
+                        </td>
+                    </tr>
+                    <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 ">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
+                            Balance
+                        </th>
+                        <td class="px-6 py-4">
+                            ₱{{ number_format($appointment->balance, 2) }}
+                        </td>
+                    </tr>
+                    <div id="modal-{{ $appointment->package->package_id ?? 'default' }}" 
+                        class="hidden fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-50">
+                        <div class="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-y-auto">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-2xl font-semibold capitalize text-gray-800 dark:text-gray-900">
+                                    {{ $appointment->package->customPackage->target ?? 'Package Details' }}
+                                </h2>
+                                <!-- Close Button -->
+                                <button type="button" 
+                                        onclick="toggleModal('{{ $appointment->package->package_id ?? 'default' }}')" 
+                                        class="text-gray-600 hover:text-gray-900 font-bold text-xl">&times;</button>
+                            </div>
+                            <p class="mt-2 text-gray-700 dark:text-gray-700">
+                                @if($appointment->package && $appointment->package->packagetype == 'Custom')
+                                    <strong class="capitalize">{{$appointment->package->packagename}}</strong>
+                                    <br>
+                                    <strong>Package Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
+                                    @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
+                                    <strong>Estimated Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
+                                    @endif
+                            </p>
+                            @if($appointment->package && $appointment->package->packagetype == 'Custom')
+                            <p class="mt-2 text-gray-700 dark:text-gray-700">
+                                <strong>Pax:</strong> 
+                                {{ $customPackage->person ?? 'Not specified' }}
+                            </p>
+                            @endif
+                            <div class="mt-4">
+                                <h3 class="text-lg font-bold text-gray-700">Inclusions</h3>
+                                <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                                    @if($appointment->package && $appointment->package->packagetype == 'Normal')
+                                        <!-- Normal Package Inclusions -->
+                                        @if (isset($appointment->package->packageinclusion))
+                                            @foreach (json_decode($appointment->package->packageinclusion) as $inclusion)
+                                                <li>{{ $inclusion }}</li>
+                                            @endforeach
+                                        @else
+                                            <li>No inclusions available</li>
+                                        @endif
+                                    @elseif($appointment->package && $appointment->package->packagetype == 'Custom')
+                                        <!-- Custom Package Items -->
+                                        @if (isset($appointment->package->customPackage->items) && count($appointment->package->customPackage->items) > 0)
+                                                @php
+                                                    // Group items by item_type
+                                                    $groupedItems = collect($appointment->package->customPackage->items)->groupBy(function ($item) {
+                                                        // Check if the item type is 'service_fee' and replace it with 'transportation_fee'
+                                                        $itemType = $item->item_type;
+                                                        // if ($itemType === 'service_fee') {
+                                                        //     $itemType = 'transportation_fee';  // Replace here
+                                                        // }
+
+                                                        // Consolidate item types into 'dishes'
+                                                        return in_array($itemType, ['beef', 'pork', 'chicken', 'veggie', 'others']) ? 'dishes' : $itemType;
+                                                    });
+                                                @endphp
+
+                                                @foreach ($groupedItems as $itemType => $items)
+                                                    <h4 class="mt-2 text-md capitalize font-semibold text-gray-800">
+                                                        {{ str_replace('_', ' ', $itemType) }}
+                                                    </h4>
+                                                    <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                                        @foreach ($items as $item)
+                                                            <li>
+                                                                {{ $item->item_name }}
+                                                                @if ($item->item_type === 'food_pack')
+                                                                    ({{ $item->quantity ?? 'N/A' }})
+                                                                @endif
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                @endforeach
+                                                <div class="flex justify-end">
+                                                    <a href="{{ route('admin.custom.editpackage.booked', $appointment->package->package_id) }}" class="inline-flex w-16 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                                        Edit
+                                                        <i class="fa-solid fa-pen-to-square ml-3"></i>
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <p class="text-gray-700">No custom items available</p>
+                                            @endif
+                                    @endif
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     
+                    <script>
+                        function toggleModal(packageId) {
+                            const modal = document.getElementById('modal-' + packageId);
+                            if (modal) {
+                                modal.classList.toggle('hidden'); // Show or hide the modal
+                            } else {
+                                console.error('Modal not found for package ID:', packageId);
+                            }
+                        }
+                    </script>
                 </tbody>
             </table>
             <div class="flex justify-end gap-3 my-5">
 
-                <form id="acceptForm" action="{{  route('appointment.done', $appointment->appointment_id) }}" method="POST">
+                <button 
+                    type="button" 
+                    class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+                    id="acceptButton">
+                    Completed
+                    <i class="fa-solid fa-check ml-3"></i>
+                </button>
+
+                <form id="acceptForm" action="{{ route('appointment.done', $appointment->appointment_id) }}" method="POST" style="display: none;">
                     @csrf
+                    <script>
+                        // Check if there are validation errors
+                        var errors = @json($errors->any()); // Check if there are any errors
+                        var errorMessages = @json($errors->all()); // Get the array of error messages
+                    
+                        // Show SweetAlert with validation errors if there are any
+                        if (errors) {
+                            Swal.fire({
+                                title: 'Validation Errors',
+                                icon: 'error',
+                                html: `
+                                    <ul style="text-align: center; color: #E07B39;">
+                                        ${errorMessages.map(error => `<li>${error}</li>`).join('')}
+                                    </ul>
+                                `,
+                                confirmButtonText: 'Close',
+                                customClass: {
+                                    popup: 'custom-popup-error',
+                                    title: 'custom-title-error',
+                                    confirmButton: 'custom-button-error'
+                                }
+                            });
+                        }
+                    </script>
+                    
+                    <style>
+                        /* SweetAlert Error Popup Customization */
+                        .custom-popup-error {
+                            background-color: #FDEDEC; /* Light red background */
+                            border: 2px solid #E07B39; /* Red border */
+                        }
+                        .custom-title-error {
+                            color: #E07B39; /* Red title text */
+                            font-weight: bold;
+                        }
+                        .custom-button-error {
+                            background-color: #E07B39 !important; /* Red button background */
+                            color: white !important; /* White button text */
+                            border-radius: 5px;
+                        }
+                        .custom-button-error:hover {
+                            background-color: #C0392B !important; /* Darker red on hover */
+                        }
+                    </style>
                     @method("PUT")
-                    <input type="hidden" name="status" value="{{$appointment->status}}">
-                    <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                        Done
-                        <i class="fa-solid fa-check ml-3"></i>
-                    </button>                        
+                    <input type="hidden" name="status" value="{{ $appointment->status }}">
+                    <input type="hidden" id="depositInput" name="deposit">
                 </form>
+                <script>
+                    document.getElementById('acceptButton').addEventListener('click', function () {
+                        var packageDesc = parseFloat("{{ $appointment->package->packagedesc }}");
+                        var deposit = parseFloat("{{ $appointment->deposit }}");
+                        var balance = parseFloat("{{ $appointment->balance }}");
+
+                        var minDeposit = (packageDesc * 0.20).toFixed(2);
+
+                        var formattedPackageDesc = new Intl.NumberFormat().format(packageDesc);
+                        var formattedDeposit = new Intl.NumberFormat().format(deposit);
+                        var formattedBalance = new Intl.NumberFormat().format(balance);
+                        var formattedMinDeposit = new Intl.NumberFormat().format(minDeposit);
+
+                        // Create the modal
+                        Swal.fire({
+                            title: 'Enter Deposit Amount',
+                            html: `
+                                <p><strong>Package Price:</strong> ₱${formattedPackageDesc}</p>
+                                <p><strong>Current Deposit :</strong> ₱${formattedDeposit}</p>
+                                <p><strong>Balance :</strong> ₱${formattedBalance}</p>
+                                ${deposit === packageDesc ? 
+                                    '<p><strong>Status:</strong> Fully Paid</p>' : 
+                                    `<input type="text" id="deposit" class="swal2-input" placeholder="Enter deposit amount">`
+                                }
+                            `,
+                            showCancelButton: true,
+                            confirmButtonText: 'Submit',
+                            cancelButtonText: 'Close',
+                            customClass: {
+                                confirmButton: 'custom-button'
+                            },
+                            preConfirm: () => {
+                                // If fully paid, set deposit to 0
+                                if (deposit === packageDesc) {
+                                    return 0; // Submit 0 if fully paid
+                                }
+
+                                var depositValue = document.getElementById('deposit').value;
+                                if (!depositValue) {
+                                    Swal.showValidationMessage('You need to enter a deposit amount!');
+                                    return false;
+                                } else if (!/^\d+(\.\d{1,2})?$/.test(depositValue)) {
+                                    Swal.showValidationMessage('Please enter a valid number (up to 2 decimal places).');
+                                    return false;
+                                } else if (parseFloat(depositValue) <= 0) {
+                                    Swal.showValidationMessage('Deposit must be a positive number!');
+                                    return false;
+                                }
+                                return depositValue;
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // If fully paid, submit 0
+                                document.getElementById('depositInput').value = result.value;
+
+                                // Submit the form
+                                document.getElementById('acceptForm').submit();
+                            }
+                        });
+                    });
+
+                </script>
+                <style>
+                    .custom-button {
+                        background-color: #dabf25 !important; /* Orange button background */
+                        color: white !important; /* White button text */
+                        border-radius: 5px;
+                    }
+                    .custom-button:hover {
+                        background-color: #dea407 !important; /* Darker orange on hover */
+                    }
+                </style>
 
                 <a href="{{ route('details.edit', $appointment->appointment_id) }}" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                     Edit
                     <i class="fa-regular fa-pen-to-square ml-3"></i>
                 </a>
 
-                <form id="cancelForm" action="{{  route('appointment.cancel', $appointment->appointment_id) }}" method="POST">
+                {{-- <form id="cancelForm" action="{{  route('appointment.cancel', $appointment->appointment_id) }}" method="POST">
                     @csrf
                     @method("PUT")
                     <input type="hidden" name="status" value="{{$appointment->status}}">
-                    {{-- <input type="submit" name="submit" value="Cancel" class="inline-flex cursor-pointer items-center px-2 py-2 text-xs sm:text-sm md:text-base font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"></input> --}}
                     <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                         Cancel
                         <i class="fa-solid fa-ban ml-3"></i>
                     </button> 
+                </form> --}}
+                <button 
+                    type="button" 
+                    class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+                    id="cancelButton">
+                    Cancel
+                    <i class="fa-solid fa-ban ml-3"></i>
+                </button>
+
+                <form id="cancelForm" action="{{ route('appointment.cancel', $appointment->appointment_id) }}" method="POST" style="display: none;">
+                    @csrf
+                    @method("PUT")
                 </form>
+
+                <script>
+                document.getElementById('cancelButton').addEventListener('click', function () {
+                    // Fetch the package details and current deposit
+                    var packageDesc = parseFloat("{{ $appointment->package->packagedesc }}");
+                    var deposit = parseFloat("{{ $appointment->deposit }}");
+                    var balance = parseFloat("{{ $appointment->balance }}");
+
+                    // Calculate minimum deposit (20% of the package price)
+                    var minDeposit = (packageDesc * 0.20).toFixed(2);
+                    var excessReturnable = (deposit - minDeposit).toFixed(2);
+
+                    // Ensure excessReturnable is not negative
+                    if (excessReturnable < 0) {
+                        excessReturnable = 0;
+                    }
+
+                    // Format values for display
+                    var formattedPackageDesc = new Intl.NumberFormat().format(packageDesc);
+                    var formattedDeposit = new Intl.NumberFormat().format(deposit);
+                    var formattedBalance = new Intl.NumberFormat().format(balance);
+                    var formattedMinDeposit = new Intl.NumberFormat().format(minDeposit);
+                    var formattedExcessReturnable = new Intl.NumberFormat().format(excessReturnable);
+
+                    // Create the cancellation modal
+                    Swal.fire({
+                        title: 'Event Cancellation',
+                        html: `
+                            <p><strong>Package Price:</strong> ₱${formattedPackageDesc}</p>
+                            <p><strong>Balance :</strong> ₱${formattedBalance}</p>
+                            <p><strong>Current Deposit :</strong> ₱${formattedDeposit}</p>
+                            <p><strong>Minimum Deposit :</strong> ₱${formattedMinDeposit}</p>
+                            <p><strong>Maximum Return :</strong> ₱${formattedExcessReturnable}</p>
+                            <select id="reason" class="swal2-select border-yellow-200 focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" style="width: 70%;">
+                                <option value="" disabled selected>Select a reason</option>
+                                <option value="Payment issue">Payment issue</option>
+                                <option value="Client request">Client request</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <br><br>
+                            <input id="deposit" type="number" placeholder="Return deposit (optional)" style="width: 70%;" min="0" step="any" />
+                        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Submit',
+                        cancelButtonText: 'Close',
+                        customClass: {
+                            confirmButton: 'custom-button'
+                        },
+                        preConfirm: () => {
+                            var reasonValue = document.getElementById('reason').value.trim();
+                            if (!reasonValue) {
+                                Swal.showValidationMessage('You need to enter a reason for cancellation!');
+                                return false;
+                            }
+
+                            // Validate the deposit input (it should not exceed the maximum returnable amount)
+                            var depositInput = parseFloat(document.getElementById('deposit').value.trim());
+
+                            if (isNaN(depositInput)) {
+                                depositInput = 0;  // If not entered, set to 0 by default
+                            }
+
+                            if (depositInput > parseFloat(excessReturnable)) {
+                                Swal.showValidationMessage(`The returnable deposit cannot exceed ₱${formattedExcessReturnable}.00`);
+                                return false;
+                            }
+
+                            // Directly add the reason and deposit to the form and submit it
+                            var cancelForm = document.getElementById('cancelForm');
+                            var reasonInput = document.createElement('input');
+                            reasonInput.type = 'hidden';
+                            reasonInput.name = 'reason';
+                            reasonInput.value = reasonValue;
+                            cancelForm.appendChild(reasonInput);
+
+                            var depositInputElement = document.createElement('input');
+                            depositInputElement.type = 'hidden';
+                            depositInputElement.name = 'deposit';
+                            depositInputElement.value = depositInput;
+                            cancelForm.appendChild(depositInputElement);
+
+                            return true;
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Submit the form with the added values
+                            document.getElementById('cancelForm').submit();
+                        }
+                    });
+                });
+                </script>
+
+
+                <style>
+                    .custom-button {
+                        background-color: #dabf25 !important; /* Red button background */
+                        color: white !important; /* White button text */
+                        border-radius: 5px;
+                    }
+                    .custom-button:hover {
+                        background-color: #dea407 !important; /* Darker red on hover */
+                    }
+                </style>
             </div>
         </div>
     </div>
@@ -341,21 +692,71 @@
 
     
     
-    @if(session('alert'))
-    {{-- <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
-        <span>{{ session('alert') }}</span>
-        <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div> --}}
-@elseif(session('error'))
-    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
-        <span>{{ session('error') }}</span>
-        <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div>
+@if (session('success'))
+<script>
+    Swal.fire({
+        title: 'Success!',
+        text: '{{ session('success') }}',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        customClass: {
+        popup: 'custom-popup',
+        title: 'custom-title',
+        confirmButton: 'custom-button'
+    }
+    });
+</script>
 @endif
+
+@if (session('error'))
+<script>
+    Swal.fire({
+        title: 'Error!',
+        text: '{{ session('error') }}',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        customClass: {
+            popup: 'custom-popup-error',
+            title: 'custom-title-error',
+            confirmButton: 'custom-button-error'
+        }
+    });
+</script>
+@endif
+
+<style>
+/* Success Alert Button */
+.custom-button {
+        background-color: #FFCF81 !important; /* Orange button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button:hover {
+        background-color: #E07B39 !important; /* Darker orange on hover */
+    }
+
+    /* Error Alert Button */
+    .custom-button-error {
+        background-color: #E07B39 !important; /* Red button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button-error:hover {
+        background-color: #C0392B !important; /* Darker red on hover */
+    }
+
+    /* Customize Popup Background for Error */
+    .custom-popup-error {
+        background-color: #FDEDEC; /* Light red background */
+        border: 2px solid #E07B39; /* Red border */
+    }
+
+    /* Customize Title for Error */
+    .custom-title-error {
+        color: #E07B39; /* Red text for title */
+        font-weight: bold;
+    }
+</style>
 
     {{-- <h1>{{ $appointment->user->firstname }}</h1>
     <h1>{{ $appointment->location }}</h1> --}}

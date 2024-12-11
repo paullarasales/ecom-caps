@@ -11,7 +11,7 @@
     <div class="text-center py-2 my-2">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Edit <span class="text-yellow-600">Event</span>
+            Edit <span class="text-yellow-600">Event Details</span>
         </h3>
 
     </div>
@@ -63,10 +63,15 @@
                 background-color: #C0392B !important; /* Darker red on hover */
             }
         </style>
-    <div class="min-h-screen p-6 flex items-center justify-center">
+    <div class="h-90 p-6 flex items-center justify-center">
         <div class="container max-w-screen-lg mx-auto">
             <div>
                 <div class="bg-white rounded shadow-lg shadow-yellow-100 p-4 px-4 md:p-8 mb-6">
+                    {{-- <div class="flex justify-center items-center py-5">
+                        <h1 class="text-center text-xl lg:text-2xl">
+                            Client: {{$appointment->user->firstname}} {{$appointment->user->lastname}}
+                        </h1>
+                    </div> --}}
                     <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                             <div class="text-gray-600">
                                 <p class="font-medium text-lg">Event Details</p>
@@ -204,17 +209,17 @@
                                     <input type="text" name="type" id="type" placeholder="(Ex. 1st Birthday)" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{$appointment->type}}" />
                                 </div>
     
-                                <div class="md:col-span-5">
+                                {{-- <div class="md:col-span-5">
                                     <label for="city">Package</label>
-                                    {{-- <input type="text" name="package" id="package" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" /> --}}
+
                                     <select name="package_id" id="" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
                                         
-                                        <option disabled>See the packages below</option>
+                                        <option disabled selected>See the packages below</option>
                                 
                                         @foreach ($packages as $pk)
                                             <option value="{{$pk->package_id}}" 
                                                 @if (isset($appointment) && $appointment->package_id == $pk->package_id) selected @endif>
-                                                {{$pk->packagename}}
+                                                {{$pk->customPackage->target}} - {{$pk->packagename}}
                                             </option>
                                         @endforeach
                                         
@@ -224,19 +229,114 @@
     
                                 <div class="md:col-span-5">
                                     <label for="package" class="uppercase bg-yellow-100 my-10 rounded-xl py-1 px-2">Available Packages</label>
-                                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4"> <!-- Grid layout for images -->
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 mt-2 lg:grid-cols-4 gap-4">
                                         @foreach ($packages as $pk)
-                                            <a href="#" class="block relative w-[150px] h-[200px] overflow-hidden rounded-lg mx-auto transition-transform duration-300 transform  hover:scale-105">
-                                                @if ($pk->packagephoto)
-                                                <p class="uppercase">{{$pk->packagename}}</p>
-                                                <p class="uppercase">₱{{ $pk->packagedesc }}.00</p>
-                                                
-                                                    <img class="w-full h-full object-cover" src="{{ asset($pk->packagephoto) }}" alt="Package Image" onclick="openModal('{{ asset($pk->packagephoto) }}')" />
-                                                @endif
-                                            </a>
+                                            <div class="max-w-[12rem] 
+                                            @if($pk->appointment->isNotEmpty())
+                                            bg-white border border-gray-200 rounded-lg shadow dark:bg-yellow-200 dark:border-gray-700
+                                            @else
+                                            bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-200 dark:border-gray-700
+                                            @endif
+                                            ">
+                                                <div class="p-3">
+                                                    <a href="#">
+                                                        <h5 class="mb-2 text-lg font-bold uppercase tracking-tight text-gray-900 dark:text-gray-700">{{ $pk->custompackage->target }}</h5>
+                                                        <h5 class="mb-2 text-md font-bold uppercase tracking-tight text-gray-900 dark:text-gray-700">{{ $pk->packagename }}</h5>
+                                                    </a>
+                                                    
+                                                    <button type="button" onclick="toggleModal({{ $pk->package_id }})" 
+                                                            class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                                        Read more
+                                                        <svg class="rtl:rotate-180 w-3 h-3 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                    
+                                            
+                                            <div id="modal-{{ $pk->package_id }}" class="hidden fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-50">
+                                                <div class="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-hidden flex flex-col">
+                                                    <div class="flex justify-between items-center">
+                                                        <h2 class="text-2xl font-semibold capitalize text-gray-800 dark:text-gray-900">{{ $pk->packagename }}</h2>
+                                                        <button type="button" onclick="toggleModal({{ $pk->package_id }})" class="text-gray-600 hover:text-gray-900 font-bold text-xl">&times;</button>
+                                                    </div>
+                                                    
+                                                    <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Package Price: ₱{{ number_format($pk->packagedesc, 2) }}</p>
+                                                    <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Pax: {{$pk->customPackage->person ?? 'N/A'}}</p> <!-- Ensure this is not null -->
+                                
+                                                    @if ($pk->customPackage && $pk->customPackage->items->isNotEmpty())
+                                                    <div class="relative overflow-x-auto mt-4 shadow-sm rounded-lg">
+                                                        @if (isset($pk->customPackage->items) && count($pk->customPackage->items) > 0)
+                                                            @php
+                                                                
+                                                                $groupedItems = collect($pk->customPackage->items)->groupBy(function ($item) {
+                                                                    // Consolidate item types into 'dishes'
+                                                                    if ($item->item_type === 'service_fee') {
+                                                                        return 'transportation_fee'; // Replace 'service_fee' with 'transportation_fee'
+                                                                    }
+                                                                    return in_array($item->item_type, ['beef', 'pork', 'chicken', 'veggie', 'others']) ? 'dishes' : $item->item_type;
+                                                                });
+                                                            @endphp
+
+                                                            @foreach ($groupedItems as $itemType => $items)
+                                                                <h4 class="mt-2 text-md capitalize font-semibold text-gray-800">
+                                                                    {{ str_replace('_', ' ', $itemType) }}
+                                                                </h4>
+                                                                <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                                                    @foreach ($items as $item)
+                                                                        <li>
+                                                                            {{ $item->item_name }}
+                                                                            @if ($item->item_type === 'food_pack')
+                                                                                ({{ $item->quantity ?? 'N/A' }})
+                                                                            @endif
+                                                                        </li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            @endforeach
+                                                        @else
+                                                            <p class="text-gray-700">No custom items available</p>
+                                                        @endif
+
+                                                    </div>
+                                                    @else
+                                                        <div class="text-gray-200">
+                                                            <p>No items available for this custom package.</p>
+                                                        </div>
+                                                    @endif
+
+
+                                                </div>
+                                            </div>
                                         @endforeach
                                     </div>
                                 </div>
+                                <script>
+                                    
+                                    function toggleModal(packageId) {
+                                        console.log("Toggling modal for package ID: " + packageId);
+                                
+                                        
+                                        const modal = document.getElementById('modal-' + packageId);
+                                
+                                        
+                                        if (modal) {
+                                            
+                                            modal.classList.toggle('hidden');
+                                            console.log("Modal toggled: ", modal.classList.contains('hidden') ? "Hidden" : "Visible");
+                                        } else {
+                                            console.error("Modal not found for package ID: " + packageId);
+                                        }
+                                    }
+                                
+                                    
+                                    document.querySelectorAll('button[type="button"]').forEach(button => {
+                                        button.addEventListener('click', function(event) {
+                                            event.preventDefault(); 
+                                        });
+                                    });
+                                </script> --}}
+                                
                                 
 
                                 <div class="md:col-span-5 text-right">

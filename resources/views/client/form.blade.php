@@ -198,19 +198,86 @@
                             </div>
 
                             <div class="md:col-span-5">
-                                <label for="package" class="uppercase bg-yellow-100 my-10 rounded-xl py-1 px-2">Available Packages</label>
-                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4"> <!-- Grid layout for images -->
+                                <label for="package" class="uppercase bg-yellow-100 my-10 rounded-xl py-1 px-2">Package Overview</label>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 mt-2 lg:grid-cols-4 gap-4">
                                     @foreach ($packages as $pk)
-                                        <a href="#" class="block relative w-[150px] h-[200px] overflow-hidden rounded-lg mx-auto transition-transform duration-300 transform  hover:scale-105">
-                                            @if ($pk->packagephoto)
-                                            <p class="uppercase">{{$pk->packagename}}</p>
-                                            <p class="uppercase">₱{{ $pk->packagedesc }}.00</p>
-                                                <img class="w-full h-full object-cover" src="{{ asset($pk->packagephoto) }}" alt="Package Image" onclick="openModal('{{ asset($pk->packagephoto) }}')" />
-                                            @endif
-                                        </a>
+                                    <div class="max-w-[12rem] bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-200 dark:border-gray-700">
+                                        <div class="p-3">
+                                            <a href="#">
+                                                <h5 class="mb-2 text-lg font-bold uppercase tracking-tight text-gray-900 dark:text-gray-700">{{ $pk->packagename }}</h5>
+                                            </a>
+                                            <!-- Button to trigger showing the details -->
+                                            <button type="button" onclick="toggleModal({{ $pk->package_id }})" 
+                                                    class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                                Read more
+                                                <svg class="rtl:rotate-180 w-3 h-3 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Modal structure -->
+                                    <div id="modal-{{ $pk->package_id }}" class="hidden fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-50">
+                                        <div class="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-hidden flex flex-col">
+                                            <div class="flex justify-between items-center">
+                                                <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-900">{{ $pk->packagename }}</h2>
+                                                <button type="button" onclick="toggleModal({{ $pk->package_id }})" class="text-gray-600 hover:text-gray-900 font-bold text-xl">&times;</button>
+                                            </div>
+                                            
+                                            <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Estimated Price: ₱{{ number_format($pk->packagedesc, 2) }}</p>
+                            
+                                            <!-- Scrollable Content Area -->
+                                            <div class="mt-4 overflow-y-auto flex-grow">
+                                                <table class="min-w-full table-auto text-sm text-left text-gray-700 dark:text-gray-900">
+                                                    <thead class="bg-gray-100 dark:bg-gray-700">
+                                                        <tr>
+                                                            <th class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 w-1/5">#</th>
+                                                            <th class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 w-4/5">Inclusion</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                                                        @foreach (json_decode($pk->packageinclusion) as $index => $inclusion)
+                                                        <tr>
+                                                            <td class="px-4 py-2 w-1/5">{{ $index + 1 }}</td>
+                                                            <td class="px-4 py-2 w-4/5">{{ $inclusion }}</td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
                                     @endforeach
                                 </div>
                             </div>
+                            
+                            <script>
+                                // Function to toggle visibility of the modal
+                                function toggleModal(packageId) {
+                                    console.log("Toggling modal for package ID: " + packageId); // Log for debugging
+                            
+                                    // Find the modal for the specific package
+                                    const modal = document.getElementById('modal-' + packageId);
+                            
+                                    // Check if the modal container was found
+                                    if (modal) {
+                                        // Toggle the 'hidden' class to show/hide the modal
+                                        modal.classList.toggle('hidden');
+                                        console.log("Modal toggled: ", modal.classList.contains('hidden') ? "Hidden" : "Visible");
+                                    } else {
+                                        console.error("Modal not found for package ID: " + packageId);
+                                    }
+                                }
+                            
+                                // Prevent page reloads when closing modal and not submitting forms
+                                document.querySelectorAll('button[type="button"]').forEach(button => {
+                                    button.addEventListener('click', function(event) {
+                                        event.preventDefault(); // Prevent form submission or page reload
+                                    });
+                                });
+                            </script>
+                            
                             
                             
                             

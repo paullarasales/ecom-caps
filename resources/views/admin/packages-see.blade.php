@@ -13,184 +13,167 @@
     </div>
 
     <div class="flex justify-center">
-        <div class="flex flex-col items-center w-full bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-4xl dark:border-gray-700 dark:bg-gray-800 ">
-            @if ($package->packagephoto)
-                <img class="object-cover w-full cursor-pointer max-w-sm h-48 md:w-48 md:h-full rounded-t-lg md:rounded-none md:rounded-s-lg" src="{{ asset($package->packagephoto) }}" alt="Package Image" onclick="openModal('{{ asset($package->packagephoto) }}')">
-            @endif
-            <div class="flex flex-col justify-between p-4 leading-normal">
-                <h5 class="mb-2 text-2xl uppercase font-bold tracking-tight text-gray-900 dark:text-white">{{ $package->packagename }}</h5>
-                <p class="mb-3 text-xl font-normal uppercase dark:text-gray-100">₱ {{ number_format($package->packagedesc, 2) }}</p>
-
-                @if($package->packagestatus === 'active')
-                @if ($package->packagetype === 'Normal')
-                    @if ($samplePhotos && count($samplePhotos) > 0)
-                        <!-- Display the sample photos if they exist -->
-                        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 border p-2 border-yellow-50">
-                            @foreach ($samplePhotos as $photo)
-                                <div class="relative overflow-hidden w-32 h-32" >
-                                    <img src="{{ asset($photo) }}" alt="Sample Photos" class="absolute inset-0 w-full h-full object-cover cursor-pointer" 
-                                        onclick="openModal('{{ asset($photo) }}')"/>
-                                </div>
-                            @endforeach
-                        </div>
-                        <br>
-                        <a href="{{ route('editsample', $package->sample->sample_id) }}" class="inline-flex w-28 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                            Edit photos
-                            <i class="fa-solid fa-pencil ml-3"></i>
-                        </a>
-                    @else
-                            <!-- Display the Add sample photos button if no sample photos exist -->
-                            <a href="{{ route('addsample', $package->package_id) }}" class="inline-flex w-full items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                                Add sample photos
-                                <i class="fa-solid fa-add ml-3"></i>
-                            </a>
-                    @endif
+        <div class="flex flex-col items-center text-center w-full bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl dark:border-gray-700 dark:bg-gray-200">
+            
+            @if($package->packagetype === 'Normal')
+            <!-- Package Info -->
+            <div class="p-6 w-full">
+                <h2 class="text-2xl font-semibold text-gray-800 capitalize dark:text-gray-900">{{ $package->packagename }}</h2>
+                <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Estimated Price: ₱{{ number_format($package->packagedesc, 2) }}</p>
                 
-                @endif
-                @endif
+                <!-- Package Inclusion Table -->
+                <div class="mt-4 overflow-x-auto rounded-lg">
+                    <table class="min-w-full table-auto text-sm text-left text-gray-700 dark:text-gray-900">
+                        <thead class="bg-gray-100 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 w-1/5">#</th>
+                                <th class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 w-4/5">Inclusion</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                            @foreach (json_decode($package->packageinclusion) as $index => $inclusion)
+                            <tr>
+                                <td class="px-4 py-2 w-1/5">{{ $index + 1 }}</td>
+                                <td class="px-4 py-2 w-4/5">{{ $inclusion }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
 
-                @if($package->packagetype === 'Custom' && $customPackage)
-                    @if($customPackage->person > 0)
-                        <div class="flex justify-start gap-3">
-                            <p class="mb-3 text-xl font-normal capitalize dark:text-gray-100">
-                                {{$customPackage->person}} Pax
-                            </p>
-                        </div>
-                    @endif
+            </div>
+            @else
+            <!-- Package Info -->
+            <div class="p-6 w-full">
+                <h2 class="text-2xl font-semibold text-gray-800 capitalize dark:text-gray-900">{{ $customPackage->target }}</h2>
+                <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Package Price: ₱{{ number_format($package->packagedesc, 2) }}</p>
+                <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Pax: {{$customPackage->person}}</p>
 
-                    {{-- Filter items by type --}}
-                    @php
-                        // Filter food and foodpack items
-                        $foodAndPackItems = $customPackage->items->filter(function ($item) {
-                            return in_array($item->item_type, ['food', 'food_pack']);
-                        });
-                        
-                        // Filter other item types
-                        $otherItems = $customPackage->items->filter(function ($item) {
-                            return !in_array($item->item_type, ['food', 'food_pack']);
-                        });
-                    @endphp
-
-                    {{-- Container for tables --}}
-                    <div class="flex flex-col md:flex-row gap-4 mb-4 rounded-xl">
-
-                        {{-- Food and Foodpack Items Table --}}
-                        @if($foodAndPackItems->isNotEmpty())
-                            <div class="flex-1">
-                                <div class="relative overflow-x-auto shadow-sm sm:rounded-lg ">
-                                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" style="table-layout: fixed;">
-                                        <thead class="text-xs text-gray-400 uppercase bg-gray-700 dark:text-gray-400">
-                                            <tr>
-                                                <th scope="col" class="px-6 py-3 capitalize">
-                                                    Item Name
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 capitalize text-center">
-                                                    Quantity
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($foodAndPackItems as $item)
-                                                <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 ">
-                                                    <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
-                                                        {{ $item->item_name }}
-                                                    </th>
-                                                    <td class="px-6 py-4 capitalize text-center">
-                                                        {{ $item->quantity }}
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        @else
-                            <div class="text-gray-200 flex-1">
-                                <p>No food or foodpack items available for this custom package.</p>
-                            </div>
+                {{-- Check if there are items to display --}}
+                @if($customPackage->items->isNotEmpty())
+                <div class="relative overflow-x-auto mt-4 shadow-sm rounded-lg">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" style="table-layout: fixed;">
+                        <thead class="text-xs text-gray-400 uppercase bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 capitalize">
+                                    Item Type
+                                </th>
+                                <th scope="col" class="px-6 py-3 capitalize">
+                                    Item Name
+                                </th>
+                                {{-- <th scope="col" class="px-6 py-3 capitalize text-center">
+                                    Quantity
+                                </th> --}}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($customPackage->items as $item)
+                                <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700">
+                                    <td class="px-6 py-4 font-medium capitalize text-gray-800 whitespace-nowrap">
+                                        {{ str_replace('_', ' ', $item->item_type) }}
+                                    </td>
+                                    <td class="px-6 py-4 capitalize">
+                                        {{ $item->item_name }}
+                                        @if ($item->item_type === 'food_pack')
+                                            ({{ $item->quantity ?? 'N/A' }})
+                                        @endif
+                                    </td>
+                                    {{-- <td class="px-6 py-4 text-center">
+                                        {{ $item->quantity ?? 'N/A' }}
+                                    </td> --}}
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-center mt-5">
+                    @if($appointmentCount != 0)
+                        @if($appointments->status === 'booked')
+                        <a href="{{route('bookedView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            Go to event
+                            <i class="fa-solid fa-arrow-right ml-3"></i>
+                        </a>
+                        @elseif($appointments->status === 'pending')
+                        <a href="{{route('pendingView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            Go to event
+                            <i class="fa-solid fa-arrow-right ml-3"></i>
+                        </a>
+                        @elseif($appointments->status === 'cancelled')
+                        <a href="{{route('cancelledView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            Go to event
+                            <i class="fa-solid fa-arrow-right ml-3"></i>
+                        </a>
+                        @elseif($appointments->status === 'done')
+                        <a href="{{route('doneView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            Go to event
+                            <i class="fa-solid fa-arrow-right ml-3"></i>
+                        </a>
                         @endif
-
-                        {{-- Other Items Table --}}
-                        @if($otherItems->isNotEmpty())
-                            <div class="flex-1">
-                                <div class="relative overflow-x-auto shadow-sm sm:rounded-lg ">
-                                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" style="table-layout: fixed;">
-                                        <thead class="text-xs text-gray-400 uppercase bg-gray-700 dark:text-gray-400">
-                                            <tr>
-                                                <th scope="col" class="px-6 py-3 capitalize">
-                                                    Item Type
-                                                </th>
-                                                <th scope="col" class="px-6 py-3 capitalize">
-                                                    Item Name
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($otherItems as $item)
-                                                <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 ">
-                                                    <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
-                                                        {{ str_replace('_', ' ', $item->item_type) }}
-                                                    </th>
-                                                    <td class="px-6 py-4 capitalize">
-                                                        {{ $item->item_name }}
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        @else
-                            <div class="text-gray-200 flex-1">
-                                <p>No other items available for this custom package.</p>
-                            </div>
-                        @endif
-
-                    </div>
-                @endif
-
-
-
-
-                <br>
-
-                <div>
-                    @if($package->packagetype === 'Custom')
-                        <div class="flex justify-start">
-                            {{-- <a href="{{ route('destroycustom', $package->package_id) }}" class="inline-flex w-20 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                                Delete
-                                <i class="fa-solid fa-trash ml-3"></i>
-                            </a> --}}
-                            @if($package->packagestatus === 'active')
-                            <a href="{{ route('admin.packages.archive', $package->package_id ) }}" class="inline-flex w-24 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                                Archive
-                                <i class="fa-solid fa-arrow-right ml-3"></i>
-                            </a>
-                            @endif
-                        </div>
-                    @else
-                        <div class="flex justify-start gap-2">
-                            @if($package->packagestatus === 'active')
-                            <a href="{{ route('editpackage', $package->package_id) }}" class="inline-flex w-16 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                                Edit
-                                <i class="fa-solid fa-arrow-right ml-3"></i>
-                            </a>
-                            {{-- <a href="{{ route('destroypackage', $package->package_id) }}" class="inline-flex w-20 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                                Delete
-                                <i class="fa-solid fa-trash ml-3"></i>
-                            </a> --}}
-                            
-                            <a href="{{ route('admin.packages.archive', $package->package_id ) }}" class="inline-flex w-24 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                                Archive
-                                <i class="fa-solid fa-arrow-right ml-3"></i>
-                            </a>
-                            @endif
-                        </div>
                     @endif
                 </div>
-                
+                @else
+                <div class="text-gray-200">
+                    <p>No items available for this custom package.</p>
+                </div>
+                @endif
+
+
             </div>
+            @endif
+    
         </div>
+    </div>
+
+    <div class="flex justify-center items-center my-2">
+        @if($package->packagetype === 'Custom')
+            <div class="flex justify-start gap-2">
+                @if($package->packagestatus === 'active')
+                    
+                        <a href="{{ route('admin.packages.archive', $package->package_id ) }}" class="inline-flex w-24 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            Archive
+                            <i class="fa-solid fa-eye-slash ml-3"></i>
+                        </a>
+                    
+                    @if($appointmentCount === 0)
+                        <a href="{{ route('admin.custom.editpackage', $package->package_id) }}" class="inline-flex w-16 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            Edit
+                                <i class="fa-solid fa-pen-to-square ml-3"></i>
+                        </a>
+                    @endif
+                    @if($appointmentCount === 0)
+                        <a href="{{route('destroycustom', $package->package_id)}}" class="inline-flex w-24 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                            Delete
+                            <i class="fa-solid fa-trash ml-3"></i>
+                        </a>
+                    @endif
+                @elseif($package->packagestatus === 'archived')
+                    <a href="{{route('admin.packages.unarchive', $package->package_id)}}" class="inline-flex w-28 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        Unarchive
+                        <i class="fa-solid fa-eye ml-3"></i>
+                    </a>
+                @endif
+            </div>
+        @else
+            <div class="flex justify-start gap-2">
+                @if($package->packagestatus === 'active')
+                    <a href="{{ route('admin.packages.archive', $package->package_id ) }}" class="inline-flex w-24 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        Archive
+                        <i class="fa-solid fa-eye-slash ml-3"></i>
+                    </a>
+
+                    <a href="{{ route('editpackage', $package->package_id) }}" class="inline-flex w-16 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                    Edit
+                        <i class="fa-solid fa-pen-to-square ml-3"></i>
+                    </a>
+                    
+                @elseif($package->packagestatus === 'archived')
+                    <a href="{{route('admin.packages.unarchive', $package->package_id)}}" class="inline-flex w-28 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        Unarchive
+                        <i class="fa-solid fa-eye ml-3"></i>
+                    </a>
+                @endif
+            </div>
+        @endif
     </div>
 
     <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden bg-gray-800 bg-opacity-50">
@@ -292,4 +275,30 @@
         font-weight: bold;
     }
 </style>
+
+{{-- @if ($samplePhotos && count($samplePhotos) > 0)
+                        <!-- Display the sample photos if they exist -->
+                        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 border p-2 border-yellow-50">
+                            @foreach ($samplePhotos as $photo)
+                                <div class="relative overflow-hidden w-32 h-32" >
+                                    <img src="{{ asset($photo) }}" alt="Sample Photos" class="absolute inset-0 w-full h-full object-cover cursor-pointer" 
+                                        onclick="openModal('{{ asset($photo) }}')"/>
+                                </div>
+                            @endforeach
+                        </div>
+                        <br>
+                        <a href="{{ route('editsample', $package->sample->sample_id) }}" class="inline-flex w-28 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            Edit photos
+                            <i class="fa-solid fa-pencil ml-3"></i>
+                        </a>
+                    @else
+                            <!-- Display the Add sample photos button if no sample photos exist -->
+                            <a href="{{ route('addsample', $package->package_id) }}" class="inline-flex w-full items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                Add sample photos
+                                <i class="fa-solid fa-add ml-3"></i>
+                            </a>
+                    @endif --}}
+
+                    
+                    
 </x-admin-layout>

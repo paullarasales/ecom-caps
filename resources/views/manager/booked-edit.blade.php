@@ -63,7 +63,7 @@
                 background-color: #C0392B !important; /* Darker red on hover */
             }
         </style>
-    <div class="min-h-screen p-6 flex items-center justify-center">
+    <div class="h-90 p-6 flex items-center justify-center">
         <div class="container max-w-screen-lg mx-auto">
             <div>
                 <div class="bg-white rounded shadow-lg shadow-yellow-100 p-4 px-4 md:p-8 mb-6">
@@ -191,9 +191,9 @@
                                     <input type="text" name="type" id="type" placeholder="(Ex. 1st Birthday)" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{$appointment->type}}" />
                                 </div>
     
-                                <div class="md:col-span-5">
+                                {{-- <div class="md:col-span-5">
                                     <label for="city">Package</label>
-                                    {{-- <input type="text" name="package" id="package" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" /> --}}
+
                                     <select name="package_id" id="" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
                                         
                                         <option disabled>See the packages below</option>
@@ -223,7 +223,7 @@
                                             </a>
                                         @endforeach
                                     </div>
-                                </div>
+                                </div> --}}
                                 
 
                                 <div class="md:col-span-5 text-right">

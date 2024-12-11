@@ -19,8 +19,11 @@ return new class extends Migration
             $table->date('edate')->nullable();
             $table->string('etime')->nullable();
             $table->string('type')->nullable();
+            $table->decimal('balance', 8, 2)->nullable();
+            $table->decimal('deposit', 8, 2)->nullable();
             $table->string('reference', 20)->nullable();
             $table->string('status')->default('pending');
+            $table->text('reason')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

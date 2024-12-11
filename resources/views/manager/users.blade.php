@@ -25,7 +25,7 @@
                 <tr>
                     <th scope="col" class="px-6 py-3">Name</th>
                     
-                    <th scope="col" class="px-6 py-3">User Type</th>
+                    {{-- <th scope="col" class="px-6 py-3">User Type</th> --}}
                     <th scope="col" class="px-6 py-3">Id for verification</th>
                     <th scope="col" class="px-6 py-3">Verification Status</th>
                     <th scope="col" class="px-6 py-3">Actions</th>
@@ -36,7 +36,7 @@
                 <tr class="bg-white border-b dark:bg-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 hover:text-gray-200">
                     <th scope="row" class="px-6 py-4 uppercase">{{ $user->firstname ?? 'N/A' }} {{$user->lastname}}</th>
                     
-                    <td class="px-6 py-4">{{ $user->usertype }}</td>
+                    {{-- <td class="px-6 py-4">{{ $user->usertype }}</td> --}}
                     <td class="px-6 py-4">
                         @if ($user->photo)
                             {{-- <a href="{{ asset($user->photo) }}" target="_blank">

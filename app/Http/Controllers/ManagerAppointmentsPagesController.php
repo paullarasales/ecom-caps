@@ -427,7 +427,12 @@ class ManagerAppointmentsPagesController extends Controller
         // $packages = Package::orderBy('created_at', 'desc')->paginate(30);
         // return view('admin.direct', compact('packages'));
 
-        $packages = Package::orderBy('created_at', 'desc')->paginate(50);
+        $packages = Package::orderBy('created_at', 'desc')
+        ->where('packagestatus', 'active')
+        ->where('packagetype', 'Custom')
+        ->whereDoesntHave('appointment')
+        ->paginate(50);
+        
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray(); // Fetch all blocked dates
         $bookedDates = Appointment::select('edate')
         ->where('status', 'booked')

@@ -19,9 +19,10 @@ class Appointment extends Model
         'edate',
         'etime',
         'type',
-        'theme',
-        'adate',
-        'atime',
+        'appointment_datetime',
+        'reason',
+        'deposit',
+        'balance',
     ];
 
     public function package(): BelongsTo

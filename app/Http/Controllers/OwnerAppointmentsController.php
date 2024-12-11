@@ -30,7 +30,41 @@ class OwnerAppointmentsController extends Controller
             'etime' => 'required',
             'type' => 'required',
             'package_id' => 'required|exists:packages,package_id',
+            'deposit' => 'required|numeric|min:0',
         ]);
+
+        // Retrieve the associated package
+        $package = Package::find($request->input('package_id')); 
+
+        if (!$package) {
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The package for this appointment could not be found.'
+            ]);
+        }
+
+        // Ensure deposit is within valid range
+        $minDeposit = $package->packagedesc * 0.20; // Minimum 20% of the package price
+        $maxDeposit = $package->packagedesc; // Maximum is the full package price
+
+        $deposit = $request->input('deposit');
+        $balance = $maxDeposit - $request->input('deposit');
+
+        if ($deposit < $minDeposit) {
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The deposit must be at least 20% of the package price.'
+            ]);
+        }
+
+        if ($deposit > $maxDeposit) {
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The deposit cannot exceed the package price.'
+            ]);
+        }
+
+
 
         // Check if the selected date is blocked
         $blockedDateExists = BlockedDate::where('blocked_date', $request->edate)->exists();
@@ -70,6 +104,8 @@ class OwnerAppointmentsController extends Controller
         $appointment->reference = strtoupper(uniqid('REF'));
         $appointment->status = 'booked';
         $appointment->isownerread = "read";
+        $appointment->deposit = $deposit;
+        $appointment->balance = $balance;
         $appointment->save();
 
         $DateFormatted = Carbon::parse($request->edate)->format('F j, Y');
@@ -82,7 +118,7 @@ class OwnerAppointmentsController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->back()->with('alert', 'Event booked successfully.');
+        return redirect()->back()->with('success', 'Event booked successfully.');
     }
 
     public function detailsedit(string $appointment_id)

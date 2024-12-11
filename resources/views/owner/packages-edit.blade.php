@@ -84,16 +84,53 @@
                                     <input type="text" name="packageprice" id="packageprice" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{$package->packagedesc}}" />
                                 </div>
     
-                                <div class="md:col-span-5">
+                                {{-- <div class="md:col-span-5">
                                     <label for="address">Package Photo</label>
                                     <input id="packagephoto" name="packagephoto" type="file" accept=".png, .jpg, .jpeg" class="mt-1 block w-full items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150" value="{{$package->packagephoto}}" />
-                                </div>
-
-                                {{-- <br>
-                                <div class="flex items-center md:col-span-5">
-                                    <input id="link-checkbox" required type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="link-checkbox" class="ms-2 text-sm font-medium text-gray-900 ">I agree with the <a href="#" class="text-gray-800 dark:text-blue-500 hover:underline" id="terms-link">terms and conditions</a>.</label>
                                 </div> --}}
+
+                                <div class="md:col-span-5">
+                                    <label for="package_inclusions">Package Inclusions</label>
+                                    <div id="inclusion-container">
+                                        @php
+                                            $inclusions = old('package_inclusions', json_decode($package->packageinclusion, true) ?: ['']); // Default to empty field if no inclusions
+                                        @endphp
+                                        @foreach ($inclusions as $index => $inclusion)
+                                            <div class="package-inclusion flex items-center space-x-2">
+                                                <input type="text" name="package_inclusions[]" placeholder="Package Inclusion" 
+                                                       class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" 
+                                                       value="{{ $inclusion }}" />
+                                                @if ($loop->index > 0) <!-- Add remove button for dynamically added fields -->
+                                                    <button type="button" class="remove-input text-red-500">Remove</button>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                        @if($errors->has('package_inclusions'))
+                                            <span class="text-red-500 text-sm">{{ $errors->first('package_inclusions') }}</span>
+                                        @endif
+                                    </div>
+                                    <button type="button" id="add-more" class="mt-2 text-yellow-500">Add More</button>
+                                </div>
+                                
+                                <script>
+                                    document.getElementById('add-more').addEventListener('click', function () {
+                                        const newInput = document.createElement('div');
+                                        newInput.classList.add('package-inclusion', 'flex', 'items-center', 'space-x-2');
+                                        newInput.innerHTML = `
+                                            <input type="text" name="package_inclusions[]" placeholder="Package Inclusion" 
+                                                   class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" />
+                                            <button type="button" class="remove-input text-red-500">Remove</button>
+                                        `;
+                                        document.getElementById('inclusion-container').appendChild(newInput);
+                                    });
+                                
+                                    // Event delegation for removing inputs
+                                    document.getElementById('inclusion-container').addEventListener('click', function (e) {
+                                        if (e.target.classList.contains('remove-input')) {
+                                            e.target.parentElement.remove();
+                                        }
+                                    });
+                                </script>
 
                                 <div class="md:col-span-5 text-right">
                                     <input type="submit" name="submit" value="Update" class="cursor-pointer bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">

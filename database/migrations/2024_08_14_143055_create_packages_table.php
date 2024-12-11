@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('packagename')->unique()->nullable();
             $table->string('packagedesc')->nullable();
+            $table->text('packageinclusion')->nullable();
             $table->string('packagephoto')->nullable();
             $table->string('packagetype')->nullable();
             $table->string('packagestatus')->default('active');

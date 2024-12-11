@@ -131,8 +131,31 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Facepaint::class);
     }
+    public function beef(): HasMany
+    {
+        return $this->hasMany(Beef::class);
+    }
+    public function pork(): HasMany
+    {
+        return $this->hasMany(Pork::class);
+    }
+    public function chicken(): HasMany
+    {
+        return $this->hasMany(Chicken::class);
+    }
+    public function veggie(): HasMany
+    {
+        return $this->hasMany(Veggie::class);
+    }
+    public function other(): HasMany
+    {
+        return $this->hasMany(Others::class);
+    }
 
-
+    public function dish(): HasMany
+    {
+        return $this->hasMany(Dish::class);
+    }
     public function log(): HasMany
     {
         return $this->hasMany(Log::class);

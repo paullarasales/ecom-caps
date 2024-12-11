@@ -134,7 +134,7 @@
                     <i class="fa-solid fa-arrow-right ml-5"></i>
                 </a>
             @endif
-            <form id="cancelForm" action="{{ route('client.appointment.cancel.meeting', $appointment->appointment_id) }}" method="POST">
+            {{-- <form id="cancelForm" action="{{ route('client.appointment.cancel.meeting', $appointment->appointment_id) }}" method="POST">
                 @csrf
                 @method("PUT")
                 <input type="hidden" name="status" value="{{ $appointment->status }}">
@@ -142,7 +142,68 @@
                     Cancel
                     <i class="fa-solid fa-ban ml-3"></i>
                 </button>                          
+            </form> --}}
+            <button 
+                type="button" 
+                class="bg-yellow-500 text-center hover:bg-yellow-700 text-white font-bold px-4 py-2 text-xs w-44 rounded-lg"
+                id="cancelButton">
+                Cancel
+                <i class="fa-solid fa-ban ml-3"></i>
+            </button>
+
+            <form id="cancelForm" action="{{ route('client.appointment.cancel.meeting', $appointment->appointment_id) }}" method="POST" style="display: none;">
+                @csrf
+                @method("PUT")
+                <input type="hidden" name="status" value="{{ $appointment->status }}">
+                <input type="hidden" id="reasonInput" name="reason">
             </form>
+
+            <script>
+                document.getElementById('cancelButton').addEventListener('click', function () {
+                    // Create the modal for inputting the cancellation reason
+                    Swal.fire({
+                        title: 'Enter Cancellation Reason',
+                        html: `
+                            
+                            <input type="text" id="reason" placeholder="Enter reason" class="swal2-select border-yellow-200 focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" style="width: 70%;">
+                        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Submit',
+                        cancelButtonText: 'Close',
+                        customClass: {
+                            confirmButton: 'custom-button'
+                        },
+                        preConfirm: () => {
+                            // Validate input here
+                            var reasonValue = document.getElementById('reason').value.trim();
+                            if (!reasonValue) {
+                                Swal.showValidationMessage('You need to enter a reason for cancellation!');
+                                return false;
+                            }
+                            return reasonValue;
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Set the reason value in the hidden input field
+                            document.getElementById('reasonInput').value = result.value;
+
+                            // Submit the form
+                            document.getElementById('cancelForm').submit();
+                        }
+                    });
+                });
+            </script>
+
+            <style>
+                .custom-button {
+                    background-color: #dabf25 !important; /* Red button background */
+                    color: white !important; /* White button text */
+                    border-radius: 5px;
+                }
+                .custom-button:hover {
+                    background-color: #dea407 !important; /* Darker red on hover */
+                }
+            </style>
         </div>
         @endforeach
         <div class="mb-10">

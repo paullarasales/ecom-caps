@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('customitem_id');
             $table->unsignedBigInteger('custompackage_id');
             $table->string('item_name');
-            $table->enum('item_type', ['food', 'food_pack', 'food_cart', 'lechon', 'cake', 'clown', 'facepaint', 'setup']);
+            $table->enum('item_type', ['food', 'beef', 'pork', 'chicken', 'veggie', 'others', 'food_pack', 'food_cart', 'lechon', 'cake', 'clown', 'facepaint', 'setup', 'service_fee'])->nullable();
             $table->integer('quantity');
             $table->timestamps();
 

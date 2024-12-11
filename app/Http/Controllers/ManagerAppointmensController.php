@@ -15,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Log as ModelsLog;
 use Illuminate\Support\Facades\DB;
+use App\Models\Custompackage;
 
 class ManagerAppointmensController extends Controller
 {
@@ -55,7 +56,39 @@ class ManagerAppointmensController extends Controller
             'etime' => 'required',
             'type' => 'required',
             'package_id' => 'required|exists:packages,package_id',
+            'deposit' => 'required|numeric|min:0',
         ]);
+
+        // Retrieve the associated package
+        $package = Package::find($request->input('package_id')); 
+
+        if (!$package) {
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The package for this appointment could not be found.'
+            ]);
+        }
+
+        // Ensure deposit is within valid range
+        $minDeposit = $package->packagedesc * 0.20; // Minimum 20% of the package price
+        $maxDeposit = $package->packagedesc; // Maximum is the full package price
+
+        $deposit = $request->input('deposit');
+        $balance = $maxDeposit - $request->input('deposit');
+
+        if ($deposit < $minDeposit) {
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The deposit must be at least 20% of the package price.'
+            ]);
+        }
+
+        if ($deposit > $maxDeposit) {
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The deposit cannot exceed the package price.'
+            ]);
+        }
 
         // Check if the selected date is blocked
         $blockedDateExists = BlockedDate::where('blocked_date', $request->edate)->exists();
@@ -104,6 +137,8 @@ class ManagerAppointmensController extends Controller
         $appointment->reference = strtoupper(uniqid('REF'));
         $appointment->status = 'booked'; 
         $appointment->ismanagerread = "read";
+        $appointment->deposit = $deposit;
+        $appointment->balance = $balance;
         $appointment->save();
 
         $DateFormatted = Carbon::parse($request->edate)->format('F j, Y');
@@ -125,6 +160,10 @@ class ManagerAppointmensController extends Controller
 
     public function accept(Request $request, string $appointment_id)
     {
+        $request->validate([
+            'deposit' => 'required|numeric|min:0',
+        ]);
+
         $appointment = Appointment::findOrFail($appointment_id);
 
         // Check if package_id is null
@@ -133,6 +172,45 @@ class ManagerAppointmensController extends Controller
             return redirect()->route('manager.pending')->with([
                 'alert' => 'error',
                 'message' => 'The appointment does not have a package assigned.'
+            ]);
+        }
+
+        // Retrieve the associated package
+        $package = $appointment->package; // Assuming you have the relationship set up
+
+        if (!$package) {
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The package for this appointment could not be found.'
+            ]);
+        }
+
+        // Ensure deposit is within valid range
+        $minDeposit = $package->packagedesc * 0.20; // Minimum 20% of the package price
+        $maxDeposit = $package->packagedesc; // Maximum is the full package price
+
+        $deposit = $request->input('deposit');
+
+        if ($deposit < $minDeposit) {
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The deposit must be at least 20% of the package price.'
+            ]);
+        }
+
+        if ($deposit > $maxDeposit) {
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The deposit cannot exceed the package price.'
+            ]);
+        }
+
+        // Check if the package's packagetype is 'normal'
+        $package = $appointment->package; // Assuming relationship is set correctly
+        if ($package && $package->packagetype === 'Normal') {
+            return redirect()->route('manager.pending')->with([
+                'alert' => 'error',
+                'message' => 'The appointment cannot proceed because the package is invalid.'
             ]);
         }
 
@@ -178,6 +256,15 @@ class ManagerAppointmensController extends Controller
         $appointment->status = 'booked';
         $appointment->isread = "unread";
         $appointment->ismanagerread = "read";
+        $appointment->deposit = $request->input('deposit');
+
+        $package = $appointment->package;
+        if ($package) {
+            $appointment->balance = $package->packagedesc - $appointment->deposit;
+        } else {
+            return response()->json(['error' => 'Package not found'], 404);
+        }
+
         $appointment->save();
 
         $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
@@ -396,6 +483,25 @@ class ManagerAppointmensController extends Controller
     {
         $appointment = Appointment::findOrFail($appointment_id);
 
+        // Check if the deposit is already fully paid
+        $currentBalance = $appointment->balance;
+        $deposit = $request->input('deposit');
+
+        // If deposit is fully paid, set the deposit to 0
+        if ($deposit == 0 && $appointment->deposit == $appointment->package->packagedesc) {
+            $deposit = 0; // Deposit is fully paid, no further deposit is required
+        }
+
+        // Validate deposit, only if it's not already fully paid
+        $request->validate([
+            'deposit' => ['required', 'numeric', 'min:0', function ($attribute, $value, $fail) use ($currentBalance) {
+                if ($value != $currentBalance) {
+                    $fail('The deposit must be exactly equal to the remaining balance to fulfill the payment.');
+                }
+            }],
+        ]);
+
+
         // Check if the edate is at least one day in the future
         // Check if the edate is today
         $edate = Carbon::parse($appointment->edate);
@@ -405,6 +511,8 @@ class ManagerAppointmensController extends Controller
             // Update appointment status to "done"
             $appointment->status = 'done';
             $appointment->isread = "unread";
+            $appointment->deposit += $deposit;
+            $appointment->balance -= $deposit;
             $appointment->save();
 
             $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
@@ -451,7 +559,7 @@ class ManagerAppointmensController extends Controller
                 // return redirect()->route('manager.booked')->with('error', 'Failed to send confirmation email.');
                 return redirect()->route('manager.booked')->with([
                     'alert' => 'success',
-                    'message' => 'Event moved to done. However, could not send a confirmation email at the moment.'
+                    'message' => 'Event moved to completed. However, could not send a confirmation email at the moment.'
                 ]);
             }
     
@@ -459,7 +567,7 @@ class ManagerAppointmensController extends Controller
             // return redirect("manager/booked")->with('alert', 'Event moved to done');
             return redirect()->route('manager.booked')->with([
                 'alert' => 'success',
-                'message' => 'Event moved to done.'
+                'message' => 'Event moved to completed.'
             ]);
         } else {
             // Redirect back or to a specific route with an error message
@@ -474,7 +582,46 @@ class ManagerAppointmensController extends Controller
 
     public function cancel(Request $request, string $appointment_id)
     {
+        $request->validate([
+            'reason' => 'required',
+            'deposit' => 'required|numeric|min:0'
+        ]);
+
         $appointment = Appointment::findOrFail($appointment_id);
+
+        // Get the package price and deposit for calculations
+        $packageDesc = $appointment->package->packagedesc; // Package price
+        $deposit = $appointment->deposit; // Current deposit
+        $balance = $appointment->balance; // Current balance
+
+        // Calculate minimum returnable (20% of package price)
+        $minDeposit = $packageDesc * 0.20;
+        // Calculate the excess returnable (deposit - minimum returnable)
+        $excessReturnable = $deposit - $minDeposit;
+
+        // Ensure the excess returnable is not negative
+        if ($excessReturnable < 0) {
+            $excessReturnable = 0;
+        }
+
+        // Get the requested deposit return value from the form
+        $requestedDeposit = $request->input('deposit');
+
+        // Check if the requested deposit to return is within the excess returnable
+        if ($requestedDeposit > $excessReturnable) {
+            return redirect()->back()->with([
+                'alert' => 'error',
+                'message' => 'The deposit to return cannot exceed the excess returnable amount of ₱' . number_format($excessReturnable, 2),
+            ]);
+        }
+
+        $package = Package::find($appointment->package_id); // Fetch package by package_id
+
+        if ($package) {
+            // Update the package status to "archived"
+            $package->packagestatus = 'archived';
+            $package->save();
+        }
 
             // Parse the edate
         $edate = Carbon::parse($appointment->edate);
@@ -490,6 +637,8 @@ class ManagerAppointmensController extends Controller
             // Update appointment status to "cancelled"
             $appointment->status = 'cancelled';
             $appointment->isread = "unread";
+            $appointment->reason = $request->input('reason');
+            $appointment->deposit = $deposit - $requestedDeposit;
             $appointment->save();
 
             $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
@@ -560,13 +709,24 @@ class ManagerAppointmensController extends Controller
 
     public function cancelmeeting(Request $request, string $appointment_id)
     {
+        $request->validate([
+            'reason' => 'required',
+        ]);
+
         $appointment = Appointment::findOrFail($appointment_id);
 
+        $package = Package::find($appointment->package_id); // Fetch package by package_id
 
+        if ($package) {
+            // Update the package status to "archived"
+            $package->packagestatus = 'archived';
+            $package->save();
+        }
 
             // Update appointment status to "cancelled"
             $appointment->status = 'mcancelled';
             $appointment->isread = "unread";
+            $appointment->reason = $request->input('reason');
             $appointment->save();
 
             $DateFormatted = Carbon::parse($appointment->appointment_datetime)->format('F j, Y g:i A');
@@ -629,54 +789,102 @@ class ManagerAppointmensController extends Controller
 
     public function detailsedit(string $appointment_id)
     {
-        $packages = Package::orderBy('created_at', 'desc')
+        $packages = Package::with(['customPackage.items']) // Load the related items
+        ->orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
+        ->where('packagetype', 'Custom')
+        ->where(function ($query) use ($appointment_id) {
+            $query->whereDoesntHave('appointment') // No appointments linked to this package
+                  ->orWhereHas('appointment', function ($query) use ($appointment_id) {
+                      $query->where('appointments.appointment_id', $appointment_id); // Only linked to the current appointment
+                  });
+        })
         ->paginate(30);
-        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
-        $appointment = Appointment::find($appointment_id);
-        $bookedDates = Appointment::select('edate')
-        ->where('status', 'booked')
-        ->where('appointment_id', '!=', $appointment_id)
-        ->groupBy('edate')
-        ->having(DB::raw('COUNT(*)'), '=', 3)
-        ->pluck('edate')
-        ->toArray();
 
-        return view('manager.booked-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates'));
+        $appointment = Appointment::find($appointment_id);
+
+        // Fetch the custom package for the specific appointment
+        $customPackage = Custompackage::with('items')
+            ->where('package_id', $appointment->package_id)
+            ->first();
+
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
+
+        $bookedDates = Appointment::select('edate')
+            ->where('status', 'booked')
+            ->where('appointment_id', '!=', $appointment_id)
+            ->groupBy('edate')
+            ->having(DB::raw('COUNT(*)'), '=', 3)
+            ->pluck('edate')
+            ->toArray();
+
+        return view('manager.booked-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates', 'customPackage'));
     }
     public function detailspendingedit(string $appointment_id)
     {
-        $packages = Package::orderBy('created_at', 'desc')
+        $packages = Package::with(['customPackage.items']) // Load the related items
+        ->orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
+        ->where('packagetype', 'Custom')
+        ->where(function ($query) use ($appointment_id) {
+            $query->whereDoesntHave('appointment') // No appointments linked to this package
+                  ->orWhereHas('appointment', function ($query) use ($appointment_id) {
+                      $query->where('appointments.appointment_id', $appointment_id); // Only linked to the current appointment
+                  });
+        })
         ->paginate(30);
-        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
-        $appointment = Appointment::find($appointment_id);
-        $bookedDates = Appointment::select('edate')
-        ->where('status', 'booked')
-        ->where('appointment_id', '!=', $appointment_id)
-        ->groupBy('edate')
-        ->having(DB::raw('COUNT(*)'), '=', 3)
-        ->pluck('edate')
-        ->toArray();
 
-        return view('manager.pending-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates'));
+        $appointment = Appointment::find($appointment_id);
+
+        // Fetch the custom package for the specific appointment
+        $customPackage = Custompackage::with('items')
+            ->where('package_id', $appointment->package_id)
+            ->first();
+
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
+
+        $bookedDates = Appointment::select('edate')
+            ->where('status', 'booked')
+            ->where('appointment_id', '!=', $appointment_id)
+            ->groupBy('edate')
+            ->having(DB::raw('COUNT(*)'), '=', 3)
+            ->pluck('edate')
+            ->toArray();
+
+        return view('manager.pending-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates', 'customPackage'));
     }
     public function detailscancellededit(string $appointment_id)
     {
-        $packages = Package::orderBy('created_at', 'desc')
+        $packages = Package::with(['customPackage.items']) // Load the related items
+        ->orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
+        ->where('packagetype', 'Custom')
+        ->where(function ($query) use ($appointment_id) {
+            $query->whereDoesntHave('appointment') // No appointments linked to this package
+                  ->orWhereHas('appointment', function ($query) use ($appointment_id) {
+                      $query->where('appointments.appointment_id', $appointment_id); // Only linked to the current appointment
+                  });
+        })
         ->paginate(30);
-        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
-        $appointment = Appointment::find($appointment_id);
-        $bookedDates = Appointment::select('edate')
-        ->where('status', 'booked')
-        ->where('appointment_id', '!=', $appointment_id)
-        ->groupBy('edate')
-        ->having(DB::raw('COUNT(*)'), '=', 3)
-        ->pluck('edate')
-        ->toArray();
 
-        return view('manager.cancelled-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates'));
+        $appointment = Appointment::find($appointment_id);
+
+        // Fetch the custom package for the specific appointment
+        $customPackage = Custompackage::with('items')
+            ->where('package_id', $appointment->package_id)
+            ->first();
+
+        $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
+
+        $bookedDates = Appointment::select('edate')
+            ->where('status', 'booked')
+            ->where('appointment_id', '!=', $appointment_id)
+            ->groupBy('edate')
+            ->having(DB::raw('COUNT(*)'), '=', 3)
+            ->pluck('edate')
+            ->toArray();
+
+        return view('manager.cancelled-edit', compact('packages', 'appointment', 'blockedDates', 'bookedDates', 'customPackage'));
     }
     public function save(Request $request, string $appointment_id)
     {
@@ -685,8 +893,17 @@ class ManagerAppointmensController extends Controller
             'edate' => 'required|date|after_or_equal:today',
             'etime' => 'required',
             'type' => 'required',
-            'package_id' => 'required|exists:packages,package_id',
+            // 'package_id' => 'required|exists:packages,package_id',
         ]);
+
+        $appointment = Appointment::findOrFail($appointment_id);
+
+        // $package = Package::findOrFail($request->input('package_id'));
+
+        // // Check if package price is lower than the appointment deposit
+        // if ($package->packagedesc < $appointment->deposit) {
+        //     return redirect()->back()->with('error', 'Package price is lower than the deposit amount of ₱' . $appointment->deposit .' Cannot proceed.');
+        // }
 
         // Check if the selected date is blocked
         $blockedDateExists = BlockedDate::where('blocked_date', $request->edate)->exists();
@@ -713,14 +930,21 @@ class ManagerAppointmensController extends Controller
             ]);
         }
 
-        $appointment = Appointment::findOrFail($appointment_id);
+        
         
         // Update appointment details
         $appointment->location = $request->input('location');
         $appointment->edate = $request->input('edate');
         $appointment->etime = $request->input('etime');
         $appointment->type = $request->input('type');
-        $appointment->package_id = $request->input('package_id');
+        // $appointment->package_id = $request->input('package_id');
+
+        // $package = $appointment->package;
+        // if ($package) {
+        //     $appointment->balance = $package->packagedesc - $appointment->deposit;
+        // } else {
+        //     return response()->json(['error' => 'Package not found'], 404);
+        // }
 
         // Save the updated appointment
         $appointment->save();
@@ -734,13 +958,44 @@ class ManagerAppointmensController extends Controller
                 $log->description = $use->firstname . " " . $use->lastname . " edited an event on " . $DateFormatted;
                 $log->logdate = now();
                 $log->save();
+        
+        // Get the user who made the appointment
+        $user = $appointment->user; // Assuming you have a relation between Appointment and User models
+
+        // Format the appointment date and time
+        $appointmentDateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+
+        // Create the email content
+        $emailContent = "
+            <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                <h1 style='color: #333;'>The details of your event: {$appointment->type} on {$appointmentDateFormatted} have been updated</h1>
+                <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                <p>We look forward on making your next event wonderful.</p>
+                <p style='color: #555;'>Message us on our Facebook page or on our Website for more details</p>
+            </div>
+        ";
+
+        try {
+            // Send the email
+            if (!empty($user->email)) {
+                Mail::send([], [], function ($message) use ($user, $emailContent) {
+                    $message->to($user->email)
+                            ->subject('Event details changes')
+                            ->html($emailContent);
+                });
+            }
+        } catch (\Exception $e) {
+            // Log the error or handle it
+            Log::error('Email could not be sent: ' . $e->getMessage());
+            
+            // Redirect back with an error message
+            return redirect()->back()->with('error', 'Failed to send confirmation email.');
+        }
 
 
         // Redirect back or to a success page
-        return redirect()->back()->with([
-            'alert' => 'success',
-            'message' => 'Event updated successfully!'
-        ]);
+        return redirect()->back()->with('success', 'Event updated successfully!');
+        
     }
 
 

@@ -32,11 +32,13 @@ class PostController extends Controller
     {
         // dd($request->all());
         $request->validate([
-            'images.*' => 'nullable|image|mimes:png,jpg,jpeg,webp', // Images are optional but must be valid
-            'description' => 'nullable|string', // Description is optional
-            'images' => 'required_without:description|array', // At least one image is required if description is not provided
-            'description' => 'required_without:images|string', // Description is required if no images are provided
+            'images.*' => 'nullable|image|mimes:png,jpg,jpeg,webp', // Images must be valid if present
+            'description' => 'nullable|string', // Description is optional if images are provided
+            'images' => 'nullable|array', // Images are optional if a description is provided
+            'images' => 'required_without_all:description', // At least one image or a description is required
+            'description' => 'required_without_all:images', // At least a description or one image is required
         ]);
+        
         
         
         $imageData = [];

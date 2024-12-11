@@ -8,33 +8,38 @@
     </div>
 
     <div class="flex justify-center">
-        <div class="flex flex-col items-center w-full bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-3xl dark:border-gray-700 dark:bg-gray-200 ">
-            @if ($package->packagephoto)
-                <img class="object-cover w-full cursor-pointer max-w-sm h-48 md:w-48 md:h-full rounded-t-lg md:rounded-none md:rounded-s-lg" src="{{ asset($package->packagephoto) }}" alt="Package Image" onclick="openModal('{{ asset($package->packagephoto) }}')">
-            @endif
-            <div class="flex flex-col justify-between p-4 leading-normal">
-                <h5 class="mb-2 text-2xl uppercase font-bold tracking-tight text-gray-700">{{ $package->packagename }}</h5>
-                <p class="mb-3 text-xl font-normal uppercase text-gray-700">₱ {{ number_format($package->packagedesc, 2) }}</p>
-
-                <p class="mb-3 text-xl font-normal uppercase text-gray-700">Sample Photos</p>
-                @if ($package->packagetype === 'Normal')
-                    @if ($samplePhotos && count($samplePhotos) > 0)
-                        <!-- Display the sample photos if they exist -->
-                        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
-                            @foreach ($samplePhotos as $photo)
-                                <div class="relative overflow-hidden w-36 h-36 sm:w-32 sm:h-32" >
-                                    <img src="{{ asset($photo) }}" alt="Sample Photos" class="absolute inset-0 w-full h-full object-cover cursor-pointer" 
-                                        onclick="openModal('{{ asset($photo) }}')"/>
-                                </div>
+        <div class="flex flex-col items-center text-center w-full bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl dark:border-gray-700 dark:bg-gray-200">
+            
+            <!-- Package Info -->
+            <div class="p-6 w-full">
+                <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-900">{{ $package->packagename }}</h2>
+                <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Package Price: ₱{{ number_format($package->packagedesc, 2) }}</p>
+                
+                <!-- Package Inclusion Table -->
+                <div class="mt-4 overflow-x-auto">
+                    <table class="min-w-full table-auto text-sm text-left text-gray-700 dark:text-gray-900">
+                        <thead class="bg-gray-100 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 w-1/5">#</th>
+                                <th class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 w-4/5">Inclusion</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                            @foreach (json_decode($package->packageinclusion) as $index => $inclusion)
+                            <tr>
+                                <td class="px-4 py-2 w-1/5">{{ $index + 1 }}</td>
+                                <td class="px-4 py-2 w-4/5">{{ $inclusion }}</td>
+                            </tr>
                             @endforeach
-                        </div>
-                    @endif
-                
-                @endif
-                
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
+    
         </div>
     </div>
+    
 
     <section class="my-10 lg:my-10">
         <div class="py-12">

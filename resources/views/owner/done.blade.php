@@ -11,7 +11,7 @@
     <div class="text-center py-2 my-2">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Done <span class="text-yellow-600">Events</span>
+            Completed <span class="text-yellow-600">Events</span>
         </h3>
 
     </div>
@@ -45,7 +45,7 @@
                     <th scope="row" class="px-6 py-4 capitalize">{{ $app->user->firstname ?? 'N/A' }} {{ $app->user->lastname ?? '' }} </th>
                     
                     <td class="px-6 py-4">{{ $app->location }}</td>
-                    <td class="px-6 py-4">{{ $app->edate }}</td>
+                    <td class="px-6 py-4">{{\Carbon\Carbon::parse($app->edate)->format('F j, Y') ? : 'No Event Date Assigned'}}</td>
                     <td class="px-6 py-4">
                         {{-- <a href="" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Edit

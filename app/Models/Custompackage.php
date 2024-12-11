@@ -11,7 +11,8 @@ class Custompackage extends Model
 
     protected $fillable = [
         'final_price',
-        'person'
+        'person',
+        'target',
     ];
 
     protected $primaryKey = 'custompackage_id';

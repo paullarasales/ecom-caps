@@ -11,12 +11,7 @@
         @foreach ($package as $pk)
         
         <div class="max-w-[12rem] bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-200 dark:border-gray-700">
-            <a href="#" class="block w-full relative pb-[100%] overflow-hidden rounded-t-lg">
-                
-                @if ($pk->packagephoto)
-                    <img class="absolute top-0 left-0 w-full h-full object-cover" src="{{ asset($pk->packagephoto) }}" alt="Package Image" onclick="openModal('{{ asset($pk->packagephoto) }}')" />
-                @endif
-            </a>
+            
             <div class="p-3">
                 <a href="#">
                     <h5 class="mb-2 text-lg font-bold uppercase tracking-tight text-gray-900 dark:text-gray-700">{{ $pk->packagename }}</h5>
@@ -60,7 +55,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center">
                         <h2 class="font-heading mb-4 bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-1/3 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
-                            We can also customize your package
+                            These packages are just overview
                         </h2>
                     </div>
                 </div>

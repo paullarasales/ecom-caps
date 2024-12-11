@@ -41,49 +41,34 @@ class PackagesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'packagephoto' => 'required|image|mimes:png,jpg,jpeg,webp',
             'packagename' => 'required|unique:packages,packagename',
             'packageprice' => 'required|numeric',
+            'package_inclusions' => 'required|array|min:1', // Validate that there is at least one inclusion
+            'package_inclusions.*' => 'required|string', // Each inclusion should be a string
         ]);
 
-        if ($file = $request->file('packagephoto')) {
-            $extension = $file->getClientOriginalExtension();
-            $filename = time() . '_' . uniqid() . '.' . $extension; // Ensure unique filename
-        
-            $path = "uploads/package/";
-            $file->move(public_path($path), $filename); // Move the file to the public directory
-        
-            $package = new Package();
-            $package->packagename = $request->packagename;
-            $package->packagedesc = $request->packageprice;
-            $package->user_id = Auth::id();
-            $package->packagephoto = $path . $filename; // Save the image path
-            $package->packagetype = "Normal";
-            $package->save();
+        // Collect package inclusions and encode them as a JSON string
+        $inclusions = json_encode($request->input('package_inclusions'));
 
-            $user = Auth::user();
+        // Create a new package record
+        $package = new Package();
+        $package->packagename = $request->packagename;
+        $package->packagedesc = $request->packageprice;  // Assuming package price is used as description, adjust as needed
+        $package->user_id = Auth::id();
+        $package->packageinclusion = $inclusions;  // Store inclusions in the database
+        $package->packagetype = "Normal";  // Or adjust if dynamic
+        $package->save();
 
-            $log = new Log();
-            $log->user_id = Auth::id();
-            $log->action = 'Package Created';
-            $log->description = $package->packagename . " package created by " . $user->firstname . " " . $user->lastname;
-            $log->logdate = now();
-            $log->save();
+        // Log the package creation action
+        $user = Auth::user();
+        $log = new Log();
+        $log->user_id = Auth::id();
+        $log->action = 'Package Created';
+        $log->description = $package->packagename . " package created by " . $user->firstname . " " . $user->lastname;
+        $log->logdate = now();
+        $log->save();
 
-            return redirect()->back()->with('success', 'Package added successfully!');
-            // if (Auth::check()) {
-            //     $user = Auth::user();
-            
-            //     if ($user->usertype === 'admin') {
-            //         return redirect()->route('addpackage')->with('alert', 'Package added successfully!');
-            //     } elseif ($user->usertype === 'manager') {
-            //         return redirect()->route('manageraddpackage')->with('alert', 'Package added successfully!');
-            //     } elseif ($user->usertype === 'owner') {
-            //         return redirect()->route('owneraddpackage')->with('alert', 'Package added successfully!');
-            //     }
-            // }
-        }
-
+        return redirect()->back()->with('success', 'Package added successfully!');
     }
 
     public function custom(Request $request)
@@ -201,10 +186,10 @@ class PackagesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $pk)
+    public function show(string $package_id)
     {
         // Find the Package by its primary key (pk)
-        $package = Package::findOrFail($pk);
+        $package = Package::findOrFail($package_id);
 
         // Retrieve the associated Custompackage, loading its related Customitems
         $customPackage = Custompackage::with('items') // This will load the related items
@@ -212,6 +197,9 @@ class PackagesController extends Controller
                                     ->first(); // Ensure you're getting a single instance
 
         $samplePhotos = $package->sample ? $package->sample->samplepath : null;
+
+        $appointmentCount = $package->appointment()->count();
+        $appointments = $package->appointment()->latest()->first();
 
 
         // Pass both the package and the custom package (with items) to the view
@@ -219,21 +207,16 @@ class PackagesController extends Controller
             'package' => $package,
             'customPackage' => $customPackage,
             'samplePhotos' => $samplePhotos,
+            'appointmentCount' => $appointmentCount,
+            'appointments' => $appointments,
         ]);
     }
 
 
-    // $package = Package::find($pk);
-        // $custom = Custom::where('package_id', $package->package_id)->first();
-        // // return view('admin.packages-see')->with("package", $package);
-        // return view('admin.packages-see')->with([
-        //     'package' => $package,
-        //     'custom' => $custom,
-        // ]);
-    public function managershow(string $pk)
+    public function managershow(string $package_id)
     {
         // Find the Package by its primary key (pk)
-        $package = Package::findOrFail($pk);
+        $package = Package::findOrFail($package_id);
 
         // Retrieve the associated Custompackage, loading its related Customitems
         $customPackage = Custompackage::with('items') // This will load the related items
@@ -241,11 +224,18 @@ class PackagesController extends Controller
                                     ->first(); // Ensure you're getting a single instance
 
         $samplePhotos = $package->sample ? $package->sample->samplepath : null;
+
+        $appointmentCount = $package->appointment()->count();
+        $appointments = $package->appointment()->latest()->first();
+
+
         // Pass both the package and the custom package (with items) to the view
         return view('manager.packages-see')->with([
             'package' => $package,
             'customPackage' => $customPackage,
             'samplePhotos' => $samplePhotos,
+            'appointmentCount' => $appointmentCount,
+            'appointments' => $appointments,
         ]);
     }
 
@@ -260,11 +250,18 @@ class PackagesController extends Controller
                                     ->first(); // Ensure you're getting a single instance
 
         $samplePhotos = $package->sample ? $package->sample->samplepath : null;
+
+        $appointmentCount = $package->appointment()->count();
+        $appointments = $package->appointment()->latest()->first();
+
+
         // Pass both the package and the custom package (with items) to the view
         return view('owner.packages-see')->with([
             'package' => $package,
             'customPackage' => $customPackage,
             'samplePhotos' => $samplePhotos,
+            'appointmentCount' => $appointmentCount,
+            'appointments' => $appointments,
         ]);
     }
 
@@ -293,148 +290,116 @@ class PackagesController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'packagephoto' => 'required|nullable|image|mimes:png,jpg,jpeg,webp',
             'packagename' => [
                 'required',
                 Rule::unique('packages', 'packagename')->ignore($id, 'package_id'),
             ],
             'packageprice' => 'required|numeric',
+            'package_inclusions' => 'required|array|min:1', // Validate that there is at least one inclusion
+            'package_inclusions.*' => 'required|string', // Each inclusion should be a string
         ]);
-    
+
+        // Collect package inclusions and encode them as a JSON string
+        $inclusions = json_encode($request->input('package_inclusions'));
+
         // Find the package by ID
         $package = Package::findOrFail($id);
-    
-        if ($file = $request->file('packagephoto')) {
-            // Check if the package already has a photo and delete it
-            if ($package->packagephoto && file_exists(public_path($package->packagephoto))) {
-                unlink(public_path($package->packagephoto)); // Delete the old photo
-            }
-    
-            $extension = $file->getClientOriginalExtension();
-            $filename = time() . '_' . uniqid() . '.' . $extension; // Ensure unique filename
-        
-            $path = "uploads/package/";
-            $file->move(public_path($path), $filename); // Move the file to the public directory
-        
-            // Update the photo path if a new file is uploaded
-            $package->packagephoto = $path . $filename;
-        }
-    
-        // Update the other fields
+
+        // Update the package fields
         $package->packagename = $request->packagename;
-        $package->packagedesc = $request->packageprice;
+        $package->packagedesc = $request->packageprice;  // Assuming package price is used as description, adjust as needed
+        $package->packageinclusion = $inclusions;  // Store inclusions in the database
         $package->user_id = Auth::id();
-    
+
         // Save the changes
         $package->save();
 
-            $user = Auth::user();
+        // Log the package update action
+        $user = Auth::user();
+        $log = new Log();
+        $log->user_id = Auth::id();
+        $log->action = 'Package Updated';
+        $log->description = $package->packagename . " package updated by " . $user->firstname . " " . $user->lastname;
+        $log->logdate = now();
+        $log->save();
 
-            $log = new Log();
-            $log->user_id = Auth::id();
-            $log->action = 'Package Updated';
-            $log->description = $package->packagename . " package updated by " . $user->firstname . " " . $user->lastname;
-            $log->logdate = now();
-            $log->save();
-    
         return redirect()->back()->with('success', 'Updated successfully!');
     }
+
     public function managerupdate(Request $request, string $id)
     {
         $request->validate([
-            'packagephoto' => 'required|nullable|image|mimes:png,jpg,jpeg,webp',
             'packagename' => [
                 'required',
                 Rule::unique('packages', 'packagename')->ignore($id, 'package_id'),
             ],
             'packageprice' => 'required|numeric',
+            'package_inclusions' => 'required|array|min:1', // Validate that there is at least one inclusion
+            'package_inclusions.*' => 'required|string', // Each inclusion should be a string
         ]);
-    
+
+        // Collect package inclusions and encode them as a JSON string
+        $inclusions = json_encode($request->input('package_inclusions'));
+
         // Find the package by ID
         $package = Package::findOrFail($id);
-    
-        if ($file = $request->file('packagephoto')) {
-            // Check if the package already has a photo and delete it
-            if ($package->packagephoto && file_exists(public_path($package->packagephoto))) {
-                unlink(public_path($package->packagephoto)); // Delete the old photo
-            }
-    
-            $extension = $file->getClientOriginalExtension();
-            $filename = time() . '_' . uniqid() . '.' . $extension; // Ensure unique filename
-        
-            $path = "uploads/package/";
-            $file->move(public_path($path), $filename); // Move the file to the public directory
-        
-            // Update the photo path if a new file is uploaded
-            $package->packagephoto = $path . $filename;
-        }
-    
-        // Update the other fields
+
+        // Update the package fields
         $package->packagename = $request->packagename;
-        $package->packagedesc = $request->packageprice;
+        $package->packagedesc = $request->packageprice;  // Assuming package price is used as description, adjust as needed
+        $package->packageinclusion = $inclusions;  // Store inclusions in the database
         $package->user_id = Auth::id();
-    
+
         // Save the changes
         $package->save();
 
-            $user = Auth::user();
+        // Log the package update action
+        $user = Auth::user();
+        $log = new Log();
+        $log->user_id = Auth::id();
+        $log->action = 'Package Updated';
+        $log->description = $package->packagename . " package updated by " . $user->firstname . " " . $user->lastname;
+        $log->logdate = now();
+        $log->save();
 
-            $log = new Log();
-            $log->user_id = Auth::id();
-            $log->action = 'Package Updated';
-            $log->description = $package->packagename . " package updated by " . $user->firstname . " " . $user->lastname;
-            $log->logdate = now();
-            $log->save();
-    
-            return redirect()->back()->with('success', 'Updated successfully!');
+        return redirect()->back()->with('success', 'Updated successfully!');
     }
 
     public function ownerupdate(Request $request, string $id)
     {
         $request->validate([
-            'packagephoto' => 'required|nullable|image|mimes:png,jpg,jpeg,webp',
             'packagename' => [
                 'required',
                 Rule::unique('packages', 'packagename')->ignore($id, 'package_id'),
             ],
             'packageprice' => 'required|numeric',
+            'package_inclusions' => 'required|array|min:1', // Validate that there is at least one inclusion
+            'package_inclusions.*' => 'required|string', // Each inclusion should be a string
         ]);
-    
+
+        // Collect package inclusions and encode them as a JSON string
+        $inclusions = json_encode($request->input('package_inclusions'));
+
         // Find the package by ID
         $package = Package::findOrFail($id);
-    
-        if ($file = $request->file('packagephoto')) {
-            // Check if the package already has a photo and delete it
-            if ($package->packagephoto && file_exists(public_path($package->packagephoto))) {
-                unlink(public_path($package->packagephoto)); // Delete the old photo
-            }
-    
-            $extension = $file->getClientOriginalExtension();
-            $filename = time() . '_' . uniqid() . '.' . $extension; // Ensure unique filename
-        
-            $path = "uploads/package/";
-            $file->move(public_path($path), $filename); // Move the file to the public directory
-        
-            // Update the photo path if a new file is uploaded
-            $package->packagephoto = $path . $filename;
-        }
-    
-        // Update the other fields
+
+        // Update the package fields
         $package->packagename = $request->packagename;
-        $package->packagedesc = $request->packageprice;
+        $package->packagedesc = $request->packageprice;  // Assuming package price is used as description, adjust as needed
+        $package->packageinclusion = $inclusions;  // Store inclusions in the database
         $package->user_id = Auth::id();
-    
+
         // Save the changes
         $package->save();
 
-            $user = Auth::user();
-
-            $log = new Log();
-            $log->user_id = Auth::id();
-            $log->action = 'Package Updated';
-            $log->description = $package->packagename . " package updated by " . $user->firstname . " " . $user->lastname;
-            $log->logdate = now();
-            $log->save();
+        // Log the package update action
+        $user = Auth::user();
+        $log = new Log();
+        $log->user_id = Auth::id();
+        $log->action = 'Package Updated';
+        $log->description = $package->packagename . " package updated by " . $user->firstname . " " . $user->lastname;
+        $log->logdate = now();
+        $log->save();
     
             return redirect()->back()->with('success', 'Updated successfully!');
     }

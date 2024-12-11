@@ -17,7 +17,7 @@
     <div class="flex flex-col items-center md:flex-row justify-center flex-wrap gap-3 mt-10">
     
     
-        <div class="w-64 h-44">
+        {{-- <div class="w-64 h-44">
             <div class="bg-white shadow-lg mx-auto border-b-4 border-indigo-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
                 <div class="bg-indigo-500 flex h-20 items-center">
                     <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
@@ -48,6 +48,101 @@
                 <div class="flex justify-center px-5 mb-2 text-sm">
                     <a href="{{route('customfoodadd')}}">
                         <button type="button" class="border border-teal-500 text-teal-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:text-white hover:bg-teal-600 focus:outline-none focus:shadow-outline">
+                            Open
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div> --}}
+
+        <div class="w-64 h-44">
+            <div class="bg-white shadow-lg mx-auto border-b-4 border-stone-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
+                <div class="bg-stone-500 flex h-20 items-center">
+                    <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
+                        <i class="fa-solid fa-cow"></i>
+                    </h1>
+                    <p class="ml-4 text-white uppercase font-semibold">Beef</p>
+                </div>
+                
+                <div class="flex justify-center px-5 mb-2 text-sm">
+                    <a href="{{route('custombeef')}}">
+                        <button type="button" class="border border-stone-500 text-stone-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:text-white hover:bg-stone-600 focus:outline-none focus:shadow-outline">
+                            Open
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <div class="w-64 h-44">
+            <div class="bg-white shadow-lg mx-auto border-b-4 border-orange-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
+                <div class="bg-orange-500 flex h-20 items-center">
+                    <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
+                        <i class="fa-solid fa-bacon"></i>
+                    </h1>
+                    <p class="ml-4 text-white uppercase font-semibold">Pork</p>
+                </div>
+                
+                <div class="flex justify-center px-5 mb-2 text-sm">
+                    <a href="{{route('custompork')}}">
+                        <button type="button" class="border border-orange-500 text-orange-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:text-white hover:bg-orange-600 focus:outline-none focus:shadow-outline">
+                            Open
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-64 h-44">
+            <div class="bg-white shadow-lg mx-auto border-b-4 border-red-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
+                <div class="bg-red-500 flex h-20 items-center">
+                    <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
+                        <i class="fa-solid fa-drumstick-bite"></i>
+                    </h1>
+                    <p class="ml-4 text-white uppercase font-semibold">Chicken</p>
+                </div>
+                
+                <div class="flex justify-center px-5 mb-2 text-sm">
+                    <a href="{{route('customchicken')}}">
+                        <button type="button" class="border border-red-500 text-red-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:text-white hover:bg-red-600 focus:outline-none focus:shadow-outline">
+                            Open
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <div class="w-64 h-44">
+            <div class="bg-white shadow-lg mx-auto border-b-4 border-lime-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
+                <div class="bg-lime-500 flex h-20 items-center">
+                    <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
+                        <i class="fa-solid fa-carrot"></i>
+                    </h1>
+                    <p class="ml-4 text-white uppercase font-semibold">Veggie</p>
+                </div>
+                
+                <div class="flex justify-center px-5 mb-2 text-sm">
+                    <a href="{{route('customveggie')}}">
+                        <button type="button" class="border border-lime-500 text-lime-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:text-white hover:bg-lime-600 focus:outline-none focus:shadow-outline">
+                            Open
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-64 h-44">
+            <div class="bg-white shadow-lg mx-auto border-b-4 border-indigo-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
+                <div class="bg-indigo-500 flex h-20 items-center">
+                    <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
+                        <i class="fa-solid fa-fish"></i>
+                    </h1>
+                    <p class="ml-4 text-white uppercase font-semibold">Fish</p>
+                </div>
+                
+                <div class="flex justify-center px-5 mb-2 text-sm">
+                    <a href="{{route('customother')}}">
+                        <button type="button" class="border border-indigo-500 text-indigo-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:text-white hover:bg-indigo-600 focus:outline-none focus:shadow-outline">
                             Open
                         </button>
                     </a>
