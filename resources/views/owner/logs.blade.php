@@ -57,6 +57,21 @@
             </span>
     
             <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+                {{-- First Page Link --}}
+                @if ($logs->onFirstPage())
+                    <li>
+                        <span class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                            First
+                        </span>
+                    </li>
+                @else
+                    <li>
+                        <a href="{{ $logs->url(1) }}" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            First
+                        </a>
+                    </li>
+                @endif
+            
                 {{-- Previous Page Link --}}
                 @if ($logs->onFirstPage())
                     <li>
@@ -71,9 +86,27 @@
                         </a>
                     </li>
                 @endif
-    
+            
+                {{-- Calculate the range of pages to display --}}
+                @php
+                    $currentPage = $logs->currentPage();
+                    $lastPage = $logs->lastPage();
+                    $startPage = max(1, $currentPage - 2);
+                    $endPage = min($lastPage, $currentPage + 2);
+                    
+                    if ($currentPage <= 3) {
+                        $startPage = 1;
+                        $endPage = min(5, $lastPage);
+                    }
+            
+                    if ($currentPage > $lastPage - 3) {
+                        $startPage = max(1, $lastPage - 4);
+                        $endPage = $lastPage;
+                    }
+                @endphp
+            
                 {{-- Pagination Elements --}}
-                @foreach ($logs->getUrlRange(1, $logs->lastPage()) as $page => $url)
+                @for ($page = $startPage; $page <= $endPage; $page++)
                     @if ($page == $logs->currentPage())
                         <li>
                             <span class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 dark:bg-gray-700 dark:text-white">
@@ -82,13 +115,13 @@
                         </li>
                     @else
                         <li>
-                            <a href="{{ $url }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            <a href="{{ $logs->url($page) }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                                 {{ $page }}
                             </a>
                         </li>
                     @endif
-                @endforeach
-    
+                @endfor
+            
                 {{-- Next Page Link --}}
                 @if ($logs->hasMorePages())
                     <li>
@@ -103,7 +136,23 @@
                         </span>
                     </li>
                 @endif
+            
+                {{-- Last Page Link --}}
+                @if ($logs->hasMorePages())
+                    <li>
+                        <a href="{{ $logs->url($logs->lastPage()) }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            Last
+                        </a>
+                    </li>
+                @else
+                    <li>
+                        <span class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                            Last
+                        </span>
+                    </li>
+                @endif
             </ul>
+            
         </nav>
     </div>
 </x-owner-layout>

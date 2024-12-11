@@ -1223,7 +1223,19 @@ class AppointmentController extends Controller
 
     public function clientcancelmeeting(Request $request, string $appointment_id)
     {
+        $request->validate([
+            'reason' => 'required',
+        ]);
+
         $appointment = Appointment::findOrFail($appointment_id);
+
+        $package = Package::find($appointment->package_id); // Fetch package by package_id
+
+        if ($package) {
+            // Update the package status to "archived"
+            $package->packagestatus = 'archived';
+            $package->save();
+        }
 
 
 
@@ -1231,6 +1243,7 @@ class AppointmentController extends Controller
             $appointment->status = 'mcancelled';
             $appointment->isread = "unread";
             $appointment->isadminread = "unread";
+            $appointment->reason = $request->input('reason');
             $appointment->save();
 
 

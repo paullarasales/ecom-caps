@@ -1159,6 +1159,9 @@ Route::get('/owner/booked/{appointment_id}/view', [OwnerAppointmentsPagesControl
 Route::get('/owner/done/events', [OwnerAppointmentsPagesController::class, 'done'])->middleware(['auth', 'verified','owner'])->name('owner.done');
 Route::get('/owner/done/{appointment_id}/view', [OwnerAppointmentsPagesController::class, 'doneView'])->middleware(['auth', 'verified','owner'])->name('owner.doneView');
 
+Route::get('/owner/cancelled/events', [OwnerAppointmentsPagesController::class, 'cancelled'])->middleware(['auth', 'verified','owner'])->name('owner.cancelled');
+Route::get('/owner/cancelled/{appointment_id}/view', [OwnerAppointmentsPagesController::class, 'cancelledView'])->middleware(['auth', 'verified','owner'])->name('owner.cancelledView');
+
 
 Route::get('/ownerchat', [OwnerController::class, 'ownerchat'])->middleware(['auth', 'verified','owner'])->name('ownerchat');
 Route::get('/owner/logs', [OwnerController::class, 'logs'])->middleware(['auth', 'verified','owner'])->name('ownerlogs');

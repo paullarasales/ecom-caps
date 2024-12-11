@@ -109,14 +109,116 @@
                             </th>
                             <td class="px-6 py-4">
                                 @if ($appointment->package)
-                                    <a href="javascript:void(0);" onclick="openModal('{{ asset($appointment->package->packagephoto) }}')">
-                                        {{ $appointment->package->packagename }} (₱ {{ number_format($appointment->package->packagedesc, 2) }})
-                                    </a>
+                                <button type="button" onclick="toggleModal({{ json_encode($appointment->package->package_id) }})"
+                                        class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700">
+                                        @if($appointment->package && $appointment->package->packagetype == 'Custom')
+                                        {{ $appointment->package->customPackage->target }} 
+                                        @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
+                                        {{ $appointment->package->packagename }} 
+                                        @endif
+                                    (₱{{ number_format($appointment->package->packagedesc, 2) }})
+                                </button>
                                 @else
                                     No package assigned
                                 @endif
                             </td>
                         </tr>
+                        <div id="modal-{{ $appointment->package->package_id ?? 'default' }}" 
+                            class="hidden fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-50">
+                            <div class="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-y-auto">
+                                <div class="flex justify-between items-center">
+                                    <h2 class="text-2xl font-semibold capitalize text-gray-800 dark:text-gray-900">
+                                        {{ $appointment->package->customPackage->target ?? 'Package Details' }}
+                                    </h2>
+                                    <!-- Close Button -->
+                                    <button type="button" 
+                                            onclick="toggleModal('{{ $appointment->package->package_id ?? 'default' }}')" 
+                                            class="text-gray-600 hover:text-gray-900 font-bold text-xl">&times;</button>
+                                </div>
+                                <p class="mt-2 text-gray-700 dark:text-gray-700">
+                                    @if($appointment->package && $appointment->package->packagetype == 'Custom')
+                                        <strong class="capitalize">{{$appointment->package->packagename}}</strong>
+                                        <br>
+                                        <strong>Package Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
+                                        @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
+                                        <strong>Estimated Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
+                                        @endif
+                                </p>
+                                @if($appointment->package && $appointment->package->packagetype == 'Custom')
+                                <p class="mt-2 text-gray-700 dark:text-gray-700">
+                                    <strong>Pax:</strong> 
+                                    {{ $customPackage->person ?? 'Not specified' }}
+                                </p>
+                                @endif
+                                <div class="mt-4">
+                                    <h3 class="text-lg font-bold text-gray-700">Inclusions</h3>
+                                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                                        @if($appointment->package && $appointment->package->packagetype == 'Normal')
+                                            <!-- Normal Package Inclusions -->
+                                            @if (isset($appointment->package->packageinclusion))
+                                                @foreach (json_decode($appointment->package->packageinclusion) as $inclusion)
+                                                    <li>{{ $inclusion }}</li>
+                                                @endforeach
+                                            @else
+                                                <li>No inclusions available</li>
+                                            @endif
+                                        @elseif($appointment->package && $appointment->package->packagetype == 'Custom')
+                                            <!-- Custom Package Items -->
+                                            @if (isset($appointment->package->customPackage->items) && count($appointment->package->customPackage->items) > 0)
+                                                    @php
+                                                        // Group items by item_type
+                                                        $groupedItems = collect($appointment->package->customPackage->items)->groupBy(function ($item) {
+                                                            // Check if the item type is 'service_fee' and replace it with 'transportation_fee'
+                                                            $itemType = $item->item_type;
+                                                            // if ($itemType === 'service_fee') {
+                                                            //     $itemType = 'transportation_fee';  // Replace here
+                                                            // }
+    
+                                                            // Consolidate item types into 'dishes'
+                                                            return in_array($itemType, ['beef', 'pork', 'chicken', 'veggie', 'others']) ? 'dishes' : $itemType;
+                                                        });
+                                                    @endphp
+    
+                                                    @foreach ($groupedItems as $itemType => $items)
+                                                        <h4 class="mt-2 text-md capitalize font-semibold text-gray-800">
+                                                            {{ str_replace('_', ' ', $itemType) }}
+                                                        </h4>
+                                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                                            @foreach ($items as $item)
+                                                                <li>
+                                                                    {{ $item->item_name }}
+                                                                    @if ($item->item_type === 'food_pack')
+                                                                        ({{ $item->quantity ?? 'N/A' }})
+                                                                    @endif
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @endforeach
+                                                    {{-- <div class="flex justify-end">
+                                                        <a href="{{ route('admin.custom.editpackage.booked', $appointment->package->package_id) }}" class="inline-flex w-16 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                                            Edit
+                                                            <i class="fa-solid fa-pen-to-square ml-3"></i>
+                                                        </a>
+                                                    </div> --}}
+                                                @else
+                                                    <p class="text-gray-700">No custom items available</p>
+                                                @endif
+                                        @endif
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <script>
+                            function toggleModal(packageId) {
+                                const modal = document.getElementById('modal-' + packageId);
+                                if (modal) {
+                                    modal.classList.toggle('hidden'); // Show or hide the modal
+                                } else {
+                                    console.error('Modal not found for package ID:', packageId);
+                                }
+                            }
+                        </script>
                         
                     </tbody>
                 </table>
