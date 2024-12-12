@@ -52,7 +52,7 @@ class PackagesPagesController extends Controller
         $package = Package::orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
         ->where('packagetype', 'normal')
-        ->paginate(10);
+        ->paginate(20);
         return view('admin.packages-view', compact('package'));
     }
     public function managerview()
@@ -61,7 +61,7 @@ class PackagesPagesController extends Controller
         $package = Package::orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
         ->where('packagetype', 'normal')
-        ->paginate(10);
+        ->paginate(20);
         return view('manager.packages-view', compact('package'));
     }
     public function ownerview()
@@ -70,7 +70,7 @@ class PackagesPagesController extends Controller
         $package = Package::orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
         ->where('packagetype', 'Normal')
-        ->paginate(10);
+        ->paginate(20);
         return view('owner.packages-view', compact('package'));
     }
 
@@ -79,7 +79,7 @@ class PackagesPagesController extends Controller
         // return view('admin.packages-view');
         $package = Package::orderBy('created_at', 'desc')
         ->where('packagestatus', 'archived')
-        ->paginate(10);
+        ->paginate(20);
         return view('admin.packages-view-archived', compact('package'));
     }
     public function managerviewArchived()
@@ -87,7 +87,7 @@ class PackagesPagesController extends Controller
         // return view('admin.packages-view');
         $package = Package::orderBy('created_at', 'desc')
         ->where('packagestatus', 'archived')
-        ->paginate(10);
+        ->paginate(20);
         return view('manager.packages-view-archived', compact('package'));
     }
     public function ownerviewArchived()
@@ -95,7 +95,7 @@ class PackagesPagesController extends Controller
         // return view('admin.packages-view');
         $package = Package::orderBy('created_at', 'desc')
         ->where('packagestatus', 'archived')
-        ->paginate(10);
+        ->paginate(20);
         return view('owner.packages-view-archived', compact('package'));
     }
 
@@ -106,7 +106,7 @@ class PackagesPagesController extends Controller
         ->orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
         ->where('packagetype', 'Custom')
-        ->paginate(10);
+        ->paginate(60);
         return view('admin.packages-view-custom', compact('package'));
     }
     public function managerviewCustom()
@@ -116,7 +116,7 @@ class PackagesPagesController extends Controller
         ->orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
         ->where('packagetype', 'Custom')
-        ->paginate(10);
+        ->paginate(60);
         return view('manager.packages-view-custom', compact('package'));
     }
     public function ownerviewCustom()
@@ -126,7 +126,7 @@ class PackagesPagesController extends Controller
         ->orderBy('created_at', 'desc')
         ->where('packagestatus', 'active')
         ->where('packagetype', 'Custom')
-        ->paginate(10);
+        ->paginate(60);
         return view('owner.packages-view-custom', compact('package'));
     }
 

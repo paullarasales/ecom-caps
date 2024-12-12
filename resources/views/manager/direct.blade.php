@@ -247,9 +247,14 @@
                                 </select>
                             </div>
 
-                            <div class="md:col-span-5">
+                            <div class="md:col-span-2">
                                 <label for="email">Event Type</label>
                                 <input type="text" name="type" id="type" placeholder="(Ex. 1st Birthday)" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('type') }}" />
+                            </div>
+
+                            <div class="md:col-span-3">
+                                <label for="theme">Event Theme</label>
+                                <input type="text" name="theme" id="theme" placeholder="Enter Theme" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('type') }}" />
                             </div>
 
                             <div class="md:col-span-5">

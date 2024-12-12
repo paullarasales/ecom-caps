@@ -601,10 +601,9 @@
                                         {{-- <label for="final">Enter Final Price</label> --}}
                                         <input type="text" name="final" id="final" placeholder="Enter Final Price"  class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('final') }}"  />
                                     </div>
-                                    <div class="md:col-span-5">
-                                        {{-- <label for="final">Enter Final Price</label> --}}
+                                    {{-- <div class="md:col-span-5">
                                         <input type="text" name="packagename" id="packagename" placeholder="Enter Package Name"  class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('packagename', $package->packagename ?? '') }}"  />
-                                    </div>
+                                    </div> --}}
                                     <div class="md:col-span-5 text-right">
                                         <input type="submit" name="submit" value="Submit" class="bg-yellow-500 cursor-pointer hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
                                     </div>

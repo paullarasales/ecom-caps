@@ -22,9 +22,20 @@
 <div class="max-w-[12rem] bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-200 dark:border-gray-700">
 
     <div class="p-3">
-        <a href="#">
+        {{-- <a href="#">
             <h5 class="mb-2 text-lg font-bold uppercase tracking-tight text-gray-900 dark:text-gray-700">{{ $pk->packagename }}</h5>
-        </a>
+        </a> --}}
+
+        @if ($pk->appointment->isNotEmpty())
+                                    <div class="text-sm text-gray-600">
+                                        <h5 class="mb-2 text-lg font-bold uppercase tracking-tight text-gray-900 dark:text-gray-700">{{ $pk->appointment->first()->user->firstname }} {{ $pk->appointment->first()->user->lastname }}</h5>
+                                        <h5 class="mb-2 text-md uppercase tracking-tight text-gray-900 dark:text-gray-700">{{ \Carbon\Carbon::parse($pk->appointment->first()->edate)->format('F j, Y') }}</h5>
+                                    </div>
+                                @else
+                                    <a href="#">
+                                        <h5 class="mb-2 text-lg font-bold uppercase tracking-tight text-gray-900 dark:text-gray-700">{{ $pk->packagename }}</h5>
+                                    </a>
+                                @endif
         
         <a href="{{route('ownershowpackage', $pk->package_id)}}" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
             Read more

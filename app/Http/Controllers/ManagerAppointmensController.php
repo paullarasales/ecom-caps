@@ -52,6 +52,7 @@ class ManagerAppointmensController extends Controller
             'address' => 'required',
             'city' => 'required',
             'location' => 'required',
+            'theme' => 'required',
             'edate' => 'required|date|after_or_equal:today',
             'etime' => 'required',
             'type' => 'required',
@@ -133,6 +134,7 @@ class ManagerAppointmensController extends Controller
         $appointment->edate = $request->input('edate');
         $appointment->etime = $request->input('etime');
         $appointment->type = $request->input('type');
+        $appointment->theme = $request->input('theme');
         $appointment->package_id = $request->input('package_id');
         $appointment->reference = strtoupper(uniqid('REF'));
         $appointment->status = 'booked'; 
@@ -890,6 +892,7 @@ class ManagerAppointmensController extends Controller
     {
         $request->validate([
             'location' => 'required',
+            'theme' => 'required',
             'edate' => 'required|date|after_or_equal:today',
             'etime' => 'required',
             'type' => 'required',
@@ -937,6 +940,7 @@ class ManagerAppointmensController extends Controller
         $appointment->edate = $request->input('edate');
         $appointment->etime = $request->input('etime');
         $appointment->type = $request->input('type');
+        $appointment->theme = $request->input('theme');
         // $appointment->package_id = $request->input('package_id');
 
         // $package = $appointment->package;

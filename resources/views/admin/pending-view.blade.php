@@ -128,6 +128,14 @@
                                 {{$appointment->type ? : 'No Event Type Assigned'}}
                             </td>
                         </tr>
+                        <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700 ">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
+                                Type
+                            </th>
+                            <td class="px-6 py-4">
+                                {{$appointment->theme ? : 'No Event Theme Assigned'}}
+                            </td>
+                        </tr>
                         <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
                                 Package

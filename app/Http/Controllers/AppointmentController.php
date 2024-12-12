@@ -43,6 +43,7 @@ class AppointmentController extends Controller
     {
         $request->validate([
             'location' => 'required',
+            'theme' => 'required',
             'edate' => 'required|date|after_or_equal:today',
             'etime' => 'required',
             'type' => 'required',
@@ -107,6 +108,7 @@ class AppointmentController extends Controller
         $appointment->user_id = Auth::id();
         $appointment->appointment_datetime = $dateTime;
         $appointment->package_id = $request->package_id;
+        $appointment->theme = $request->theme;
         // Generate a unique reference
         $appointment->reference = strtoupper(uniqid('REF'));
         $appointment->save();
@@ -172,6 +174,7 @@ class AppointmentController extends Controller
     {
         $request->validate([
             'location' => 'required',
+            'theme' => 'required',
             'edate' => 'required|date|after_or_equal:today',
             'etime' => 'required',
             'type' => 'required',
@@ -227,6 +230,7 @@ class AppointmentController extends Controller
         $appointment->edate = $request->input('edate');
         $appointment->etime = $request->input('etime');
         $appointment->type = $request->input('type');
+        $appointment->theme = $request->input('theme');
         $appointment->package_id = $request->input('package_id');
         $appointment->appointment_datetime = $dateTime;
 
@@ -482,6 +486,7 @@ class AppointmentController extends Controller
             'address' => 'required',
             'city' => 'required',
             'location' => 'required',
+            'theme' => 'required',
             'edate' => 'required|date|after_or_equal:today',
             'etime' => 'required',
             'type' => 'required',
@@ -564,6 +569,7 @@ class AppointmentController extends Controller
         $appointment->edate = $request->input('edate');
         $appointment->etime = $request->input('etime');
         $appointment->type = $request->input('type');
+        $appointment->theme = $request->input('theme');
         $appointment->package_id = $request->input('package_id');
         $appointment->reference = strtoupper(uniqid('REF'));
         $appointment->status = 'booked'; // Consider using null instead of 'null' if you want it to be a database NULL
@@ -923,6 +929,14 @@ class AppointmentController extends Controller
     {
         $appointment = Appointment::findOrFail($appointment_id);
 
+        $package = Package::find($appointment->package_id); // Fetch package by package_id
+
+        if ($package) {
+            // Update the package status to "archived"
+            $package->packagestatus = 'archived';
+            $package->save();
+        }
+
         // Check if the deposit is already fully paid
         $currentBalance = $appointment->balance;
         $deposit = $request->input('deposit');
@@ -1229,13 +1243,15 @@ class AppointmentController extends Controller
 
         $appointment = Appointment::findOrFail($appointment_id);
 
-        $package = Package::find($appointment->package_id); // Fetch package by package_id
+        // $package = Package::find($appointment->package_id); // Fetch package by package_id
 
-        if ($package) {
-            // Update the package status to "archived"
-            $package->packagestatus = 'archived';
-            $package->save();
-        }
+        // if ($package) {
+        //     // Update the package status to "archived"
+        //     if($package->packagetype === 'Normal'){
+        //         $package->packagestatus = 'archived';
+        //         $package->save();
+        //     }
+        // }
 
 
 
@@ -1390,6 +1406,7 @@ class AppointmentController extends Controller
     {
         $request->validate([
             'location' => 'required',
+            'theme' => 'required',
             'edate' => 'required|date|after_or_equal:today',
             'etime' => 'required',
             'type' => 'required',
@@ -1430,6 +1447,7 @@ class AppointmentController extends Controller
         $appointment->edate = $request->input('edate');
         $appointment->etime = $request->input('etime');
         $appointment->type = $request->input('type');
+        $appointment->theme = $request->input('theme');
         // $appointment->package_id = $request->input('package_id');
 
         // $package = $appointment->package;

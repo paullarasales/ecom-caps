@@ -31,6 +31,7 @@ use App\Http\Controllers\SampleController;
 use App\Http\Controllers\OwnerCustomPackagesController;
 use App\Http\Controllers\OwnerCustomPackagesPagesController;
 use App\Http\Controllers\NewSampleController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -62,7 +63,17 @@ Route::get('/unread-message-count', [ChatController::class, 'fetchUnreadMessageC
 
 
 
+Route::post('/reports/booked-month', [ReportController::class, 'bookedMonth'])
+    ->name('reports.booked.month');
 
+Route::post('/reports/done-month', [ReportController::class, 'doneMonth'])
+    ->name('reports.done.month');
+
+Route::post('/reports/pending-month', [ReportController::class, 'pendingMonth'])
+    ->name('reports.pending.month');
+
+Route::post('/reports/cancelled-month', [ReportController::class, 'cancelledMonth'])
+    ->name('reports.cancelled.month');
 
 
 
@@ -75,6 +86,7 @@ Route::get('/users', [UsertypeController::class, 'index'])->middleware(['auth', 
 Route::get('/adminreviews', [AdminController::class, 'adminreviews'])->middleware(['auth', 'verified','admin'])->name('adminratings');
 Route::get('/packages', [AdminController::class, 'packages'])->middleware(['auth', 'verified','admin'])->name('adminpackages');
 Route::get('/logs', [AdminController::class, 'logs'])->middleware(['auth', 'verified','admin'])->name('adminlogs');
+Route::get('/reports', [AdminController::class, 'reports'])->middleware(['auth', 'verified','admin'])->name('adminreports');
 Route::get('/admin/profile', [AdminController::class, 'profile'])->middleware(['auth', 'verified','admin'])->name('profile');
 
 //ADMIN APPOINTMENT

@@ -72,6 +72,10 @@ class MgrCustomPackagesPagesController extends Controller
             return redirect()->back()->with('error', 'Appointment not found');
         }
 
+        if (!$appointment->edate) {
+            return redirect()->back()->with('error', 'Event date is yet not set');
+        }
+
         $packages = Package::where('packagestatus', 'active')
                             ->where('packagetype', 'Normal')
                             ->get();

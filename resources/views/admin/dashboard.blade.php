@@ -388,7 +388,7 @@
             });
         </script>
 
-<canvas id="packageChart" class="w-32 h-32" style="max-height: 400px;"></canvas>
+{{-- <canvas id="packageChart" class="w-32 h-32" style="max-height: 400px;"></canvas>
 <script>
     var ctxPackage = document.getElementById('packageChart').getContext('2d');
     var packageChart = new Chart(ctxPackage, {
@@ -451,8 +451,7 @@
             }
         }
     });
-</script>
-
+</script> --}}
 
         
 

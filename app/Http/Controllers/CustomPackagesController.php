@@ -24,6 +24,7 @@ use App\Models\Pork;
 use App\Models\Chicken;
 use App\Models\Veggie;
 use App\Models\Others;
+use Carbon\Carbon;
 
 class CustomPackagesController extends Controller
 {
@@ -277,7 +278,7 @@ class CustomPackagesController extends Controller
         $log = new ModelsLog();
         $log->user_id = Auth::id();
         $log->action = 'Package Created';
-        $log->description = $package->packagename . " package created by " . $use->firstname . " " . $use->lastname;
+        $log->description = $package->packagename . " under " . $customPackage->target . " package created by " . $use->firstname . " " . $use->lastname;
         $log->logdate = now();
         $log->save();
 
@@ -292,27 +293,27 @@ class CustomPackagesController extends Controller
         $request->validate([
             // 'package_id' => 'required|exists:packages,package_id',
             'final' => 'required|numeric',
-            'packagename' => 'required',
+            // 'packagename' => 'required',
             'foodpackitem' => 'required|array',
             'foodpackquantity' => 'required|array',
             'foodcartselected' => 'sometimes|array',
-            'packagename' => 'required|unique:packages,packagename',
+            // 'packagename' => 'required|unique:packages,packagename',
             'packageitem' => 'required',
             'fee' => 'nullable|numeric',
         ]);
 
-        $packagename = $request->input('packagename');
-        if (Package::where('packagename', $packagename)->exists()) {
-            return back()->withErrors([
-                'packagename' => 'The package name is already in use. Please choose a different name.'
-            ])->withInput();
-        }
+        // $packagename = $request->input('packagename');
+        // if (Package::where('packagename', $packagename)->exists()) {
+        //     return back()->withErrors([
+        //         'packagename' => 'The package name is already in use. Please choose a different name.'
+        //     ])->withInput();
+        // }
 
 
         // Create a new package entry
         $package = new Package();
         $package->user_id = Auth::id();
-        $package->packagename = $packagename; 
+        // $package->packagename = $packagename; 
         $package->packagedesc = $request->input('final'); 
         $package->packagephoto = 'images/custom.jpg'; 
         $package->packagetype = "Custom";
@@ -521,12 +522,13 @@ class CustomPackagesController extends Controller
             return back()->withErrors('Appointment not found.');
         }
 
+        $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
         $use = Auth::user();
 
         $log = new ModelsLog();
         $log->user_id = Auth::id();
         $log->action = 'Package Created';
-        $log->description = $package->packagename . " package created by " . $use->firstname . " " . $use->lastname;
+        $log->description = $customPackage->target . " package created for event on " .$DateFormatted . " by " . $use->firstname . " " . $use->lastname;
         $log->logdate = now();
         $log->save();
 
@@ -653,7 +655,7 @@ class CustomPackagesController extends Controller
         $log = new ModelsLog();
         $log->user_id = Auth::id();
         $log->action = 'Package Updated';
-        $log->description = $package->packagename . " package updated by " . $use->firstname . " " . $use->lastname;
+        $log->description = $package->packagename . " under " . $customPackage->target . " edited created by " . $use->firstname . " " . $use->lastname;
         $log->logdate = now();
         $log->save();
 
@@ -666,23 +668,23 @@ class CustomPackagesController extends Controller
         // Validate incoming request
         $request->validate([
             'final' => 'required|numeric',
-            'packagename' => 'required',
+            // 'packagename' => 'required',
             'foodpackitem' => 'required|array',
             'foodpackquantity' => 'required|array',
             'foodcartselected' => 'sometimes|array',
-            'packagename' => 'required|unique:packages,packagename,' . $package_id . ',package_id', // Exclude current package from uniqueness check
+            // 'packagename' => 'required|unique:packages,packagename,' . $package_id . ',package_id', // Exclude current package from uniqueness check
             'packageitem' => 'required',
             'fee' => 'nullable|numeric',
         ]);
 
-        $packagename = $request->input('packagename');
-        if (Package::where('packagename', $packagename)
-            ->where('package_id', '!=', $package_id)
-            ->exists()) {
-            return back()->withErrors([
-                'packagename' => 'The package name is already in use. Please choose a different name.'
-            ])->withInput();
-        }
+        // $packagename = $request->input('packagename');
+        // if (Package::where('packagename', $packagename)
+        //     ->where('package_id', '!=', $package_id)
+        //     ->exists()) {
+        //     return back()->withErrors([
+        //         'packagename' => 'The package name is already in use. Please choose a different name.'
+        //     ])->withInput();
+        // }
 
         // Find the package to update
         $package = Package::find($package_id);
@@ -704,7 +706,7 @@ class CustomPackagesController extends Controller
         }
 
         // Update package details
-        $package->packagename = $request->input('packagename');
+        // $package->packagename = $request->input('packagename');
         $package->packagedesc = $request->input('final');
         // You might want to update package photo or other fields, if necessary
         // $package->packagephoto = $request->input('new_photo') ?? 'images/custom.jpg'; 
@@ -792,12 +794,13 @@ class CustomPackagesController extends Controller
             $appointment->save();
         }
 
+        $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
         // Log the update action
         $use = Auth::user();
         $log = new ModelsLog();
         $log->user_id = Auth::id();
         $log->action = 'Package Updated';
-        $log->description = $package->packagename . " package updated by " . $use->firstname . " " . $use->lastname;
+        $log->description = $customPackage->target . " package edited for event on " .$DateFormatted . " by " . $use->firstname . " " . $use->lastname;
         $log->logdate = now();
         $log->save();
 

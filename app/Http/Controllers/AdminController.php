@@ -196,6 +196,10 @@ class AdminController extends Controller
     {
         return view('admin.reviews');
     }
+    public function reports()
+    {
+        return view('admin.reports');
+    }
     public function users()
     {
         return view('admin.users');
