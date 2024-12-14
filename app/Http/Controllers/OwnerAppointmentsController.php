@@ -205,6 +205,35 @@ class OwnerAppointmentsController extends Controller
         ]);
     }
 
+    public function contract(Request $request, string $appointment_id)
+    {
+        $request->validate([
+            'contract' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($file = $request->file('contract')) {
+            $appointment = Appointment::findOrFail($appointment_id);
+
+            // Delete the existing contract file if it exists
+            if ($appointment->contract && file_exists(public_path($appointment->contract))) {
+                unlink(public_path($appointment->contract)); // Delete the previous file
+            }
+
+            $extension = $file->getClientOriginalExtension();
+            $filename = time() . '_' . uniqid() . '.' . $extension; // Ensure unique filename
+        
+            $path = "uploads/contract/";
+            $file->move(public_path($path), $filename); // Move the file to the public directory
+        
+            $appointment = Appointment::findOrFail($appointment_id);
+            $appointment->contract = $path . $filename;
+            $appointment->save();
+
+            return redirect()->back()->with('success', 'Contract attached successfully!');
+        }
+        return redirect()->back()->with('error', 'Contract attatchment error');
+    }
+
 
     
     public function block(Request $request)

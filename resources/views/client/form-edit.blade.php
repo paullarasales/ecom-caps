@@ -114,7 +114,7 @@
                                         showSweetAlert('The selected date is blocked due to scheduling restrictions. Please choose another date.');
                                         this.value = ''; // Clear the input
                                     } else if (bookedDates.includes(formattedDate)) {
-                                        showSweetAlert('The selected date is fully booked. Please choose another date.');
+                                        showSweetAlert('The selected date is fully unavailable. Please choose another date.');
                                         this.value = ''; // Clear the input
                                     }
                                 });
@@ -123,7 +123,7 @@
                                 function showSweetAlert(message) {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Invalid Date',
+                                        title: 'Unavailable Date',
                                         text: message,
                                         confirmButtonText: 'OK',
                                         customClass: {
@@ -555,7 +555,7 @@
                         function showSweetAlert(message) {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Invalid Appointment',
+                                title: 'Unavailable',
                                 text: message,
                                 confirmButtonText: 'OK',
                                 customClass: {
@@ -572,7 +572,7 @@
                             var formattedDate = selectedDate.toISOString().split('T')[0];
                 
                             if (blockedDates.includes(formattedDate) || blockedApps.includes(formattedDate)) {
-                                showSweetAlert('The selected meeting date is blocked. Please choose another date.');
+                                showSweetAlert('The selected meeting date is unavailable. Please choose another date.');
                                 this.value = ''; // Clear the input
                             }
                         });
@@ -580,7 +580,7 @@
                         function showSweetAlert(message) {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Invalid Date',
+                                        title: 'Unavailable Date',
                                         text: message,
                                         confirmButtonText: 'OK',
                                         customClass: {

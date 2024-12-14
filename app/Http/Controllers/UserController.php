@@ -68,7 +68,7 @@ class UserController extends Controller
         // Fetch blocked dates
         $blockedDates = BlockedDate::all()->map(function ($blocked) {
             return [
-                'title' => 'Blocked: ' . ($blocked->reason ? $blocked->reason : 'Unavailable'),
+                'title' => 'Unavailable: ' . ($blocked->reason ? $blocked->reason : 'Unavailable'),
                 'start' => $blocked->blocked_date, // Assuming `date` is the field in BlockedDate
                 'color' => '#6c757d', // Gray color for blocked dates
                 'display' => 'background',  // Set as a background event

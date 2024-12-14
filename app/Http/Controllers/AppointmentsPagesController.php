@@ -51,7 +51,7 @@ class AppointmentsPagesController extends Controller
         $blockedDates = BlockedDate::all()->map(function ($blocked) {
             return [
                 'id' => $blocked->blocked_id,
-                'title' => 'Blocked: ' . ($blocked->reason ? $blocked->reason : 'Unavailable'),
+                'title' => 'Unavailable: ' . ($blocked->reason ? $blocked->reason : 'Unavailable'),
                 'start' => $blocked->blocked_date,
                 'display' => 'background',  // Set as a background event
                 'backgroundColor' => '#1E201E', // Grey fill for blocked dates
@@ -103,7 +103,7 @@ class AppointmentsPagesController extends Controller
     $blockedDates = Blockedapp::all()->map(function ($blocked) {
         return [
             'id' => $blocked->blockedapp_id,
-            'title' => 'Blocked: ' . ($blocked->appreason ? $blocked->appreason : 'Unavailable'),
+            'title' => 'Unavailable: ' . ($blocked->appreason ? $blocked->appreason : 'Unavailable'),
             'start' => $blocked->blocked_app,
             'display' => 'background',  // Set as a background event
             'backgroundColor' => '#1E201E', // Grey fill for blocked dates

@@ -23,6 +23,8 @@ class Appointment extends Model
         'reason',
         'deposit',
         'balance',
+        'theme',
+        'contract',
     ];
 
     public function package(): BelongsTo

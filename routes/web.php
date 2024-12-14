@@ -1023,9 +1023,10 @@ Route::delete('/appointment/manager/{appointment_id}/delete', [ManagerAppointmen
 Route::delete('/appointment/manager/{appointment_id}/delete/meeting', [ManagerAppointmensController::class, 'destroyMeeting'])
     ->middleware(['auth', 'verified', 'manager'])
     ->name('manager.appointment.delete.meeting');
+//DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE 
 
 
-
+//ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE 
 Route::get('/appointment/{appointment_id}/archive', [AppointmentController::class, 'archive'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('appointment.archive');
@@ -1039,7 +1040,7 @@ Route::get('/appointment/{appointment_id}/unarchive', [AppointmentController::cl
     ->name('appointment.unarchive');
 
 //MANAGER
-    Route::get('/appointment./manager/{appointment_id}/archive', [ManagerAppointmensController::class, 'archive'])
+Route::get('/appointment./manager/{appointment_id}/archive', [ManagerAppointmensController::class, 'archive'])
     ->middleware(['auth', 'verified', 'manager'])
     ->name('manager.appointment.archive');
 
@@ -1050,8 +1051,22 @@ Route::get('/appointment/{appointment_id}/manager/archive/pending', [ManagerAppo
 Route::get('/appointment/{appointment_id}/manager/unarchive', [ManagerAppointmensController::class, 'unarchive'])
     ->middleware(['auth', 'verified', 'manager'])
     ->name('manager.appointment.unarchive');
+//ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE //ARCHIVE 
 
-//DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE //DELETE 
+//CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT 
+Route::put('/appointment/{appointment_id}/admin/contract', [AppointmentController::class, 'contract'])
+    ->middleware(['auth', 'verified', 'admin'])
+    ->name('admin.attach.contract');
+
+Route::put('/appointment/{appointment_id}/manager/contract', [ManagerAppointmensController::class, 'contract'])
+    ->middleware(['auth', 'verified', 'manager'])
+    ->name('manager.attach.contract');
+
+Route::put('/appointment/{appointment_id}/owner/contract', [OwnerAppointmentsController::class, 'contract'])
+    ->middleware(['auth', 'verified', 'owner'])
+    ->name('owner.attach.contract');
+
+//CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT 
 
 //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT //APPOINTMENT 
 
