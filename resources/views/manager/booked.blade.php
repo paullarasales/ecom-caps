@@ -79,12 +79,27 @@
     <div class="py-4 px-4">
         <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
             <span class="text-sm font-normal text-gray-900 mb-4 md:mb-0 block w-full md:inline md:w-auto">
-                Showing <span class="font-semibold text-gray-900 ">{{ $appointments->firstItem() }}</span> to 
-                <span class="font-semibold text-gray-900 ">{{ $appointments->lastItem() }}</span> of 
-                <span class="font-semibold text-gray-900 ">{{ $appointments->total() }}</span> results
+                Showing <span class="font-semibold text-gray-900">{{ $appointments->firstItem() }}</span> to 
+                <span class="font-semibold text-gray-900">{{ $appointments->lastItem() }}</span> of 
+                <span class="font-semibold text-gray-900">{{ $appointments->total() }}</span> results
             </span>
     
             <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+                {{-- First Page Link --}}
+                @if ($appointments->onFirstPage())
+                    <li>
+                        <span class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                            First
+                        </span>
+                    </li>
+                @else
+                    <li>
+                        <a href="{{ $appointments->url(1) }}" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            First
+                        </a>
+                    </li>
+                @endif
+    
                 {{-- Previous Page Link --}}
                 @if ($appointments->onFirstPage())
                     <li>
@@ -100,8 +115,26 @@
                     </li>
                 @endif
     
+                {{-- Sliding Window Logic --}}
+                @php
+                    $currentPage = $appointments->currentPage();
+                    $lastPage = $appointments->lastPage();
+                    $startPage = max(1, $currentPage - 2);
+                    $endPage = min($lastPage, $currentPage + 2);
+    
+                    if ($currentPage <= 3) {
+                        $startPage = 1;
+                        $endPage = min(5, $lastPage);
+                    }
+    
+                    if ($currentPage > $lastPage - 3) {
+                        $startPage = max(1, $lastPage - 4);
+                        $endPage = $lastPage;
+                    }
+                @endphp
+    
                 {{-- Pagination Elements --}}
-                @foreach ($appointments->getUrlRange(1, $appointments->lastPage()) as $page => $url)
+                @for ($page = $startPage; $page <= $endPage; $page++)
                     @if ($page == $appointments->currentPage())
                         <li>
                             <span class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 dark:bg-gray-700 dark:text-white">
@@ -110,12 +143,12 @@
                         </li>
                     @else
                         <li>
-                            <a href="{{ $url }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            <a href="{{ $appointments->url($page) }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                                 {{ $page }}
                             </a>
                         </li>
                     @endif
-                @endforeach
+                @endfor
     
                 {{-- Next Page Link --}}
                 @if ($appointments->hasMorePages())
@@ -131,9 +164,25 @@
                         </span>
                     </li>
                 @endif
+    
+                {{-- Last Page Link --}}
+                @if ($appointments->hasMorePages())
+                    <li>
+                        <a href="{{ $appointments->url($lastPage) }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            Last
+                        </a>
+                    </li>
+                @else
+                    <li>
+                        <span class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                            Last
+                        </span>
+                    </li>
+                @endif
             </ul>
         </nav>
     </div>
+    
 
                         <!-- Loading animation overlay -->
                         <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
