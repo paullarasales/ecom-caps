@@ -12,6 +12,10 @@
             text-align: center;
             margin-bottom: 10px;
         }
+        .head {
+            font-size: 20px;
+            margin: 0;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -19,7 +23,7 @@
         }
         th, td {
             border: 1px solid #000;
-            padding: 3px;
+            padding: 1px;
             text-align: left;
             font-size: 12px;
             text-transform: capitalize;
@@ -40,14 +44,15 @@
             text-align: right;
         }
         .footer {
-            font-style: italic
+            font-style: italic;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h2>The Siblings Catering Services</h2>
-        <h3>Booked Events Report</h3>
+        <p class="head">The Siblings Catering Services</p>
+        <p class="head">Booked Events Report</p>
         <p>Month: {{ $month }}</p>
     </div>
 
@@ -76,7 +81,7 @@
         </tbody>
     </table>
     <div class="footer">
-        <p class="foot">Date printed: {{ \Carbon\Carbon::now()->format('F j, Y') }} | Page: </p>
+        <p class="foot">{{ \Carbon\Carbon::now()->format('F j, Y g:i A') }}</p>
     </div>
 </body>
 </html>

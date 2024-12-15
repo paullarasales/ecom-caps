@@ -173,6 +173,10 @@ class ManagerController extends Controller
     {
         return view('manager.packages');
     }
+    public function reports()
+    {
+        return view('manager.reports');
+    }
     public function managerusers(Request $request)
     {
         $search = $request->input('search');

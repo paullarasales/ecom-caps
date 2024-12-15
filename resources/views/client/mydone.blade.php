@@ -107,7 +107,7 @@
                         </tr>
                         <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
-                                Type
+                                Theme
                             </th>
                             <td class="px-6 py-4">
                                 {{$appointment->theme ? : 'No Event Theme Assigned'}}

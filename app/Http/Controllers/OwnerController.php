@@ -184,6 +184,10 @@ class OwnerController extends Controller
     {
         return view('owner.reviews');
     }
+    public function reports()
+    {
+        return view('owner.reports');
+    }
     public function logs()
     {
         $logs = Log::with('user')->orderBy('created_at', 'desc')->paginate(15);

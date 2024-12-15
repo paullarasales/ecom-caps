@@ -155,4 +155,128 @@ class ReportController extends Controller
 
         return $pdf->stream($filename);
     }
+
+    public function bookedDetails(string $appointment_id)
+    {
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'booked')
+            ->where('appointment_id', $appointment_id)
+            ->first();
+
+        if (!$appointment) {
+            return redirect()->route('adminappointments')->with('error', 'Appointment not found or not booked.');
+        }
+
+        // Fetch the custom package if it exists
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
+
+        // Prepare data for the PDF
+        $data = [
+            'appointment' => $appointment,
+            'package' => $appointment->package,
+            'customPackage' => $customPackage,
+        ];
+
+        /// Generate a filename using edate and etime
+        $filename = $appointment->edate . '_' . str_replace(':', '-', $appointment->etime) . '_booked-details.pdf';
+
+        // Load the view and generate the PDF
+        $pdf = Pdf::loadView('report.booked-details', $data);
+
+        // Return the generated PDF for download
+        return $pdf->stream($filename);
+    }
+
+    public function pendingDetails(string $appointment_id)
+    {
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'pending')
+            ->where('appointment_id', $appointment_id)
+            ->first();
+
+        if (!$appointment) {
+            return redirect()->route('adminappointments')->with('error', 'Appointment not found or not booked.');
+        }
+
+        // Fetch the custom package if it exists
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
+
+        // Prepare data for the PDF
+        $data = [
+            'appointment' => $appointment,
+            'package' => $appointment->package,
+            'customPackage' => $customPackage,
+        ];
+
+        /// Generate a filename using edate and etime
+        $filename = $appointment->edate . '_' . str_replace(':', '-', $appointment->etime) . 'pending-details.pdf';
+
+        // Load the view and generate the PDF
+        $pdf = Pdf::loadView('report.pending-details', $data);
+
+        // Return the generated PDF for download
+        return $pdf->stream($filename);
+    }
+
+    public function cancelledDetails(string $appointment_id)
+    {
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'cancelled')
+            ->where('appointment_id', $appointment_id)
+            ->first();
+
+        if (!$appointment) {
+            return redirect()->route('adminappointments')->with('error', 'Appointment not found or not booked.');
+        }
+
+        // Fetch the custom package if it exists
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
+
+        // Prepare data for the PDF
+        $data = [
+            'appointment' => $appointment,
+            'package' => $appointment->package,
+            'customPackage' => $customPackage,
+        ];
+
+        /// Generate a filename using edate and etime
+        $filename = $appointment->edate . '_' . str_replace(':', '-', $appointment->etime) . 'cancelled-details.pdf';
+
+        // Load the view and generate the PDF
+        $pdf = Pdf::loadView('report.cancelled-details', $data);
+
+        // Return the generated PDF for download
+        return $pdf->stream($filename);
+    }
+
+    public function doneDetails(string $appointment_id)
+    {
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'done')
+            ->where('appointment_id', $appointment_id)
+            ->first();
+
+        if (!$appointment) {
+            return redirect()->route('adminappointments')->with('error', 'Appointment not found or not booked.');
+        }
+
+        // Fetch the custom package if it exists
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
+
+        // Prepare data for the PDF
+        $data = [
+            'appointment' => $appointment,
+            'package' => $appointment->package,
+            'customPackage' => $customPackage,
+        ];
+
+        /// Generate a filename using edate and etime
+        $filename = $appointment->edate . '_' . str_replace(':', '-', $appointment->etime) . 'completed-details.pdf';
+
+        // Load the view and generate the PDF
+        $pdf = Pdf::loadView('report.done-details', $data);
+
+        // Return the generated PDF for download
+        return $pdf->stream($filename);
+    }
 }

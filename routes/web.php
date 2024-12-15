@@ -62,7 +62,8 @@ Route::post('/mark-messages-as-read/{senderId}', [ChatController::class, 'markAs
 Route::get('/unread-message-count', [ChatController::class, 'fetchUnreadMessageCount'])->name('fetchUnreadMessageCount');
 
 
-
+//PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF 
+//REPORTS //REPORTS //REPORTS //REPORTS //REPORTS //REPORTS //REPORTS 
 Route::post('/reports/booked-month', [ReportController::class, 'bookedMonth'])
     ->name('reports.booked.month');
 
@@ -74,8 +75,22 @@ Route::post('/reports/pending-month', [ReportController::class, 'pendingMonth'])
 
 Route::post('/reports/cancelled-month', [ReportController::class, 'cancelledMonth'])
     ->name('reports.cancelled.month');
+//REPORTS //REPORTS //REPORTS //REPORTS //REPORTS //REPORTS //REPORTS 
 
+//DETAILS //DETAILS //DETAILS //DETAILS //DETAILS //DETAILS //DETAILS 
+Route::post('/reports/booked-details/{appointment_id}', [ReportController::class, 'bookedDetails'])
+    ->name('reports.booked.details');
 
+Route::post('/reports/done-details/{appointment_id}', [ReportController::class, 'doneDetails'])
+    ->name('reports.done.details');
+
+Route::post('/reports/pending-details/{appointment_id}', [ReportController::class, 'pendingDetails'])
+    ->name('reports.pending.details');
+
+Route::post('/reports/cancelled-details/{appointment_id}', [ReportController::class, 'cancelledDetails'])
+    ->name('reports.cancelled.details');
+//DETAILS //DETAILS //DETAILS //DETAILS //DETAILS //DETAILS //DETAILS 
+//PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF 
 
 //ADMIN
 Route::get('/admin/chat', [AdminController::class, 'chat'])->middleware(['auth', 'verified','admin'])->name('admin.chat');
@@ -1110,6 +1125,7 @@ Route::get('/managerpackages', [ManagerController::class, 'managerpackages'])->m
 Route::get('/managerreviews', [ManagerController::class, 'managerreviews'])->middleware(['auth', 'verified','manager'])->name('managerreviews');
 Route::get('/managerchat', [ManagerController::class, 'managerchat'])->middleware(['auth', 'verified','manager'])->name('managerchat');
 Route::get('/managerusers', [ManagerController::class, 'managerusers'])->middleware(['auth', 'verified','manager'])->name('managerusers');
+Route::get('/managerreports', [ManagerController::class, 'reports'])->middleware(['auth', 'verified','manager'])->name('managerreports');
 
 //MANAGER CALENDAR //MANAGER CALENDAR //MANAGER CALENDAR //MANAGER CALENDAR 
 Route::get('/manager/calendar/data', [ManagerAppointmentsPagesController::class, 'calendar'])->middleware(['auth', 'verified','manager'])->name('managercalendar');
@@ -1194,6 +1210,7 @@ Route::get('/ownerchat', [OwnerController::class, 'ownerchat'])->middleware(['au
 Route::get('/owner/logs', [OwnerController::class, 'logs'])->middleware(['auth', 'verified','owner'])->name('ownerlogs');
 Route::get('/owner/packages', [OwnerController::class, 'packages'])->middleware(['auth', 'verified','owner'])->name('ownerpackages');
 Route::get('/owner/reviews', [OwnerController::class, 'reviews'])->middleware(['auth', 'verified','owner'])->name('ownerreviews');
+Route::get('/ownerreports', [OwnerController::class, 'reports'])->middleware(['auth', 'verified','owner'])->name('ownerreports');
 
 Route::post('/owner/direct/save', [OwnerAppointmentsController::class, 'directsave'])->middleware(['auth', 'verified','owner'])->name('ownerdirectsave');
 
