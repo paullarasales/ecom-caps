@@ -290,7 +290,7 @@
                             </div>
                             <p class="mt-2 text-gray-700 dark:text-gray-700">
                                 @if($appointment->package && $appointment->package->packagetype == 'Custom')
-                                    <strong class="capitalize">{{$appointment->package->packagename}}</strong>
+                                    {{-- <strong class="capitalize">{{$appointment->package->packagename}}</strong> --}}
                                     <br>
                                     <strong>Package Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
                                     @elseif($appointment->package && $appointment->package->packagetype == 'Normal')

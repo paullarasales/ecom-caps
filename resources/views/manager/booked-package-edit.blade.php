@@ -198,7 +198,7 @@
                                                 selected 
                                             @endif
                                         >
-                                            {{ $food->beefname }} - ₱{{ number_format($food->beefprice, 2) }}
+                                            {{ $food->beefname }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -225,7 +225,7 @@
                                                 selected 
                                             @endif
                                         >
-                                            {{ $food->porkname }} - ₱{{ number_format($food->prokprice, 2) }}
+                                            {{ $food->porkname }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -250,7 +250,7 @@
                                                 selected 
                                             @endif
                                         >
-                                            {{ $food->chickenname }} - ₱{{ number_format($food->chickenprice, 2) }}
+                                            {{ $food->chickenname }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -275,7 +275,7 @@
                                                 selected 
                                             @endif
                                         >
-                                            {{ $food->veggiename }} - ₱{{ number_format($food->veggieprice, 2) }}
+                                            {{ $food->veggiename }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -300,7 +300,7 @@
                                                 selected 
                                             @endif
                                         >
-                                            {{ $food->othername }} - ₱{{ number_format($food->otherprice, 2) }}
+                                            {{ $food->othername }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -316,6 +316,34 @@
                                 
                         </div>
                     </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const personInput = document.getElementById('person');
+                            const beefItem = document.getElementById('beefItem');
+                            const porkItem = document.getElementById('porkItem');
+                            const chickenItem = document.getElementById('chickenItem');
+                            const veggieItem = document.getElementById('veggieItem');
+                            const otherItem = document.getElementById('otherItem');
+                            
+                            // Function to check if person value is 0, none, or empty and disable/enable dropdowns
+                            function toggleDropdowns() {
+                                const personValue = personInput.value.trim();
+                                const isDisabled = personValue === '' || parseInt(personValue) <= 0;
+                    
+                                beefItem.disabled = isDisabled;
+                                porkItem.disabled = isDisabled;
+                                chickenItem.disabled = isDisabled;
+                                veggieItem.disabled = isDisabled;
+                                otherItem.disabled = isDisabled;
+                            }
+                    
+                            // Initial check when the page loads
+                            toggleDropdowns();
+                    
+                            // Listen for changes in the person input to update dropdowns dynamically
+                            personInput.addEventListener('input', toggleDropdowns);
+                        });
+                    </script>
 
                     <br>
 
@@ -339,7 +367,7 @@
                                     <div class="md:col-span-4 col-span-5">
                                         <input type="hidden" name="foodpackitem[]" value="{{ $food->foodpackname }}" />
                                         <input type="text" name="display_foodpackitem[]" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none placeholder-gray-800" 
-                                            placeholder="{{ $food->foodpackname }} - ₱{{ number_format($food->foodpackprice, 2) }}" 
+                                            placeholder="{{ $food->foodpackname }}" 
                                             readonly data-price="{{ $food->foodpackprice }}" />
                                     </div>
 
@@ -397,7 +425,7 @@
                                                 selected 
                                             @endif
                                         >
-                                        {{ $food->lechonname }} - ₱{{ number_format($food->lechonprice, 2) }}
+                                        {{ $food->lechonname }}
                                     </option>
                                 @endforeach
                             </select>
@@ -430,7 +458,7 @@
                                             selected 
                                         @endif
                                     >
-                                        {{ $food->cakename }} - ₱{{ number_format($food->cakeprice, 2) }}
+                                        {{ $food->cakename }}
                                     </option>
                                 @endforeach
                             </select>
@@ -464,7 +492,7 @@
                                             selected 
                                         @endif
                                     >
-                                        {{ $food->clownname }} - ₱{{ number_format($food->clownprice, 2) }}
+                                        {{ $food->clownname }}
                                     </option>
                                 @endforeach
                             </select>
@@ -498,7 +526,7 @@
                                             selected 
                                         @endif
                                     >
-                                        {{ $food->facepaintname }} - ₱{{ number_format($food->facepaintprice, 2) }}
+                                        {{ $food->facepaintname }}
                                     </option>
                                 @endforeach
                             </select>
@@ -532,7 +560,7 @@
                                             selected 
                                         @endif
                                     >
-                                        {{ $food->setupname }} - ₱{{ number_format($food->setupprice, 2) }}
+                                        {{ $food->setupname }}
                                     </option>
                                 @endforeach
                             </select>
@@ -616,8 +644,193 @@
             </div>
         </div>
     </form>
-
+    <button id="openModalBtn" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+        Show Summary
+    </button>
+    
+    <!-- Modal Structure -->
+    <div id="formulaModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg sm:w-1/2 w-5/6">
+            <h2 class="text-xl font-semibold mb-4 text-center">Selected Items Summary</h2>
+            <div id="selectedItemsDisplay" class="space-y-4"></div>
+    
+            <div class="flex justify-end mt-6">
+                <button id="closeModalBtn" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Close</button>
+            </div>
+        </div>
+    </div>
     <script>
+
+            // Modal open and close functionality
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const formulaModal = document.getElementById('formulaModal');
+
+    openModalBtn.addEventListener('click', () => {
+        formulaModal.classList.remove('hidden');
+        openModalBtn.classList.add('hidden');  // Hide the 'Show Summary' button
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        formulaModal.classList.add('hidden');
+        openModalBtn.classList.remove('hidden');  // Show the 'Show Summary' button again
+    });
+
+    // Function to display selected items (updated with space and alignment)
+    function displaySelectedItems() {
+        const selectedItemsDisplay = document.getElementById('selectedItemsDisplay');
+        selectedItemsDisplay.innerHTML = ''; // Clear previous content
+
+        const persons = parseFloat(document.getElementById('person').value) || 0;
+
+        const foodItems = [
+            { id: 'beefItem', label: 'Beef', multiplyByPersons: true },
+            { id: 'porkItem', label: 'Pork', multiplyByPersons: true },
+            { id: 'chickenItem', label: 'Chicken', multiplyByPersons: true },
+            { id: 'veggieItem', label: 'Veggie', multiplyByPersons: true },
+            { id: 'otherItem', label: 'Other', multiplyByPersons: true },
+            { id: 'lechonItem', label: 'Lechon', multiplyByPersons: false },
+            { id: 'cakeItem', label: 'Cake', multiplyByPersons: false },
+            { id: 'clownItem', label: 'Clown', multiplyByPersons: false },
+            { id: 'facepaintItem', label: 'Face Paint', multiplyByPersons: false },
+            { id: 'setupItem', label: 'Setup', multiplyByPersons: false }
+        ];
+
+        // Separate items into menu and others
+        const menuItems = foodItems.filter(item => item.multiplyByPersons);
+        const otherItems = foodItems.filter(item => !item.multiplyByPersons);
+
+        let total = 0; // Initialize total price
+
+        // Helper function to create section with space
+        function createSection(title, items, showQuantity) {
+            const sectionTitle = document.createElement('h3');
+            sectionTitle.textContent = title;
+            sectionTitle.classList.add('text-lg', 'font-medium', 'mb-2');
+            selectedItemsDisplay.appendChild(sectionTitle);
+
+            items.forEach(item => {
+                const selectElement = document.getElementById(item.id);
+                const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+                if (selectedOption && selectedOption.dataset.price) {
+                    const price = parseFloat(selectedOption.dataset.price);
+                    const quantity = item.multiplyByPersons ? (persons || 1) : 1; // Multiply by persons if applicable
+                    const totalPrice = price * quantity; // Calculate total price
+
+                    // Get the name of the selected item (Beef, Pork, etc.)
+                    const itemName = selectedOption.textContent.split(" - ")[0];
+
+                    // For "Others" items, we don't show the price on the left, only on the right
+                    const itemDisplay = showQuantity
+                        ? `${itemName}: ₱${price.toFixed(2)} x ${quantity} = ₱${totalPrice.toFixed(2)}`
+                        : `${itemName}`; // Just the item name for others
+
+                    // Create a new div for each selected item
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('flex', 'justify-between', 'mb-2', 'text-sm'); // Flexbox for alignment
+
+                    const itemDescription = document.createElement('span');
+                    itemDescription.textContent = itemDisplay.split(' =')[0]; // Everything before the equal sign (item name)
+                    itemDiv.appendChild(itemDescription);
+
+                    // For "Others" section, we just add the price on the right
+                    const itemTotalPrice = document.createElement('span');
+                    itemTotalPrice.classList.add('font-semibold');
+                    itemTotalPrice.textContent = `₱${totalPrice.toFixed(2)}`; // Total price part
+                    itemDiv.appendChild(itemTotalPrice);
+
+                    selectedItemsDisplay.appendChild(itemDiv);
+
+                    // Add to total
+                    total += totalPrice;
+                }
+            });
+        }
+
+        // Create menu section with space
+        createSection('Menu:', menuItems, true);
+
+        // Create others section with space
+        createSection('Others:', otherItems, false);
+
+        // Display total price for food packs
+        const foodPackTotal = Array.from(document.querySelectorAll('input[name="foodpackquantity[]"]')).reduce((acc, input, index) => {
+            const quantity = parseFloat(input.value) || 0;
+            const price = parseFloat(input.closest('.grid').querySelector('input[type="text"]').dataset.price) || 0;
+            const totalFoodPackPrice = quantity * price;
+            acc += totalFoodPackPrice;
+
+            if (quantity > 0) {
+                const foodpackName = input.closest('.grid').querySelector('input[name="display_foodpackitem[]"]').placeholder.split(" - ")[0];
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('flex', 'justify-between', 'mb-2', 'text-sm'); // Flexbox for alignment
+                const itemDescription = document.createElement('span');
+                itemDescription.textContent = `Food Pack (${foodpackName}): ₱${price.toFixed(2)} x ${quantity}`;
+                itemDiv.appendChild(itemDescription);
+                const itemTotalPrice = document.createElement('span');
+                itemTotalPrice.classList.add('font-semibold');
+                itemTotalPrice.textContent = `₱${totalFoodPackPrice.toFixed(2)}`;
+                itemDiv.appendChild(itemTotalPrice);
+                selectedItemsDisplay.appendChild(itemDiv);
+            }
+
+            return acc;
+        }, 0);
+
+        // Add food pack total to overall total
+        total += foodPackTotal;
+
+        // Display food cart total with space
+        const foodCartTotal = Array.from(document.querySelectorAll('input[name="foodcartselected[]"]:checked')).reduce((acc, checkbox) => {
+            const price = parseFloat(checkbox.closest('.grid').querySelector('input[type="text"]').dataset.price) || 0;
+            const foodCartName = checkbox.closest('.grid').querySelector('input[name="foodcartitem[]"]').value.split(" - ")[0];
+            acc += price;
+
+            const itemDiv = document.createElement('div');
+            itemDiv.classList.add('flex', 'justify-between', 'mb-2', 'text-sm'); // Flexbox to align items
+            const itemDescription = document.createElement('span');
+            itemDescription.textContent = `Food Cart (${foodCartName})`;
+            itemDiv.appendChild(itemDescription);
+            const itemPrice = document.createElement('span');
+            itemPrice.classList.add('font-semibold');
+            itemPrice.textContent = `₱${price.toFixed(2)}`;
+            itemDiv.appendChild(itemPrice);
+            selectedItemsDisplay.appendChild(itemDiv);
+
+
+            return acc;
+        }, 0);
+
+        // Add food cart total to overall total
+        total += foodCartTotal;
+
+        // Display service fee
+        const feeInput = document.getElementById('fee');
+        const fee = parseFloat(feeInput.value) || 0; // Default to 0 if empty
+        total += fee; // Add the service fee to the total
+
+        const feeDiv = document.createElement('div');
+        feeDiv.classList.add('flex', 'justify-between', 'mb-2', 'text-sm'); // Flexbox to align items
+        const feeDescription = document.createElement('span');
+        feeDescription.textContent = 'Service Fee:';
+        feeDiv.appendChild(feeDescription);
+        const feePrice = document.createElement('span');
+        feePrice.classList.add('font-semibold');
+        feePrice.textContent = `₱${fee.toFixed(2)}`;
+        feeDiv.appendChild(feePrice);
+        selectedItemsDisplay.appendChild(feeDiv);
+
+
+        // Display the overall total with space
+        const totalDiv = document.createElement('div');
+        totalDiv.textContent = `Total: ₱${total.toFixed(2)}`;
+        totalDiv.classList.add('mt-4', 'font-bold', 'text-right', 'text-md');
+        selectedItemsDisplay.appendChild(totalDiv);
+    }
+
+
+
         // Function to calculate the total price
         function calculateTotal() {
             let total = 0;
@@ -721,6 +934,8 @@
     
             // Update the total display
             document.getElementById('total').textContent = `₱${total.toFixed(2)}`;
+
+            displaySelectedItems();
         }
     
         // Attach event listeners to quantity inputs and checkboxes
@@ -746,6 +961,24 @@
     
         // Trigger the calculation on page load to set the initial total
         window.addEventListener('load', calculateTotal);
+
+                // Attach event listeners
+    document.querySelectorAll('.quantity-input').forEach(function(input) {
+        input.addEventListener('input', calculateTotal);
+    });
+
+    document.querySelectorAll('.checkbox-input').forEach(function(checkbox) {
+        checkbox.addEventListener('change', calculateTotal);
+    });
+
+    const dropdowns = [
+        'lechonItem', 'cakeItem', 'clownItem', 'facepaintItem', 'setupItem',
+        'beefItem', 'porkItem', 'chickenItem', 'veggieItem', 'otherItem', 'fee'
+    ];
+
+    dropdowns.forEach(id => {
+        document.getElementById(id).addEventListener('change', calculateTotal);
+    });
     </script>
     
 

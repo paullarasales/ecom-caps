@@ -32,6 +32,7 @@ use App\Http\Controllers\OwnerCustomPackagesController;
 use App\Http\Controllers\OwnerCustomPackagesPagesController;
 use App\Http\Controllers\NewSampleController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DishesController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -547,7 +548,11 @@ Route::get('/owner/custom/packages/facepaint/destroy/{facepaint_id}', [OwnerCust
 
 // CUSTOM PACKAGE // CUSTOM PACKAGE // CUSTOM PACKAGE // CUSTOM PACKAGE // CUSTOM PACKAGE 
 
+//DISHES //DISHES //DISHES //DISHES //DISHES //DISHES //DISHES //DISHES //DISHES 
+Route::get('/admin/dishes', [DishesController::class, 'index'])->middleware(['auth', 'verified','admin'])->name('dish.index');
+Route::get('/admin/dishes/add', [DishesController::class, 'add'])->middleware(['auth', 'verified','admin'])->name('dish.add');
 
+//DISHES //DISHES //DISHES //DISHES //DISHES //DISHES //DISHES //DISHES //DISHES 
 
 
 //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES //PACKAGES 

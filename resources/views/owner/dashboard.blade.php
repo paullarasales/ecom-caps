@@ -268,8 +268,44 @@
             </div>
         </div>
 
+        <!-- Display the top cities' information -->
+        <div id="cityMessage" class="mt-6 p-4 bg-gray-100 border rounded-md text-sm">
+            <!-- Message will be injected here -->
+        </div>
+
         <script>
             var ctxCity = document.getElementById('userCityChart').getContext('2d');
+
+            // City data from PHP (Laravel)
+            var cityNames = {!! json_encode($cityNames) !!};
+            var cityUserCounts = {!! json_encode($cityUserCounts) !!};
+
+            // Create an array of city objects to easily determine the top cities
+            var cities = cityNames.map((city, index) => {
+                return {
+                    name: city,
+                    userCount: cityUserCounts[index]
+                };
+            });
+
+            // Sort cities by userCount in descending order
+            cities.sort((a, b) => b.userCount - a.userCount);
+
+            // Determine top 3 cities
+            var top3Cities = cities.slice(0, 5);
+
+            // Determine cities to improve (4th place and beyond)
+            var citiesToImprove = cities.slice(9);
+
+            // Prepare the message
+            var cityMessage = document.getElementById('cityMessage');
+
+            // Display the message dynamically
+            cityMessage.innerHTML = `
+                <p>Top cities/municipalities: <strong>${top3Cities.map(city => city.name).join(', ')}</strong>.</p>
+                <br>
+                <p>Improve the service on cities/municipalities: <strong>${citiesToImprove.map(city => city.name).join(', ')}</strong>.</p>
+            `;
         
             // Define an array of colors
             var backgroundColors = [
