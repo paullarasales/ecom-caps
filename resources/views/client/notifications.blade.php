@@ -18,7 +18,7 @@
                         {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('F j, Y g:i A') }}. <span class="text-blue-500"><a href="{{route('myrequest')}}"> Reference {{$appointment->reference}}</a></span>
                     </h1>                    
                     @elseif($appointment->status === 'booked')
-                        <h1 class="text-md text-gray-600 py-4">Your event {{ $appointment->type }} on {{ $appointment->edate }} is already booked.</h1>
+                        <h1 class="text-md text-gray-600 py-4">Your event {{ $appointment->type }} on {{ $appointment->edate }} is already booked. <span class="text-blue-500"><a href="{{route('mybooked')}}"> Reference {{$appointment->reference}}</a></span></h1>
                     @elseif($appointment->status === 'done')
                         <h1 class="text-md text-gray-600 py-4">
                             Your event {{ $appointment->type }} on {{ $appointment->edate }} is done.
@@ -29,7 +29,7 @@
                             @endif
                         </h1>
                     @elseif($appointment->status === 'cancelled')
-                        <h1 class="text-md text-gray-600 py-4">Your event {{ $appointment->type }} on {{ \Carbon\Carbon::parse($appointment->edate)->format('F j, Y') }} has been cancelled.</h1>
+                        <h1 class="text-md text-gray-600 py-4">Your event {{ $appointment->type }} on {{ \Carbon\Carbon::parse($appointment->edate)->format('F j, Y') }} has been cancelled. <span class="text-blue-500"><a href="{{route('mycancelled')}}"> Reference {{$appointment->reference}}</a></span></h1>
                     @elseif($appointment->user && $appointment->status === 'mcancelled' && \Carbon\Carbon::parse($appointment->edate)->isFuture())
                         <h1 class="text-md text-gray-600 py-4">
                             Your appointment meeting on {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('F j, Y g:i A') }} 

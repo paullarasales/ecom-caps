@@ -6,12 +6,12 @@
         </h3>
     </div> --}}
 
-    @if ($bookedAppointments->isEmpty()) 
+    @if ($cancelledAppointments->isEmpty()) 
 
     <div class="h-[50vh] flex items-center justify-center">
-        <div class="text-center py-2 px-6">
+        <div class="text-center py-4 px-6">
             <h2 class="font-heading bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-64 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
-                You have no booked events
+                You have no done events
             </h2>
         </div>
     </div>
@@ -29,12 +29,13 @@
 
         <div class="text-center mt-5 lg:mt-20 py-4 px-6">
             <h2 class="font-heading bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-64 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
-                Booked Events
+                Cancelled Events
             </h2>
         </div>
-        @foreach ($bookedAppointments as $appointment)
+
+        @foreach ($cancelledAppointments as $appointment)
         
-        <div class="bg-gray-100 lg:mx-56 lg:my-5 rounded-xl lg:p-4">
+        <div class="bg-gray-100 lg:mx-56 lg:mt-8 mt-5 mb-2 rounded-xl lg:p-4">
             <div class="relative overflow-x-auto shadow-sm sm:rounded-lg ">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" style="table-layout: fixed;">
                     <thead class="text-xs text-gray-700 uppercase bg-yellow-200 dark:text-gray-500">
@@ -50,13 +51,21 @@
                     <tbody>
                         <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
+                                Reason
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ $appointment->reason }}
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
                                 Reference
                             </th>
                             <td class="px-6 py-4">
                                 {{ $appointment->reference }}
                             </td>
                         </tr>
-                        <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
+                        {{-- <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
                                 Meeting Date
                             </th>
@@ -71,7 +80,7 @@
                             <td class="px-6 py-4">
                                 {{ \Carbon\Carbon::parse($appointment->appointment_datetime)->format('g:i A') }} <!-- Display time -->
                             </td>
-                        </tr>
+                        </tr> --}}
                         <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
                                 Event Date
@@ -248,9 +257,19 @@
                 </table>
             </div>
         </div>
+        {{-- <div class="flex justify-end lg:mx-56">
+            @if ($appointment->review)
+                <h1 class="font-heading text-center bg-yellow-200 text-orange-800 px-4 py-2 rounded-lg w-32 sm:w-44 text-xs font-semibold uppercase">done review</h1>
+            @else
+                <a href="{{ route('makereviews', $appointment->appointment_id) }}" class="bg-yellow-500 text-center hover:bg-yellow-700 text-white font-bold px-4 py-2 text-xs w-44 rounded-lg">
+                    Make a Review
+                    <i class="fa-solid fa-arrow-right ml-5"></i>
+                </a>
+            @endif
+        </div>            --}}
         @endforeach
         <div class="flex justify-center">
-            <div class="mt-6 text-center lg:text-left">
+            <div class="mt-6 mb-20 text-center lg:text-left">
                 <a href="{{ route('book-form') }}" class="bg-yellow-200 rounded-3xl py-3 px-8 font-medium inline-block mr-4 hover:bg-transparent hover:border-yellow-500 hover:bg-yellow-400 duration-300 hover:border border border-t">Book Again</a>
             </div>
         </div>
@@ -263,7 +282,7 @@
     <div class="flex items-center justify-center min-h-screen">
         <div id="modal-container" class="relative max-w-lg max-h-[75vh] bg-gray-100 rounded-xl shadow-lg overflow-auto p-4">
             <!-- Close Button -->
-            <button class="absolute top-2 right-4 text-gray-600 hover:text-gray-800 z-50" onclick="closeModal()">
+            <button class="absolute top-4 right-4 text-gray-600 hover:text-gray-800 z-50" onclick="closeModal()">
                 <i class="fa-solid fa-xmark text-3xl"></i>
             </button>
             <!-- Modal Content -->
@@ -347,4 +366,19 @@
     }
 </script>
     
+    @if(session('alert'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-green-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('alert') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-green-600 hover:bg-green-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@elseif(session('error'))
+    <div class="fixed top-0 right-0 mt-4 mr-4 px-4 py-2 bg-red-400 text-white rounded shadow-lg flex items-center space-x-2">
+        <span>{{ session('error') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-white bg-red-600 hover:bg-red-700 rounded-full p-1">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+@endif
 </x-app-layout>

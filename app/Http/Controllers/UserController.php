@@ -151,6 +151,18 @@ class UserController extends Controller
         
         return view('client.mydone', compact('doneAppointments'));
     }
+    public function mycancelled()
+    {
+        // return view('client.myrequest');
+        $user = Auth::user();
+        $cancelledAppointments = Appointment::with(['package.custompackage.items','review'])
+        ->where('user_id', $user->id)
+        ->where('status', 'cancelled')
+        ->orderBy('edate', 'asc')
+        ->get();
+        
+        return view('client.mycancelled', compact('cancelledAppointments'));
+    }
     public function chat()
     {
         Message::where('receiver_id', auth()->id())

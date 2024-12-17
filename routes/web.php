@@ -1263,6 +1263,7 @@ Route::get('/makereviews/{appointment_id}', [UserController::class, 'makereviews
 Route::get('/myevent', [UserController::class, 'myevent'])->middleware(['auth', 'verified','user'])->name('myevent');
 Route::get('/mybooked', [UserController::class, 'mybooked'])->middleware(['auth', 'verified','user'])->name('mybooked');
 Route::get('/mydone', [UserController::class, 'mydone'])->middleware(['auth', 'verified','user'])->name('mydone');
+Route::get('/mycancelled', [UserController::class, 'mycancelled'])->middleware(['auth', 'verified','user'])->name('mycancelled');
 Route::get('/myrequest', [UserController::class, 'myrequest'])->middleware(['auth', 'verified','user'])->name('myrequest');
 Route::get('/events/data', [UserController::class, 'events'])->middleware(['auth', 'verified','user'])->name('events');
 Route::get('/events', [UserController::class, 'eventsView'])->middleware(['auth', 'verified','user'])->name('eventsView');

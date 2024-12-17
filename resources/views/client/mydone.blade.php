@@ -29,7 +29,7 @@
 
         <div class="text-center mt-5 lg:mt-20 py-4 px-6">
             <h2 class="font-heading bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-64 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
-                Done Events
+                Completed Events
             </h2>
         </div>
 
