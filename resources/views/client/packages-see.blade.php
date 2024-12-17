@@ -13,7 +13,7 @@
             <!-- Package Info -->
             <div class="p-6 w-full">
                 <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-900">{{ $package->packagename }}</h2>
-                <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Package Price: ₱{{ number_format($package->packagedesc, 2) }}</p>
+                <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Estimated Price: ₱{{ number_format($package->packagedesc, 2) }}</p>
                 
                 <!-- Package Inclusion Table -->
                 <div class="mt-4 overflow-x-auto">
@@ -46,7 +46,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
                     <h2 class="font-heading mb-4 bg-yellow-100 text-orange-800 px-4 py-2 rounded-lg w-full sm:w-1/3 mx-auto text-xs font-semibold tracking-widest uppercase title-font">
-                        We can also customize your package
+                        We will customize your preferred package when you arrive at on the meeting
                     </h2>
                 </div>
             </div>

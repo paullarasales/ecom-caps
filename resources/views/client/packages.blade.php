@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="text-center py-4 my-20">
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Available <span class="text-yellow-600">Packages</span>
+            Available <span class="text-yellow-600">Package Types</span>
         </h3>
     </div>
 
