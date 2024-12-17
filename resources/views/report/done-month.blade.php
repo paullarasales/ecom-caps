@@ -47,6 +47,12 @@
             font-style: italic;
             font-size: 12px;
         }
+        .totals {
+            margin-top: 15px;
+            text-align: right;
+            font-size: 12px;
+            font-weight: normal;
+        }
     </style>
 </head>
 <body>
@@ -76,6 +82,22 @@
             @endforeach
         </tbody>
     </table>
+
+    <div class="totals">
+        @php
+            $totalDeposit = $appointments->sum('deposit');
+            $totalBalance = $appointments->sum('balance');
+            $totalPackagePrice = $appointments->sum(function ($appointment) {
+                return $appointment->package->packagedesc ?? 0;
+            });
+        @endphp
+        {{-- <span>Total Deposit: Php {{ number_format($totalDeposit, 2) }}</span>
+        <br>
+        <span>Total Balance: Php {{ number_format($totalBalance, 2) }}</span>
+        <br> --}}
+        <span>Total Package Price: Php {{ number_format($totalPackagePrice, 2) }}</span>
+    </div>
+    
     <div class="footer">
         <p class="foot">{{ \Carbon\Carbon::now()->format('F j, Y g:i A') }}</p>
     </div>

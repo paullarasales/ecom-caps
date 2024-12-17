@@ -140,9 +140,14 @@
                                 <div id="modal-{{ $food->packagename }}" class="hidden fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-50">
                                     <div class="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-y-auto">
                                         <div class="flex justify-between items-center">
-                                            <p class="mt-2 text-gray-700 dark:text-gray-700">
-                                                <strong class="capitalize text-xl">{{ $food->packagename }}</strong>
-                                            </p>
+                                            <div>
+                                                <p class="mt-2 text-gray-700 dark:text-gray-700">
+                                                    <strong class="capitalize text-xl">{{ $food->packagename }}</strong>
+                                                </p>
+                                                <p class="mt-2 text-gray-700 dark:text-gray-700">
+                                                    <strong class="capitalize text-md">Estimated Price: ₱{{ number_format($food->packagedesc ?? 0, 2) }}</strong>
+                                                </p>
+                                                </div>
                                             <button type="button" onclick="toggleModal('{{ $food->packagename }}')" class="text-gray-600 hover:text-gray-900 font-bold text-xl">&times;</button>
                                         </div>
                             

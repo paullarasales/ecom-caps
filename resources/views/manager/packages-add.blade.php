@@ -9,7 +9,7 @@
     <div class="text-center py-2 my-2">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Add <span class="text-yellow-600">Package</span>
+            Add <span class="text-yellow-600">Package Type</span>
         </h3>
 
     </div>
@@ -67,19 +67,19 @@
                 <div class="bg-white rounded shadow-lg shadow-yellow-100 p-4 px-4 md:p-8 mb-6">
                     <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                             <div class="text-gray-600">
-                                <p class="font-medium text-lg">Add Package</p>
+                                <p class="font-medium text-lg">Add Package Type</p>
                                 <p>Please fill out all the fields.</p>
                             </div>
     
                         <div class="lg:col-span-2">
                             <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
                                 <div class="md:col-span-5">
-                                    <label for="firstname">Package Name</label>
+                                    <label for="firstname">Package Type Name</label>
                                     <input type="text" name="packagename" id="packagename" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('packagename') }}" />
                                 </div>
     
                                 <div class="md:col-span-5">
-                                    <label for="lastname">Package Price</label>
+                                    <label for="lastname">Estimated Price</label>
                                     <input type="text" name="packageprice" id="packageprice" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('packageprice') }}" />
                                 </div>
     
