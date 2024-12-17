@@ -723,7 +723,7 @@
 
                     // For "Others" items, we don't show the price on the left, only on the right
                     const itemDisplay = showQuantity
-                        ? `${itemName}: ₱${price.toFixed(2)} x ${quantity} = ₱${totalPrice.toFixed(2)}`
+                        ? `${itemName}: ₱${price.toFixed(2)} x ${quantity}pax = ₱${totalPrice.toFixed(2)}`
                         : `${itemName}`; // Just the item name for others
 
                     // Create a new div for each selected item

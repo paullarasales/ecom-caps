@@ -119,34 +119,51 @@ class OwnerController extends Controller
         $cityUserCounts = $usersByCity->pluck('count')->toArray();
 
         // Count appointments per package
+        // Fetch appointments grouped by package_id with their counts
         $appointmentsByPackage = Appointment::select('package_id', DB::raw('count(*) as count'))
-            ->whereIn('status', ['booked', 'done'])
-            ->groupBy('package_id')
-            ->with('package') // Eager load the package relationship
-            ->get();
+        ->whereIn('status', ['booked', 'done'])
+        ->groupBy('package_id')
+        ->with('package.custompackage') // Eager load package and custompackage relationships
+        ->get();
 
-            // Prepare the package names and counts
-            $packageNames = [];
-            $packageCounts = [];
+        // Use an associative array to store unique package names and their counts
+        $packageCountsMap = [];
 
-            foreach ($appointmentsByPackage as $appointment) {
-                // Assuming you have a relationship defined in the Appointment model
-                $package = Package::find($appointment->package_id);
+        // First, iterate through appointments and store counts
+        foreach ($appointmentsByPackage as $appointment) {
+        $package = $appointment->package;
 
-                if ($package) {
-                    $packageNames[] = $package->packagename; // Get the package name
-                    $packageCounts[] = $appointment->count; // Get the appointment count
-                }
+        if ($package) {
+            // Get the correct package name based on the custompackage relationship
+            $packageName = $package->custompackage
+                ? $package->custompackage->target
+                : $package->packagename;
+
+            // Add to map or update count
+            if (isset($packageCountsMap[$packageName])) {
+                $packageCountsMap[$packageName] += $appointment->count;
+            } else {
+                $packageCountsMap[$packageName] = $appointment->count;
             }
+        }
+        }
 
-            // In case you want to display a count for packages with no appointments
-            $allPackages = Package::all();
-            foreach ($allPackages as $package) {
-                if (!in_array($package->packagename, $packageNames)) {
-                    $packageNames[] = $package->packagename; // Add package name if it doesn't exist
-                    $packageCounts[] = 0; // Set count to 0
-                }
-            }
+        // Now, include all packages with a count of 0 if they are not already in the map
+        $allPackages = Package::with('custompackage')->get();
+        foreach ($allPackages as $package) {
+        $packageName = $package->custompackage
+            ? $package->custompackage->target
+            : $package->packagename;
+
+        // Only add packages that are not already counted
+        if (!isset($packageCountsMap[$packageName])) {
+            $packageCountsMap[$packageName] = 0;
+        }
+        }
+
+        // Prepare package names and counts for display
+        $packageNames = array_keys($packageCountsMap);
+        $packageCounts = array_values($packageCountsMap);
 
         return view('owner.dashboard', [
             'appointmentStatusCounts' => $appointmentStatusCounts,

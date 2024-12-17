@@ -22,6 +22,7 @@
         .appointment-table {
             width: 100%;
             border-collapse: collapse;
+            text-transform: capitalize;
         }
 
         .appointment-table td {
@@ -57,6 +58,10 @@
             text-transform: capitalize;
             font-size: 13px;
             margin: 8px 0;;
+        }
+        .bal {
+            font-size: 12px;
+            font-style: italic;
         }
         .footer {
             position: absolute;
@@ -124,6 +129,7 @@
             {{ $package->packagename }} 
             @endif
             (Php {{ number_format($package->packagedesc, 2) }})
+            <span class="bal">(Balance: Php {{ number_format($appointment->balance, 2) }})</span>
         </p>
         <div class="pack">
             @if($package)

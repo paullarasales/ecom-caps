@@ -424,35 +424,41 @@
         </script>
 
 <canvas id="packageChart" class="w-32 h-32" style="max-height: 400px;"></canvas>
+
+<!-- Suggestion Div -->
+<div id="packageSuggestions" class="mt-4 p-4 bg-gray-100 rounded">
+    <div id="mostPicked" class="mb-6 text-sm"></div>
+    <div id="leastPicked" class="mb-2 text-sm"></div>
+</div>
+
 <script>
     var ctxPackage = document.getElementById('packageChart').getContext('2d');
+    var packageNames = {!! json_encode($packageNames) !!};
+    var packageCounts = {!! json_encode($packageCounts) !!};
+
+    // Chart.js Configuration
     var packageChart = new Chart(ctxPackage, {
-        type: 'pie', // Change type to 'pie'
+        type: 'pie',
         data: {
-            labels: {!! json_encode($packageNames) !!},
+            labels: packageNames,
             datasets: [{
                 label: 'Events for this Package',
-                data: {!! json_encode($packageCounts) !!},
+                data: packageCounts,
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',  // Red
-                    'rgba(54, 162, 235, 0.6)',  // Blue
-                    'rgba(255, 206, 86, 0.6)',   // Yellow
-                    'rgba(75, 192, 192, 0.6)',   // Teal
-                    'rgba(153, 102, 255, 0.6)',  // Purple
-                    'rgba(255, 159, 64, 0.6)',   // Orange
-                    'rgba(255, 99, 132, 0.6)',   // Light Red
-                    'rgba(54, 162, 235, 0.6)',   // Light Blue
-                    'rgba(255, 206, 86, 0.6)',    // Light Yellow
-                    'rgba(75, 192, 192, 0.6)',    // Light Teal
-                    'rgba(153, 102, 255, 0.6)',   // Light Purple
-                    'rgba(255, 159, 64, 0.6)',    // Light Orange
-                    'rgba(255, 99, 132, 0.6)',    // Pink
-                    'rgba(100, 255, 100, 0.6)',   // Light Green
-                    'rgba(255, 200, 200, 0.6)',   // Light Pink
-                    'rgba(200, 200, 255, 0.6)',   // Light Blue
-                    'rgba(200, 255, 200, 0.6)',   // Light Lime
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
                 ],
-                borderColor: 'rgba(255, 255, 255, 1)', // Optional border color for segments
+                borderColor: 'rgba(255, 255, 255, 1)',
                 borderWidth: 1
             }]
         },
@@ -461,23 +467,19 @@
             plugins: {
                 legend: {
                     display: true,
-                    position: 'top', // Legend position
+                    position: 'top',
                 },
                 title: {
                     display: true,
-                    text: 'Booked and Done Events per Package', // Title of the chart
-                    font: {
-                                size: 18
-                            }
+                    text: 'Booked and Done Events per Package',
+                    font: { size: 18 }
                 },
                 tooltip: {
                     callbacks: {
                         label: function(tooltipItem) {
                             var data = tooltipItem.dataset.data;
                             var currentValue = data[tooltipItem.dataIndex];
-                            var total = data.reduce(function(accumulator, value) {
-                                return accumulator + value;
-                            }, 0);
+                            var total = data.reduce((acc, value) => acc + value, 0);
                             var percentage = ((currentValue / total) * 100).toFixed(2);
                             return `${tooltipItem.label}: ${currentValue} (${percentage}%)`;
                         }
@@ -486,6 +488,35 @@
             }
         }
     });
+
+    // Generate Suggestions
+    function generateSuggestions() {
+        // Combine names and counts into an array of objects
+        let packages = packageNames.map((name, index) => ({
+            name: name,
+            count: packageCounts[index]
+        }));
+
+        // Sort packages based on counts
+        packages.sort((a, b) => b.count - a.count);
+
+        // Most picked package
+        const mostPicked = packages[0];
+        document.getElementById('mostPicked').innerHTML = `
+            <strong>${mostPicked.name}</strong>: This is the most picked package, improve it more as it is what most clients prefer.
+        `;
+
+        // Least picked packages (top 3 with the least counts)
+        const leastPicked = packages.slice(-3); // Get the last 3 elements
+        const leastPickedNames = leastPicked.map(pkg => pkg.name).join(', '); // Join package names with commas
+
+        document.getElementById('leastPicked').innerHTML = `
+            <strong>${leastPickedNames}</strong>: Improve/Update these packages for clients to choose them more often.
+        `;
+    }
+
+    // Call the function to display suggestions
+    generateSuggestions();
 </script>
 
 

@@ -269,6 +269,7 @@
                     </tbody>
                 </table>
                 <div class="flex justify-center my-5">
+                    @if($appointment->package_id)
                     <form action="{{route('reports.pending.details', $appointment->appointment_id)}}" method="POST">
                         @csrf
                         <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
@@ -276,6 +277,7 @@
                             <i class="fa-solid fa-download ml-3"></i>
                         </button>  
                     </form>
+                    @endif
                 </div>
                 <div class="flex justify-end gap-3 my-5">
 
@@ -406,6 +408,8 @@
                                             <option value="" disabled selected>Select a reason</option>
                                             <option value="Payment issue">Payment issue</option>
                                             <option value="Client request">Client request</option>
+                                            <option value="Client emergency">Client emergency</option>
+                                            <option value="Cannot continue">Cannot continue</option>
                                             <option value="Other">Other</option>
                                         </select>
                                     `,

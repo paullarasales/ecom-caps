@@ -33,6 +33,7 @@ use App\Http\Controllers\OwnerCustomPackagesPagesController;
 use App\Http\Controllers\NewSampleController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DishesController;
+use App\Http\Controllers\ReminderController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -62,6 +63,10 @@ Route::get('/get-unread-message-counts', [ChatController::class, 'fetchUserUnrea
 Route::post('/mark-messages-as-read/{senderId}', [ChatController::class, 'markAsRead'])->name('messages.markAsRead');
 Route::get('/unread-message-count', [ChatController::class, 'fetchUnreadMessageCount'])->name('fetchUnreadMessageCount');
 
+//REMINDER //REMINDER //REMINDER //REMINDER //REMINDER //REMINDER //REMINDER 
+Route::post('/reminder/booked/{appointment_id}', [ReminderController::class, 'booked'])
+    ->name('reminder.booked');
+//REMINDER //REMINDER //REMINDER //REMINDER //REMINDER //REMINDER //REMINDER 
 
 //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF 
 //REPORTS //REPORTS //REPORTS //REPORTS //REPORTS //REPORTS //REPORTS 

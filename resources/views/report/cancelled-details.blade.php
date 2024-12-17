@@ -22,6 +22,7 @@
         .appointment-table {
             width: 100%;
             border-collapse: collapse;
+            text-transform: capitalize;
         }
 
         .appointment-table td {
