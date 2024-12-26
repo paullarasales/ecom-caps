@@ -92,22 +92,22 @@
                 <div class="flex justify-center mt-5">
                     @if($appointmentCount != 0)
                         @if($appointments->status === 'booked')
-                        <a href="{{route('bookedView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        <a href="{{route('manager.bookedView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Go to event
                             <i class="fa-solid fa-arrow-right ml-3"></i>
                         </a>
                         @elseif($appointments->status === 'pending')
-                        <a href="{{route('pendingView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        <a href="{{route('manager.pendingView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Go to event
                             <i class="fa-solid fa-arrow-right ml-3"></i>
                         </a>
                         @elseif($appointments->status === 'cancelled')
-                        <a href="{{route('cancelledView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        <a href="{{route('manager.cancelledView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Go to event
                             <i class="fa-solid fa-arrow-right ml-3"></i>
                         </a>
                         @elseif($appointments->status === 'done')
-                        <a href="{{route('doneView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        <a href="{{route('manager.doneView', $appointments->appointment_id)}}" class="inline-flex w-30 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                             Go to event
                             <i class="fa-solid fa-arrow-right ml-3"></i>
                         </a>

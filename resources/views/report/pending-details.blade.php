@@ -48,6 +48,9 @@
             font-size: 18px;
             margin: 20px 0;
         }
+        .title .tent {
+            font-style: italic;
+        }
         .pack {
             margin: 0 40px;
         }
@@ -121,10 +124,12 @@
 
         <p class="title"><strong>Package :</strong> @if($appointment->package && $appointment->package->packagetype == 'Custom')
             {{ $package->customPackage->target }} 
+            (Php {{ number_format($package->packagedesc, 2) }})
             @elseif($package && $package->packagetype == 'Normal')
             {{ $package->packagename }} 
-            @endif
             (Php {{ number_format($package->packagedesc, 2) }})
+            <span class="tent">Tentative</span>
+            @endif
         </p>
         <div class="pack">
             @if($package)
