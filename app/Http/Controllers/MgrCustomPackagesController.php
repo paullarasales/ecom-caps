@@ -24,6 +24,7 @@ use App\Models\Pork;
 use App\Models\Chicken;
 use App\Models\Veggie;
 use App\Models\Others;
+use App\Models\Dessert;
 use Carbon\Carbon;
 
 class MgrCustomPackagesController extends Controller
@@ -1721,6 +1722,71 @@ class MgrCustomPackagesController extends Controller
         }
 
         return redirect()->back()->with('error', 'Facepaint item not found.');
+    }
+
+    public function dessertStore(Request $request)
+    {
+        // Validate incoming data
+        $request->validate([
+            'dessertname' => 'required|string|max:255',
+        ]);
+
+        $dessert = new Dessert($request->all());
+        $dessert->user_id = Auth::id();
+        $dessert->save();
+
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Dessert-Item Created';
+        $log->description = $request->dessertname . " dessert item has been added by " . $use->firstname . " " . $use->lastname;
+        $log->logdate = now();
+        $log->save();
+
+        return redirect()->back()->with('success', 'Dessert item added successfully!');
+    }
+    public function dessertUpdate(Request $request, string $dessert_id)
+    {
+        $request->validate([
+            'dessertname' => 'required|string|max:255',
+        ]);
+        
+        $dessert = Dessert::find($dessert_id);
+        $dessert->dessertname = $request->input('dessertname');
+        $dessert->save();
+
+        $use = Auth::user();
+
+        $log = new ModelsLog();
+        $log->user_id = Auth::id();
+        $log->action = 'Dessert-Item Updated';
+        $log->description = $request->dessertname . " dessert item has been updated by " . $use->firstname . " " . $use->lastname;
+        $log->logdate = now();
+        $log->save();
+
+        return redirect()->back()->with('success', 'Dessert item updated successfully!');
+    }
+    public function dessertDestroy(string $dessert_id)
+    {
+        $food = Dessert::find($dessert_id);
+
+        if ($food) {
+            $food->delete();
+
+            $use = Auth::user();
+
+            $log = new ModelsLog();
+            $log->user_id = Auth::id();
+            $log->action = 'Dessert-Item Deleted';
+            $log->description = $food->dessertname . " dessert item has been deleted by " . $use->firstname . " " . $use->lastname;
+            $log->logdate = now();
+            $log->save();
+
+            return redirect()->back()->with('success', 'Setup item deleted successfully!');
+        }
+
+        return redirect()->back()->with('error', 'Dessert item not found.');
     }
 
     /**

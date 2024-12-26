@@ -1,7 +1,7 @@
 <x-manager-layout>
 
     <div class="absolute">
-        <a href="{{route('manager.customchicken')}}">
+        <a href="{{route('manager.customdessert')}}">
             <i class="fa-solid fa-arrow-left float-left ml-5 text-xl"></i>
         </a>
     </div>
@@ -9,13 +9,13 @@
     <div class="text-center py-2 my-2">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Add <span class="text-yellow-600">Chicken</span>
+            Add <span class="text-yellow-600">Dessert</span>
         </h3>
 
     </div>
 
     
-    <form action="{{route('manager.customchicken.store')}}" method="POST" enctype="multipart/form-data">
+    <form action="{{route('manager.customdessert.store')}}" method="POST" enctype="multipart/form-data">
         @csrf
         <script>
             // Check if there are validation errors
@@ -67,21 +67,21 @@
                 <div class="bg-white rounded shadow-lg shadow-yellow-100 p-4 px-4 md:p-8 mb-6">
                     <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                             <div class="text-gray-600">
-                                <p class="font-medium text-lg">Add Chicken</p>
+                                <p class="font-medium text-lg">Add Dessert</p>
                                 <p>Please fill out all the fields.</p>
                             </div>
     
                         <div class="lg:col-span-2">
                             <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-4">
-                                <div class="md:col-span-2">
-                                    <label for="chickenname">Chicken Name</label>
-                                    <input type="text" name="chickenname" id="chickenname" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
+                                <div class="md:col-span-4">
+                                    <label for="dessertname">Dessert Name</label>
+                                    <input type="text" name="dessertname" id="dessertname" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
                                 </div>
     
-                                <div class="md:col-span-2">
+                                {{-- <div class="md:col-span-2">
                                     <label for="chickenprice">Price</label>
                                     <input type="text" name="chickenprice" id="chickenprice" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" />
-                                </div>
+                                </div> --}}
 
 
                                 <div class="md:col-span-5 text-right">

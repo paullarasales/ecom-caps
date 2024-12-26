@@ -14,6 +14,14 @@
 
     </div>
 
+    <div class="text-center py-2 my-2">
+                
+        <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
+            <span class="text-yellow-600">Main</span>
+        </h3>
+
+    </div>
+
     <div class="flex flex-col items-center md:flex-row justify-center flex-wrap gap-3 mt-10">
     
     
@@ -150,7 +158,40 @@
             </div>
         </div>
     
-        
+    </div>
+
+    <hr class="my-5 border border-yellow-100">
+
+    <div class="text-center py-2 my-2">
+                
+        <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
+            <span class="text-yellow-600">Dessert</span>
+        </h3>
+
+    </div>
+
+    <div class="flex flex-col items-center md:flex-row justify-center flex-wrap gap-3 mt-10">
+    
+        <div class="w-64 h-44">
+            <div class="bg-white shadow-lg mx-auto border-b-4 border-pink-500 rounded-2xl overflow-hidden hover:shadow-2xl transition duration-500 transform hover:scale-105 cursor-pointer">
+                <div class="bg-pink-500 flex h-20 items-center">
+                    <h1 class="text-white ml-4 border-2 py-2 px-4 rounded-full">
+                        <i class="fa-solid fa-cookie"></i>
+                    </h1>
+                    <p class="ml-4 text-white uppercase font-semibold">Dessert</p>
+                </div>
+                
+                <div class="flex justify-center px-5 mb-2 text-sm">
+                    <a href="{{route('owner.customother')}}">
+                        <button type="button" class="border border-pink-500 text-pink-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:text-white hover:bg-pink-600 focus:outline-none focus:shadow-outline">
+                            Open
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
     
     
     </div>

@@ -550,6 +550,37 @@ Route::get('/owner/custom/packages/facepaint/destroy/{facepaint_id}', [OwnerCust
 //FACEPAINT //FACEPAINT //FACEPAINT //FACEPAINT //FACEPAINT
 
 
+//DESSERT //DESSERT //DESSERT //DESSERT //DESSERT
+//DESSERT-ADMIN
+Route::get('/admin/custom/packages/dessert', [CustomPackagesPagesController::class, 'dessert'])->middleware(['auth', 'verified','admin'])->name('customdessert');
+Route::get('/admin/custom/packages/dessert/add', [CustomPackagesPagesController::class, 'dessertAdd'])->middleware(['auth', 'verified','admin'])->name('customdessertadd');
+Route::post('/admin/custom/packages/dessert/store', [CustomPackagesController::class, 'dessertStore'])->middleware(['auth', 'verified','admin'])->name('customdessert.store');
+Route::get('/admin/custom/packages/dessert/view', [CustomPackagesPagesController::class, 'dessertView'])->middleware(['auth', 'verified','admin'])->name('customdessert.view');
+Route::get('/admin/custom/packages/dessert/edit/{dessert_id}', [CustomPackagesPagesController::class, 'dessertEdit'])->middleware(['auth', 'verified','admin'])->name('customdessert.edit');
+Route::put('/admin/custom/packages/dessert/update/{dessert_id}', [CustomPackagesController::class, 'dessertUpdate'])->middleware(['auth', 'verified','admin'])->name('customdessert.update');
+Route::get('/admin/custom/packages/dessert/destroy/{dessert_id}', [CustomPackagesController::class, 'dessertDestroy'])->middleware(['auth', 'verified','admin'])->name('customdessert.destroy');
+
+
+//DESSERT-MANAGER
+Route::get('/manager/custom/packages/dessert', [MgrCustomPackagesPagesController::class, 'dessert'])->middleware(['auth', 'verified','manager'])->name('manager.customdessert');
+Route::get('/manager/custom/packages/dessert/add', [MgrCustomPackagesPagesController::class, 'dessertAdd'])->middleware(['auth', 'verified','manager'])->name('manager.customdessertadd');
+Route::post('/manager/custom/packages/dessert/store', [MgrCustomPackagesController::class, 'dessertStore'])->middleware(['auth', 'verified','manager'])->name('manager.customdessert.store');
+Route::get('/manager/custom/packages/dessert/view', [MgrCustomPackagesPagesController::class, 'dessertView'])->middleware(['auth', 'verified','manager'])->name('manager.customdessert.view');
+Route::get('/manager/custom/packages/dessert/edit/{dessert_id}', [MgrCustomPackagesPagesController::class, 'dessertEdit'])->middleware(['auth', 'verified','manager'])->name('manager.customdessert.edit');
+Route::put('/manager/custom/packages/dessert/update/{dessert_id}', [MgrCustomPackagesController::class, 'dessertUpdate'])->middleware(['auth', 'verified','manager'])->name('manager.customdessert.update');
+Route::get('/manager/custom/packages/dessert/destroy/{dessert_id}', [MgrCustomPackagesController::class, 'dessertDestroy'])->middleware(['auth', 'verified','manager'])->name('manager.customdessert.destroy');
+
+
+//DESSERT-OWNER
+Route::get('/owner/custom/packages/dessert', [OwnerCustomPackagesPagesController::class, 'dessert'])->middleware(['auth', 'verified','owner'])->name('owner.customdessert');
+Route::get('/owner/custom/packages/dessert/add', [OwnerCustomPackagesPagesController::class, 'dessertAdd'])->middleware(['auth', 'verified','owner'])->name('owner.customdessertadd');
+Route::post('/owner/custom/packages/dessert/store', [OwnerCustomPackagesController::class, 'dessertStore'])->middleware(['auth', 'verified','owner'])->name('owner.customdessert.store');
+Route::get('/owner/custom/packages/dessert/view', [OwnerCustomPackagesPagesController::class, 'dessertView'])->middleware(['auth', 'verified','owner'])->name('owner.customdessert.view');
+Route::get('/owner/custom/packages/dessert/edit/{dessert_id}', [OwnerCustomPackagesPagesController::class, 'dessertEdit'])->middleware(['auth', 'verified','owner'])->name('owner.customdessert.edit');
+Route::put('/owner/custom/packages/dessert/update/{dessert_id}', [OwnerCustomPackagesController::class, 'dessertUpdate'])->middleware(['auth', 'verified','owner'])->name('owner.customdessert.update');
+Route::get('/owner/custom/packages/dessert/destroy/{dessert_id}', [OwnerCustomPackagesController::class, 'dessertDestroy'])->middleware(['auth', 'verified','owner'])->name('owner.customdessert.destroy');
+//DESSERT //DESSERT //DESSERT //DESSERT //DESSERT
+
 
 // CUSTOM PACKAGE // CUSTOM PACKAGE // CUSTOM PACKAGE // CUSTOM PACKAGE // CUSTOM PACKAGE 
 

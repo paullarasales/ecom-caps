@@ -18,6 +18,7 @@ use App\Models\Pork;
 use App\Models\Chicken;
 use App\Models\Veggie;
 use App\Models\Others;
+use App\Models\Dessert;
 use App\Models\Package;
 use App\Models\Custompackage;
 use App\Models\Customitem;
@@ -543,5 +544,24 @@ class MgrCustomPackagesPagesController extends Controller
     {
         $food = Facepaint::find($facepaint_id);
         return view('manager.custom-facepaint-edit')->with("food", $food);
+    }
+
+    public function dessert()
+    {
+        return view('admin.custom-dessert');
+    }
+    public function dessertAdd()
+    {
+        return view('admin.custom-dessert-add');
+    }
+    public function dessertView()
+    {
+        $foods = Dessert::orderBy('created_at', 'desc')->paginate(10);
+        return view('admin.custom-dessert-view', compact('foods'));
+    }
+    public function dessertEdit(string $dessert_id)
+    {
+        $food = Dessert::find($dessert_id);
+        return view('admin.custom-dessert-edit')->with("food", $food);
     }
 }

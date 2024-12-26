@@ -67,7 +67,7 @@
                 <div class="bg-white rounded shadow-lg shadow-yellow-100 p-4 px-4 md:p-8 mb-6">
                     <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                             <div class="text-gray-600">
-                                <p class="font-medium text-lg">Add Pork</p>
+                                <p class="font-medium text-lg">Add Chicken</p>
                                 <p>Please fill out all the fields.</p>
                             </div>
     

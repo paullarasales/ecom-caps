@@ -11,7 +11,8 @@ class Customitem extends Model
 
     protected $fillable = [
         'item_name', 
-        'item_type', 
+        'item_type',
+        'item_price',
         'quantity'
     ];
 
