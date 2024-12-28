@@ -61,6 +61,9 @@
                                 <th scope="col" class="px-6 py-3 capitalize">
                                     Item Name
                                 </th>
+                                <th scope="col" class="px-6 py-3 capitalize">
+                                    Item Price
+                                </th>
                                 {{-- <th scope="col" class="px-6 py-3 capitalize text-center">
                                     Quantity
                                 </th> --}}
@@ -77,6 +80,9 @@
                                         @if ($item->item_type === 'food_pack')
                                             ({{ $item->quantity ?? 'N/A' }})
                                         @endif
+                                    </td>
+                                    <td class="px-6 py-4 font-medium capitalize text-gray-800 whitespace-nowrap">
+                                        {{ number_format($item->item_price, 2)  }}
                                     </td>
                                     {{-- <td class="px-6 py-4 text-center">
                                         {{ $item->quantity ?? 'N/A' }}

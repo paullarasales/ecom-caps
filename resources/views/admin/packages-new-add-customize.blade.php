@@ -175,12 +175,15 @@
                         }
                     </script>
 
+                    <br>
+
                     <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                         <div class="text-gray-600">
                             <p class="font-medium text-lg">Foods</p>
                             {{-- <p>Select the quantity for each item.</p> --}}
                         </div>
                         <div class="lg:col-span-2">
+                            <label for="package" class="uppercase bg-yellow-100 my-10 rounded-xl py-1 px-2">Main</label>
                             <div class="grid gap-4 gap-y-2 text-sm grid-cols-7 md:grid-cols-5">
                                 <div class="md:col-span-7 col-span-7">
                                     <label for="person">Pax</label>
@@ -190,7 +193,7 @@
 
                             <div class="lg:col-span-2">
                                 {{-- <label for="beefitem">Beef Items</label> --}}
-                                <select name="beefitem" id="beefItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                                <select name="beefitem" id="beefItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" onchange="updateBeefPrice()">
                                     <option disabled selected>Select Beef</option> <!-- Enabled placeholder -->
                                     @foreach($beefs as $food)
                                         <option value="{{ $food->beefname }}" data-price="{{ $food->beefprice }}"
@@ -199,19 +202,30 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                <input type="hidden" name="beefprice" id="beefPrice" value="">
                                 <button type="button" onclick="clearBeefSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                             </div>
+                            
                             <script>
+                                function updateBeefPrice() {
+                                    const selectElement = document.getElementById('beefItem');
+                                    const selectedOption = selectElement.options[selectElement.selectedIndex];
+                                    const price = selectedOption.getAttribute('data-price') || '';
+                                    document.getElementById('beefPrice').value = price;
+                                }
+                            
                                 function clearBeefSelection() {
                                     const selectElement = document.getElementById('beefItem');
                                     selectElement.selectedIndex = 0; // Reset to the first option (placeholder)
+                                    document.getElementById('beefPrice').value = ''; // Clear price value
                                     calculateTotal(); // Update total after clearing selection
                                 }
                             </script>
+                            
 
                             <div class="lg:col-span-2">
                                 {{-- <label for="porkitem">Pork Items</label> --}}
-                                <select name="porkitem" id="porkItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                                <select name="porkitem" id="porkItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" onchange="updatePorkPrice()">
                                     <option disabled selected>Select Pork</option> <!-- Enabled placeholder -->
                                     @foreach($porks as $food)
                                         <option value="{{ $food->porkname }}" data-price="{{ $food->prokprice }}"
@@ -220,19 +234,30 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                <input type="hidden" name="porkprice" id="porkPrice" value="">
                                 <button type="button" onclick="clearPorkSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                             </div>
+                            
                             <script>
+                                function updatePorkPrice() {
+                                    const selectElement = document.getElementById('porkItem');
+                                    const selectedOption = selectElement.options[selectElement.selectedIndex];
+                                    const price = selectedOption.getAttribute('data-price') || '';
+                                    document.getElementById('porkPrice').value = price;
+                                }
+                            
                                 function clearPorkSelection() {
                                     const selectElement = document.getElementById('porkItem');
                                     selectElement.selectedIndex = 0; // Reset to the first option (placeholder)
+                                    document.getElementById('porkPrice').value = ''; // Clear price value
                                     calculateTotal(); // Update total after clearing selection
                                 }
                             </script>
+                            
 
                             <div class="lg:col-span-2">
                                 {{-- <label for="chickenitem">Chicken Items</label> --}}
-                                <select name="chickenitem" id="chickenItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                                <select name="chickenitem" id="chickenItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" onchange="updateChickenPrice()">
                                     <option disabled selected>Select Chicken</option> <!-- Enabled placeholder -->
                                     @foreach($chickens as $food)
                                         <option value="{{ $food->chickenname }}" data-price="{{ $food->chickenprice }}"
@@ -241,19 +266,30 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                <input type="hidden" name="chickenprice" id="chickenPrice" value="">
                                 <button type="button" onclick="clearChickenSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                             </div>
+                            
                             <script>
+                                function updateChickenPrice() {
+                                    const selectElement = document.getElementById('chickenItem');
+                                    const selectedOption = selectElement.options[selectElement.selectedIndex];
+                                    const price = selectedOption.getAttribute('data-price') || '';
+                                    document.getElementById('chickenPrice').value = price;
+                                }
+                            
                                 function clearChickenSelection() {
                                     const selectElement = document.getElementById('chickenItem');
                                     selectElement.selectedIndex = 0; // Reset to the first option (placeholder)
+                                    document.getElementById('chickenPrice').value = ''; // Clear price value
                                     calculateTotal(); // Update total after clearing selection
                                 }
                             </script>
+                            
 
                             <div class="lg:col-span-2">
                                 {{-- <label for="veggieitem">Veggie Items</label> --}}
-                                <select name="veggieitem" id="veggieItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                                <select name="veggieitem" id="veggieItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" onchange="updateVeggiePrice()">
                                     <option disabled selected>Select Veggie</option> <!-- Enabled placeholder -->
                                     @foreach($veggies as $food)
                                         <option value="{{ $food->veggiename }}" data-price="{{ $food->veggieprice }}"
@@ -262,19 +298,30 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                <input type="hidden" name="veggieprice" id="veggiePrice" value="">
                                 <button type="button" onclick="clearVeggieSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                             </div>
+                            
                             <script>
+                                function updateVeggiePrice() {
+                                    const selectElement = document.getElementById('veggieItem');
+                                    const selectedOption = selectElement.options[selectElement.selectedIndex];
+                                    const price = selectedOption.getAttribute('data-price') || '';
+                                    document.getElementById('veggiePrice').value = price;
+                                }
+                            
                                 function clearVeggieSelection() {
                                     const selectElement = document.getElementById('veggieItem');
                                     selectElement.selectedIndex = 0; // Reset to the first option (placeholder)
+                                    document.getElementById('veggiePrice').value = ''; // Clear price value
                                     calculateTotal(); // Update total after clearing selection
                                 }
                             </script>
+                            
 
                             <div class="lg:col-span-2">
-                                {{-- <label for="veggieitem">Veggie Items</label> --}}
-                                <select name="otheritem" id="otherItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                                {{-- <label for="otheritem">Fish Items</label> --}}
+                                <select name="otheritem" id="otherItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" onchange="updateOtherPrice()">
                                     <option disabled selected>Select Fish</option> <!-- Enabled placeholder -->
                                     @foreach($others as $food)
                                         <option value="{{ $food->othername }}" data-price="{{ $food->otherprice }}"
@@ -283,16 +330,61 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                <input type="hidden" name="otherprice" id="otherPrice" value="">
                                 <button type="button" onclick="clearOtherSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                             </div>
+                            
                             <script>
+                                function updateOtherPrice() {
+                                    const selectElement = document.getElementById('otherItem');
+                                    const selectedOption = selectElement.options[selectElement.selectedIndex];
+                                    const price = selectedOption.getAttribute('data-price') || '';
+                                    document.getElementById('otherPrice').value = price;
+                                }
+                            
                                 function clearOtherSelection() {
                                     const selectElement = document.getElementById('otherItem');
                                     selectElement.selectedIndex = 0; // Reset to the first option (placeholder)
+                                    document.getElementById('otherPrice').value = ''; // Clear price value
                                     calculateTotal(); // Update total after clearing selection
                                 }
                             </script>
-                                
+                            
+                            
+                            <br>
+
+                            <label for="package" class="uppercase bg-yellow-100 my-10 rounded-xl py-1 px-2">Dessert</label>
+                            <div class="lg:col-span-2">
+                                {{-- <label for="dessertitem">Dessert Items</label> --}}
+                                <select name="dessertitem" id="dessertItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" onchange="updateDessertPrice()">
+                                    <option disabled selected>Select Dessert</option> <!-- Enabled placeholder -->
+                                    @foreach($dessert as $food)
+                                        <option value="{{ $food->dessertname }}" data-price="{{ $food->dessertprice }}"
+                                            {{ old('dessertitem') == $food->dessertname ? 'selected' : '' }}>
+                                            {{ $food->dessertname }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <input type="hidden" name="dessertprice" id="dessertPrice" value="">
+                                <button type="button" onclick="clearDessertSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
+                            </div>
+                            
+                            <script>
+                                function updateDessertPrice() {
+                                    const selectElement = document.getElementById('dessertItem');
+                                    const selectedOption = selectElement.options[selectElement.selectedIndex];
+                                    const price = selectedOption.getAttribute('data-price') || '';
+                                    document.getElementById('dessertPrice').value = price;
+                                }
+                            
+                                function clearDessertSelection() {
+                                    const selectElement = document.getElementById('dessertItem');
+                                    selectElement.selectedIndex = 0; // Reset to the first option (placeholder)
+                                    document.getElementById('dessertPrice').value = ''; // Clear price value
+                                    calculateTotal(); // Update total after clearing selection
+                                }
+                            </script>
+                            
                         </div>
                     </div>
                     <script>
@@ -303,25 +395,38 @@
                             const chickenItem = document.getElementById('chickenItem');
                             const veggieItem = document.getElementById('veggieItem');
                             const otherItem = document.getElementById('otherItem');
-                            
+                            const dessertItem = document.getElementById('dessertItem');
+
                             // Function to check if person value is 0, none, or empty and disable/enable dropdowns
                             function toggleDropdowns() {
                                 const personValue = personInput.value.trim();
                                 const isDisabled = personValue === '' || parseInt(personValue) <= 0;
-                    
+
                                 beefItem.disabled = isDisabled;
                                 porkItem.disabled = isDisabled;
                                 chickenItem.disabled = isDisabled;
                                 veggieItem.disabled = isDisabled;
                                 otherItem.disabled = isDisabled;
+                                
+                                // Count how many items are selected
+                                const selectedItems = [beefItem, porkItem, chickenItem, veggieItem, otherItem].filter(item => item.selectedIndex > 0).length;
+
+                                // Enable dessertItem if 4 or more items are selected
+                                dessertItem.disabled = selectedItems < 4;
                             }
-                    
+
                             // Initial check when the page loads
                             toggleDropdowns();
-                    
+
+                            // Listen for changes in the item selections to update dropdowns dynamically
+                            [beefItem, porkItem, chickenItem, veggieItem, otherItem].forEach(item => {
+                                item.addEventListener('change', toggleDropdowns);
+                            });
+
                             // Listen for changes in the person input to update dropdowns dynamically
                             personInput.addEventListener('input', toggleDropdowns);
                         });
+
                     </script>                    
 
                     <br>
@@ -335,25 +440,28 @@
                             @foreach($foodpacks as $index => $food)
                                 <div class="grid gap-4 gap-y-2 text-sm grid-cols-7 md:grid-cols-5">
                                     <div class="md:col-span-4 col-span-5">
-                                        {{-- <label>Food Item</label> --}}
-                                        <!-- Hidden input to store the actual value for submission -->
+                                        {{-- Hidden input to store the actual value for submission --}}
                                         <input type="hidden" name="foodpackitem[]" value="{{ $food->foodpackname }}" />
-
-                                        <!-- Read-only input with placeholder displaying the formatted value -->
-                                        <input type="text" name="display_foodpackitem[]" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none placeholder-gray-800" 
+                    
+                                        {{-- Hidden input to store the price --}}
+                                        <input type="hidden" name="foodpackprice[]" value="{{ $food->foodpackprice }}" />
+                    
+                                        {{-- Read-only input with placeholder displaying the formatted value --}}
+                                        <input type="text" name="display_foodpackitem[]" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none placeholder-gray-800"
                                             placeholder="{{ $food->foodpackname }}" 
                                             readonly data-price="{{ $food->foodpackprice }}" />
                                     </div>
-
+                    
                                     <div class="md:col-span-1 col-span-2">
-                                        {{-- <label for="foodpackquantity">Quantity</label> --}}
-                                        <input type="number" name="foodpackquantity[]" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 quantity-input" 
+                                        {{-- Quantity Input --}}
+                                        <input type="number" name="foodpackquantity[]" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 quantity-input"
                                             min="0" value="{{ old('foodpackquantity.' . $index, 0) }}" />
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     </div>
+                    
 
                     <br>
 
@@ -366,23 +474,27 @@
                             @foreach($foodcarts as $food)
                                 <div class="grid gap-4 gap-y-2 text-sm grid-cols-7 md:grid-cols-5">
                                     <div class="md:col-span-4 col-span-5">
-                                        {{-- <label>Food Item</label> --}}
+                                        {{-- Food Cart Name (Read-only input) --}}
                                         <input type="text" name="foodcartitem[]" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none pointer-events-none" 
                                             value="{{ $food->foodcartname }}" readonly data-price="{{ $food->foodcartprice }}" />
+                                        
+                                        {{-- Hidden input to store the price for each food cart --}}
+                                        <input type="hidden" name="foodcartprice[]" value="{{ $food->foodcartprice }}" />
                                     </div>
                     
                                     <div class="md:col-span-1 col-span-2">
-                                        {{-- <label for="foodcartquantity">Select</label> --}}
+                                        {{-- Checkbox for selecting Food Cart --}}
                                         <input type="checkbox" name="foodcartselected[]" 
                                             value="{{ $food->foodcart_id }}" 
-                                            class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input" 
+                                            class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input"
                                             data-price="{{ $food->foodcartprice }}"
-                                            {{ is_array(old('foodcartselected')) && in_array($food->foodcart_id, old('foodcartselected')) ? 'checked' : '' }}>
+                                            {{ is_array(old('foodcartselected')) && in_array($food->foodcart_id, old('foodcartselected')) ? 'checked' : '' }} />
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     </div>
+                    
 
                     <br>
 
@@ -392,7 +504,7 @@
                         </div>
                         <div class="lg:col-span-2">
                             {{-- <label for="lechonItem">Lechon Items</label> --}}
-                            <select name="lechonitem" id="lechonItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                            <select name="lechonitem" id="lechonItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" onchange="updateLechonPrice()">
                                 <option disabled selected>Select Lechon</option> <!-- Enabled placeholder -->
                                 @foreach($lechon as $food)
                                     <option value="{{ $food->lechonname }}" data-price="{{ $food->lechonprice }}"
@@ -401,16 +513,26 @@
                                     </option>
                                 @endforeach
                             </select>
+                            <input type="hidden" name="lechonprice" id="lechonPrice" value="">
                             <button type="button" onclick="clearLechonSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                         </div>
                     </div>  
                     <script>
+                        function updateLechonPrice() {
+                            const selectElement = document.getElementById('lechonItem');
+                            const selectedOption = selectElement.options[selectElement.selectedIndex];
+                            const price = selectedOption.getAttribute('data-price') || '';
+                            document.getElementById('lechonPrice').value = price;
+                        }
+                    
                         function clearLechonSelection() {
                             const selectElement = document.getElementById('lechonItem');
                             selectElement.selectedIndex = 0; // Reset to the first option (placeholder)
+                            document.getElementById('lechonPrice').value = ''; // Clear price value
                             calculateTotal(); // Update total after clearing selection
                         }
                     </script>
+                    
 
                     <br>
 
@@ -421,7 +543,7 @@
                         </div>
                         <div class="lg:col-span-2">
                             {{-- <label for="cakeItem">Cake Items</label> --}}
-                            <select name="cakeitem" id="cakeItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                            <select name="cakeitem" id="cakeItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" onchange="updateCakePrice()">
                                 <option disabled selected>Select Cake</option>
                                 @foreach($cake as $food)
                                     <option value="{{ $food->cakename }}" data-price="{{ $food->cakeprice }}"
@@ -430,17 +552,26 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <button type="button" onclick="clearSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
+                            <input type="hidden" name="cakeprice" id="cakePrice" value="">
+                            <button type="button" onclick="clearCakeSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                         </div>
                     </div>
-                    
                     <script>
-                        function clearSelection() {
+                        function updateCakePrice() {
+                            const selectElement = document.getElementById('cakeItem');
+                            const selectedOption = selectElement.options[selectElement.selectedIndex];
+                            const price = selectedOption.getAttribute('data-price') || '';
+                            document.getElementById('cakePrice').value = price; // Update the hidden price input
+                        }
+                    
+                        function clearCakeSelection() {
                             const selectElement = document.getElementById('cakeItem');
                             selectElement.selectedIndex = 0; // Reset to the first option
-                            calculateTotal();
+                            document.getElementById('cakePrice').value = ''; // Clear price value
+                            calculateTotal(); // Recalculate the total if applicable
                         }
                     </script>
+                    
 
                     <br>
 
@@ -450,8 +581,8 @@
                             {{-- <p>Select an item.</p> --}}
                         </div>
                         <div class="lg:col-span-2">
-                            {{-- <label for="cakeItem">Clown items</label> --}}
-                            <select name="clownitem" id="clownItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                            {{-- <label for="clownItem">Clown items</label> --}}
+                            <select name="clownitem" id="clownItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" onchange="updateClownPrice()">
                                 <option disabled selected>Select Clown/Emcee</option>
                                 @foreach($clown as $food)
                                     <option value="{{ $food->clownname }}" data-price="{{ $food->clownprice }}"
@@ -460,17 +591,26 @@
                                     </option>
                                 @endforeach
                             </select>
+                            <input type="hidden" name="clownprice" id="clownPrice" value="">
                             <button type="button" onclick="clearClownSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                         </div>
                     </div>
-
                     <script>
+                        function updateClownPrice() {
+                            const selectElement = document.getElementById('clownItem');
+                            const selectedOption = selectElement.options[selectElement.selectedIndex];
+                            const price = selectedOption.getAttribute('data-price') || '';
+                            document.getElementById('clownPrice').value = price; // Update hidden price input
+                        }
+                    
                         function clearClownSelection() {
                             const selectElement = document.getElementById('clownItem');
                             selectElement.selectedIndex = 0; // Reset to the first option
-                            calculateTotal();
+                            document.getElementById('clownPrice').value = ''; // Clear price value
+                            calculateTotal(); // Recalculate total if applicable
                         }
                     </script>
+                    
 
                     <br>
 
@@ -481,7 +621,7 @@
                         </div>
                         <div class="lg:col-span-2">
                             {{-- <label for="facepaintItem">Facepaint items</label> --}}
-                            <select name="facepaintitem" id="facepaintItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                            <select name="facepaintitem" id="facepaintItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" onchange="updateFacepaintPrice()">
                                 <option disabled selected>Select Facepaint</option>
                                 @foreach($facepaint as $food)
                                     <option value="{{ $food->facepaintname }}" data-price="{{ $food->facepaintprice }}"
@@ -490,17 +630,29 @@
                                     </option>
                                 @endforeach
                             </select>
+                            <input type="hidden" name="facepaintprice" id="facepaintPrice" value="">
                             <button type="button" onclick="clearFacepaintSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                         </div>
                     </div>
-
+                    
                     <script>
+                        // Update the hidden price input when an option is selected
+                        function updateFacepaintPrice() {
+                            const selectElement = document.getElementById('facepaintItem');
+                            const selectedOption = selectElement.options[selectElement.selectedIndex];
+                            const price = selectedOption.getAttribute('data-price') || '';
+                            document.getElementById('facepaintPrice').value = price; // Set the price in the hidden input
+                        }
+                    
+                        // Reset the dropdown and hidden price field
                         function clearFacepaintSelection() {
                             const selectElement = document.getElementById('facepaintItem');
                             selectElement.selectedIndex = 0; // Reset to the first option
-                            calculateTotal();
+                            document.getElementById('facepaintPrice').value = ''; // Clear price value
+                            calculateTotal(); // Recalculate the total price
                         }
                     </script>
+                    
 
                     <br>
 
@@ -511,7 +663,7 @@
                         </div>
                         <div class="lg:col-span-2">
                             {{-- <label for="setupItem">Setup items</label> --}}
-                            <select name="setupitem" id="setupItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                            <select name="setupitem" id="setupItem" class="h-10 border text-sm mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" onchange="updateSetupPrice()">
                                 <option disabled selected>Select Setup</option>
                                 @foreach($setup as $food)
                                     <option value="{{ $food->setupname }}" data-price="{{ $food->setupprice }}"
@@ -520,17 +672,30 @@
                                     </option>
                                 @endforeach
                             </select>
+                            <input type="hidden" name="setupprice" id="setupPrice" value="">
                             <button type="button" onclick="clearSetupSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                         </div>
                     </div>
-
+                    
                     <script>
+                        // Update the hidden price input when an option is selected
+                        function updateSetupPrice() {
+                            const selectElement = document.getElementById('setupItem');
+                            const selectedOption = selectElement.options[selectElement.selectedIndex];
+                            const price = selectedOption.getAttribute('data-price') || '';
+                            document.getElementById('setupPrice').value = price; // Set the price in the hidden input
+                            calculateTotal(); // Recalculate total when selection changes
+                        }
+                    
+                        // Reset the dropdown and hidden price field
                         function clearSetupSelection() {
                             const selectElement = document.getElementById('setupItem');
                             selectElement.selectedIndex = 0; // Reset to the first option
-                            calculateTotal();
+                            document.getElementById('setupPrice').value = ''; // Clear price value
+                            calculateTotal(); // Recalculate total after clearing selection
                         }
                     </script>
+                    
 
                     <br>
 
@@ -721,6 +886,31 @@
         // Create others section with space
         createSection('Others:', otherItems, false);
 
+        // Display selected dessert
+        const dessertSelect = document.getElementById('dessertItem');
+        const selectedDessertOption = dessertSelect.options[dessertSelect.selectedIndex];
+        if (selectedDessertOption && selectedDessertOption.dataset.price) {
+            const dessertPrice = parseFloat(selectedDessertOption.dataset.price);
+            const dessertName = selectedDessertOption.textContent.split(" - ")[0]; // Extract the dessert name
+
+            const dessertDiv = document.createElement('div');
+            dessertDiv.classList.add('flex', 'justify-between', 'mb-2', 'text-sm'); // Flexbox for alignment
+
+            const dessertDescription = document.createElement('span');
+            dessertDescription.textContent = `${dessertName}: ₱${dessertPrice.toFixed(2)}`; // Display the dessert and its price
+            dessertDiv.appendChild(dessertDescription);
+
+            const dessertTotalPrice = document.createElement('span');
+            dessertTotalPrice.classList.add('font-semibold');
+            dessertTotalPrice.textContent = `₱${dessertPrice.toFixed(2)}`; // Display the dessert price
+            dessertDiv.appendChild(dessertTotalPrice);
+
+            selectedItemsDisplay.appendChild(dessertDiv);
+
+            // Add dessert price to total
+            total += dessertPrice;
+        }
+
         // Display total price for food packs
         const foodPackTotal = Array.from(document.querySelectorAll('input[name="foodpackquantity[]"]')).reduce((acc, input, index) => {
             const quantity = parseFloat(input.value) || 0;
@@ -868,6 +1058,13 @@
             //     total -= 500; // Apply the discount
             // }
 
+            const dessertSelect = document.getElementById('dessertItem');
+            const selectedDessertOption = dessertSelect.options[dessertSelect.selectedIndex];
+            if (selectedDessertOption && selectedDessertOption.dataset.price) {
+                const dessertPrice = parseFloat(selectedDessertOption.dataset.price);
+                total += dessertPrice;
+            }
+
             // Calculate total from lechon dropdown selection
             const lechonSelect = document.getElementById('lechonItem');
             const selectedOption = lechonSelect.options[lechonSelect.selectedIndex];
@@ -939,6 +1136,7 @@
         document.getElementById('chickenItem').addEventListener('change', calculateTotal);
         document.getElementById('veggieItem').addEventListener('change', calculateTotal);
         document.getElementById('otherItem').addEventListener('change', calculateTotal);
+        document.getElementById('dessertItem').addEventListener('change', calculateTotal);
         document.getElementById('fee').addEventListener('change', calculateTotal);
 
         // document.getElementById('person').addEventListener('input', calculateTotal);

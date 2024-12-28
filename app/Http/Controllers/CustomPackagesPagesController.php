@@ -46,6 +46,7 @@ class CustomPackagesPagesController extends Controller
         $setup = Setup::all();
         $lechon = Lechon::all();
         $facepaint = Facepaint::all();
+        $dessert = Dessert::all();
         return view('admin.packages-new-add-customize', compact(
             'packages',
             'foods', 
@@ -56,6 +57,7 @@ class CustomPackagesPagesController extends Controller
             'setup', 
             'lechon', 
             'facepaint',
+            'dessert',
             'beefs',
             'porks',
             'chickens',
@@ -94,6 +96,7 @@ class CustomPackagesPagesController extends Controller
         $setup = Setup::all();
         $lechon = Lechon::all();
         $facepaint = Facepaint::all();
+        $dessert = Dessert::all();
         return view('admin.packages-add-custom-direct', compact(
             'appointment',
             'packages',
@@ -105,6 +108,7 @@ class CustomPackagesPagesController extends Controller
             'setup', 
             'lechon', 
             'facepaint',
+            'dessert',
             'beefs',
             'porks',
             'chickens',

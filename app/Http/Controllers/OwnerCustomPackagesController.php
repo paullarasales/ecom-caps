@@ -100,6 +100,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('beefitem');
             $customItem->item_type = 'beef';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('beefprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for beef', ['item' => $request->input('beefitem')]);
@@ -112,6 +113,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('porkitem');
             $customItem->item_type = 'pork';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('porkprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for pork', ['item' => $request->input('porkitem')]);
@@ -124,6 +126,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('chickenitem');
             $customItem->item_type = 'chicken';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('chickenprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for chicken', ['item' => $request->input('chickenitem')]);
@@ -136,6 +139,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('veggieitem');
             $customItem->item_type = 'veggie';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('veggieprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for veggie', ['item' => $request->input('veggieitem')]);
@@ -148,9 +152,23 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('otheritem');
             $customItem->item_type = 'others';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('otherprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for fish', ['item' => $request->input('otheritem')]);
+            }
+        }
+
+        if ($request->filled('dessertitem')) {
+            $customItem = new Customitem();
+            $customItem->custompackage_id = $customPackage->custompackage_id;
+            $customItem->item_name = $request->input('dessertitem');
+            $customItem->item_type = 'dessert';
+            $customItem->quantity = 1;
+            $customItem->item_price = $request->input('dessertprice');
+
+            if (!$customItem->save()) {
+                Log::error('Failed to save custom item for fish', ['item' => $request->input('dessertitem')]);
             }
         }
 
@@ -159,12 +177,14 @@ class OwnerCustomPackagesController extends Controller
         if (!empty($request->foodpackitem)) {
             foreach ($request->foodpackitem as $index => $item) {
                 $quantity = $request->foodpackquantity[$index] ?? 0; // Get quantity or default to 0
+                $price = $request->foodpackprice[$index] ?? 0;
                 if ($quantity > 0) {
                     $customItem = new Customitem();
                     $customItem->custompackage_id = $customPackage->custompackage_id;
                     $customItem->item_name = $item;
                     $customItem->item_type = 'food_pack';
                     $customItem->quantity = $quantity;
+                    $customItem->item_price = $price;
 
                     if (!$customItem->save()) {
                         Log::error('Failed to save custom item for food pack', ['item' => $item]);
@@ -177,12 +197,14 @@ class OwnerCustomPackagesController extends Controller
         if (!empty($request->foodcartselected)) {
             foreach ($request->foodcartselected as $foodcartId) {
                 $foodcart = FoodCart::find($foodcartId);
+                $price = $request->foodcartprice[$index] ?? 0;
                 if ($foodcart) {
                     $customItem = new Customitem();
                     $customItem->custompackage_id = $customPackage->custompackage_id;
                     $customItem->item_name = $foodcart->foodcartname;
                     $customItem->item_type = 'food_cart';
                     $customItem->quantity = 1; // Adjust as necessary
+                    $customItem->item_price = $price;
 
                     if (!$customItem->save()) {
                         Log::error('Failed to save custom item for food cart', ['item' => $foodcart->foodcartname]);
@@ -198,6 +220,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('lechonitem');
             $customItem->item_type = 'lechon';
             $customItem->quantity = 1; // Adjust quantity as needed
+            $customItem->item_price = $request->input('lechonprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for lechon', ['item' => $request->input('lechonitem')]);
@@ -211,6 +234,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('cakeitem');
             $customItem->item_type = 'cake';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('cakeprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for cake', ['item' => $request->input('cakeitem')]);
@@ -224,6 +248,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('clownitem');
             $customItem->item_type = 'clown';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('clownprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for clown', ['item' => $request->input('clownitem')]);
@@ -237,6 +262,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('facepaintitem');
             $customItem->item_type = 'facepaint';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('facepaintprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for facepaint', ['item' => $request->input('facepaintitem')]);
@@ -250,6 +276,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('setupitem');
             $customItem->item_type = 'setup';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('setupprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for setup', ['item' => $request->input('setupitem')]);
@@ -260,8 +287,9 @@ class OwnerCustomPackagesController extends Controller
         if ($request->has('fee') && $request->input('fee') !== null) {
             $customItem = new Customitem();
             $customItem->custompackage_id = $customPackage->custompackage_id;
-            $customItem->item_name = $request->input('fee');  // Fee is used as item_name
+            $customItem->item_name = 'Service fee';  // Fee is used as item_name
             $customItem->item_type = 'service_fee';  // Set item_type to 'service_fee'
+            $customItem->item_price = $request->input('fee');
             $customItem->quantity = 1; // Fee is typically a one-time charge, so quantity is set to 1
 
             if (!$customItem->save()) {
@@ -341,6 +369,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('beefitem');
             $customItem->item_type = 'beef';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('beefprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for beef', ['item' => $request->input('beefitem')]);
@@ -353,6 +382,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('porkitem');
             $customItem->item_type = 'pork';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('porkprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for pork', ['item' => $request->input('porkitem')]);
@@ -365,6 +395,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('chickenitem');
             $customItem->item_type = 'chicken';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('chickenprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for chicken', ['item' => $request->input('chickenitem')]);
@@ -377,6 +408,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('veggieitem');
             $customItem->item_type = 'veggie';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('veggieprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for veggie', ['item' => $request->input('veggieitem')]);
@@ -389,9 +421,23 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('otheritem');
             $customItem->item_type = 'others';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('otherprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for fish', ['item' => $request->input('otheritem')]);
+            }
+        }
+
+        if ($request->filled('dessertitem')) {
+            $customItem = new Customitem();
+            $customItem->custompackage_id = $customPackage->custompackage_id;
+            $customItem->item_name = $request->input('dessertitem');
+            $customItem->item_type = 'dessert';
+            $customItem->quantity = 1;
+            $customItem->item_price = $request->input('dessertprice');
+
+            if (!$customItem->save()) {
+                Log::error('Failed to save custom item for fish', ['item' => $request->input('dessertitem')]);
             }
         }
 
@@ -400,12 +446,14 @@ class OwnerCustomPackagesController extends Controller
         if (!empty($request->foodpackitem)) {
             foreach ($request->foodpackitem as $index => $item) {
                 $quantity = $request->foodpackquantity[$index] ?? 0; // Get quantity or default to 0
+                $price = $request->foodpackprice[$index] ?? 0;
                 if ($quantity > 0) {
                     $customItem = new Customitem();
                     $customItem->custompackage_id = $customPackage->custompackage_id;
                     $customItem->item_name = $item;
                     $customItem->item_type = 'food_pack';
                     $customItem->quantity = $quantity;
+                    $customItem->item_price = $price;
 
                     if (!$customItem->save()) {
                         Log::error('Failed to save custom item for food pack', ['item' => $item]);
@@ -418,12 +466,14 @@ class OwnerCustomPackagesController extends Controller
         if (!empty($request->foodcartselected)) {
             foreach ($request->foodcartselected as $foodcartId) {
                 $foodcart = FoodCart::find($foodcartId);
+                $price = $request->foodcartprice[$index] ?? 0;
                 if ($foodcart) {
                     $customItem = new Customitem();
                     $customItem->custompackage_id = $customPackage->custompackage_id;
                     $customItem->item_name = $foodcart->foodcartname;
                     $customItem->item_type = 'food_cart';
                     $customItem->quantity = 1; // Adjust as necessary
+                    $customItem->item_price = $price;
 
                     if (!$customItem->save()) {
                         Log::error('Failed to save custom item for food cart', ['item' => $foodcart->foodcartname]);
@@ -439,6 +489,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('lechonitem');
             $customItem->item_type = 'lechon';
             $customItem->quantity = 1; // Adjust quantity as needed
+            $customItem->item_price = $request->input('lechonprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for lechon', ['item' => $request->input('lechonitem')]);
@@ -452,6 +503,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('cakeitem');
             $customItem->item_type = 'cake';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('cakeprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for cake', ['item' => $request->input('cakeitem')]);
@@ -465,6 +517,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('clownitem');
             $customItem->item_type = 'clown';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('clownprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for clown', ['item' => $request->input('clownitem')]);
@@ -478,6 +531,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('facepaintitem');
             $customItem->item_type = 'facepaint';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('facepaintprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for facepaint', ['item' => $request->input('facepaintitem')]);
@@ -491,6 +545,7 @@ class OwnerCustomPackagesController extends Controller
             $customItem->item_name = $request->input('setupitem');
             $customItem->item_type = 'setup';
             $customItem->quantity = 1;
+            $customItem->item_price = $request->input('setupprice');
 
             if (!$customItem->save()) {
                 Log::error('Failed to save custom item for setup', ['item' => $request->input('setupitem')]);
@@ -500,8 +555,9 @@ class OwnerCustomPackagesController extends Controller
                 if ($request->has('fee') && $request->input('fee') !== null) {
             $customItem = new Customitem();
             $customItem->custompackage_id = $customPackage->custompackage_id;
-            $customItem->item_name = $request->input('fee');  // Fee is used as item_name
+            $customItem->item_name = 'Service fee';  // Fee is used as item_name
             $customItem->item_type = 'service_fee';  // Set item_type to 'service_fee'
+            $customItem->item_price = $request->input('fee');
             $customItem->quantity = 1; // Fee is typically a one-time charge, so quantity is set to 1
 
             if (!$customItem->save()) {
@@ -1730,6 +1786,7 @@ class OwnerCustomPackagesController extends Controller
 
         $dessert = new Dessert($request->all());
         $dessert->user_id = Auth::id();
+        $dessert->dessertprice = 0.00;
         $dessert->save();
 
         $use = Auth::user();
@@ -1751,6 +1808,7 @@ class OwnerCustomPackagesController extends Controller
         
         $dessert = Dessert::find($dessert_id);
         $dessert->dessertname = $request->input('dessertname');
+        $dessert->dessertprice = 0.00;
         $dessert->save();
 
         $use = Auth::user();
