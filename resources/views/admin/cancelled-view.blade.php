@@ -286,7 +286,7 @@
 
                     <div id="modal-{{ $appointment->package->package_id ?? 'default' }}" 
                         class="hidden fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-50">
-                        <div class="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-y-auto">
+                        <div class="bg-white p-6 rounded-lg shadow-lg w-full lg:w-1/2 max-h-[90vh] overflow-y-auto">
                             <div class="flex justify-between items-center">
                                 <h2 class="text-2xl font-semibold capitalize text-gray-800 dark:text-gray-900">
                                     {{ $appointment->package->customPackage->target ?? 'Package Details' }}
@@ -344,13 +344,26 @@
                                                     <h4 class="mt-2 text-md capitalize font-semibold text-gray-800">
                                                         {{ str_replace('_', ' ', $itemType) }}
                                                     </h4>
-                                                    <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                                    <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700">
                                                         @foreach ($items as $item)
-                                                            <li>
-                                                                {{ $item->item_name }}
+                                                            <li class="flex justify-between">
+                                                                <span>{{ $item->item_name }}
                                                                 @if ($item->item_type === 'food_pack')
                                                                     ({{ $item->quantity ?? 'N/A' }})
+                                                                @elseif (in_array($item->item_type, ['beef', 'pork', 'chicken', 'veggie', 'others']))
+                                                                    (₱{{ $item->item_price ?? 'N/A' }} x {{ $customPackage->person ?? 'Not specified' }}pax)
                                                                 @endif
+                                                                </span>
+                                                                <span class="text-gray-900 italic">
+                                                                    ₱{{ number_format(
+                                                                        $item->item_type === 'food_pack' 
+                                                                            ? ($item->item_price * ($item->quantity ?? 1)) 
+                                                                            : (in_array($item->item_type, ['beef', 'pork', 'chicken', 'veggie', 'others']) 
+                                                                                ? ($item->item_price * ($customPackage->person ?? 1)) 
+                                                                                : $item->item_price), 
+                                                                        2
+                                                                    ) }}
+                                                                </span>
                                                             </li>
                                                         @endforeach
                                                     </ul>

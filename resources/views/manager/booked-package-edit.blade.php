@@ -940,7 +940,7 @@
     
     <!-- Modal Structure -->
     <div id="formulaModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white p-6 rounded-lg shadow-lg sm:w-1/2 w-5/6">
+        <div class="bg-white p-6 rounded-lg shadow-lg sm:w-1/2 w-5/6 max-h-[90vh] overflow-y-auto">
             <h2 class="text-xl font-semibold mb-4 text-center">Selected Items Summary</h2>
             <div id="selectedItemsDisplay" class="space-y-4"></div>
     
@@ -972,6 +972,10 @@
         selectedItemsDisplay.innerHTML = ''; // Clear previous content
 
         const persons = parseFloat(document.getElementById('person').value) || 0;
+        const formatter = new Intl.NumberFormat('en-PH', {
+            style: 'currency',
+            currency: 'PHP',
+        });
 
         const foodItems = [
             { id: 'beefItem', label: 'Beef', multiplyByPersons: true },
@@ -1027,7 +1031,7 @@
                     // For "Others" section, we just add the price on the right
                     const itemTotalPrice = document.createElement('span');
                     itemTotalPrice.classList.add('font-semibold');
-                    itemTotalPrice.textContent = `₱${totalPrice.toFixed(2)}`; // Total price part
+                    itemTotalPrice.textContent = formatter.format(totalPrice); // Total price part
                     itemDiv.appendChild(itemTotalPrice);
 
                     selectedItemsDisplay.appendChild(itemDiv);
@@ -1057,7 +1061,7 @@
 
             const dessertTotalPrice = document.createElement('span');
             dessertTotalPrice.classList.add('font-semibold');
-            dessertTotalPrice.textContent = `₱${dessertPrice.toFixed(2)}`; // Display the dessert price
+            dessertTotalPrice.textContent = formatter.format(dessertPrice); // Display the dessert price
             dessertDiv.appendChild(dessertTotalPrice);
 
             selectedItemsDisplay.appendChild(dessertDiv);
@@ -1085,7 +1089,7 @@
                 itemDiv.appendChild(itemDescription);
                 const itemTotalPrice = document.createElement('span');
                 itemTotalPrice.classList.add('font-semibold');
-                itemTotalPrice.textContent = `₱${totalFoodPackPrice.toFixed(2)}`;
+                itemTotalPrice.textContent = formatter.format(totalFoodPackPrice);
                 itemDiv.appendChild(itemTotalPrice);
                 selectedItemsDisplay.appendChild(itemDiv);
             }
@@ -1109,7 +1113,7 @@
             itemDiv.appendChild(itemDescription);
             const itemPrice = document.createElement('span');
             itemPrice.classList.add('font-semibold');
-            itemPrice.textContent = `₱${price.toFixed(2)}`;
+            itemPrice.textContent = formatter.format(price);
             itemDiv.appendChild(itemPrice);
             selectedItemsDisplay.appendChild(itemDiv);
 
@@ -1132,14 +1136,14 @@
         feeDiv.appendChild(feeDescription);
         const feePrice = document.createElement('span');
         feePrice.classList.add('font-semibold');
-        feePrice.textContent = `₱${fee.toFixed(2)}`;
+        feePrice.textContent = formatter.format(fee);
         feeDiv.appendChild(feePrice);
         selectedItemsDisplay.appendChild(feeDiv);
 
 
         // Display the overall total with space
         const totalDiv = document.createElement('div');
-        totalDiv.textContent = `Total: ₱${total.toFixed(2)}`;
+        totalDiv.textContent = 'Total: ' + formatter.format(total);
         totalDiv.classList.add('mt-4', 'font-bold', 'text-right', 'text-md');
         selectedItemsDisplay.appendChild(totalDiv);
     }
