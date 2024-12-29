@@ -288,7 +288,7 @@ class CustomPackagesController extends Controller
         if ($request->has('fee') && $request->input('fee') !== null) {
             $customItem = new Customitem();
             $customItem->custompackage_id = $customPackage->custompackage_id;
-            $customItem->item_name = 'Service fee';  // Fee is used as item_name
+            $customItem->item_name = $request->input('fee');  // Fee is used as item_name
             $customItem->item_type = 'service_fee';  // Set item_type to 'service_fee'
             $customItem->item_price = $request->input('fee');
             $customItem->quantity = 1; // Fee is typically a one-time charge, so quantity is set to 1
@@ -556,7 +556,7 @@ class CustomPackagesController extends Controller
                 if ($request->has('fee') && $request->input('fee') !== null) {
             $customItem = new Customitem();
             $customItem->custompackage_id = $customPackage->custompackage_id;
-            $customItem->item_name = 'Service fee';  // Fee is used as item_name
+            $customItem->item_name = $request->input('fee');  // Fee is used as item_name
             $customItem->item_type = 'service_fee';  // Set item_type to 'service_fee'
             $customItem->item_price = $request->input('fee');
             $customItem->quantity = 1; // Fee is typically a one-time charge, so quantity is set to 1
@@ -657,22 +657,25 @@ class CustomPackagesController extends Controller
 
         // Re-add items (same logic as the store method, now for updates)
         // Re-add custom items for individual ingredients
-        $this->addCustomItem($request, 'beefitem', 'beef', $customPackage);
-        $this->addCustomItem($request, 'porkitem', 'pork', $customPackage);
-        $this->addCustomItem($request, 'chickenitem', 'chicken', $customPackage);
-        $this->addCustomItem($request, 'veggieitem', 'veggie', $customPackage);
-        $this->addCustomItem($request, 'otheritem', 'others', $customPackage);
+        $this->addCustomItem($request, 'beefitem', 'beef', $customPackage, $request->input('beefprice'));
+        $this->addCustomItem($request, 'porkitem', 'pork', $customPackage, $request->input('porkprice'));
+        $this->addCustomItem($request, 'chickenitem', 'chicken', $customPackage, $request->input('chickenprice'));
+        $this->addCustomItem($request, 'veggieitem', 'veggie', $customPackage, $request->input('veggieprice'));
+        $this->addCustomItem($request, 'otheritem', 'others', $customPackage, $request->input('otherprice'));
+        $this->addCustomItem($request, 'dessertitem', 'dessert', $customPackage, $request->input('dessertprice'));
 
         // Re-add custom items for food pack items
         if (!empty($request->foodpackitem)) {
             foreach ($request->foodpackitem as $index => $item) {
                 $quantity = $request->foodpackquantity[$index] ?? 0; // Get quantity or default to 0
+                $foodpackPrice = $request->foodpackprice[$index] ?? 0;
                 if ($quantity > 0) {
                     $customItem = new Customitem();
                     $customItem->custompackage_id = $customPackage->custompackage_id;
                     $customItem->item_name = $item;
                     $customItem->item_type = 'food_pack';
                     $customItem->quantity = $quantity;
+                    $customItem->item_price = $foodpackPrice;
 
                     if (!$customItem->save()) {
                         Log::error('Failed to save custom item for food pack', ['item' => $item]);
@@ -686,11 +689,13 @@ class CustomPackagesController extends Controller
             foreach ($request->foodcartselected as $foodcartId) {
                 $foodcart = FoodCart::find($foodcartId);
                 if ($foodcart) {
+                    $foodcartPrice = $request->input('foodcartprice')[$index];
                     $customItem = new Customitem();
                     $customItem->custompackage_id = $customPackage->custompackage_id;
                     $customItem->item_name = $foodcart->foodcartname;
                     $customItem->item_type = 'food_cart';
                     $customItem->quantity = 1; // Adjust as necessary
+                    $customItem->item_price = $foodcartPrice;
 
                     if (!$customItem->save()) {
                         Log::error('Failed to save custom item for food cart', ['item' => $foodcart->foodcartname]);
@@ -700,12 +705,12 @@ class CustomPackagesController extends Controller
         }
 
         // Re-add custom items for other predefined items (like lechon, cake, clown, etc.)
-        $this->addCustomItem($request, 'lechonitem', 'lechon', $customPackage);
-        $this->addCustomItem($request, 'cakeitem', 'cake', $customPackage);
-        $this->addCustomItem($request, 'clownitem', 'clown', $customPackage);
-        $this->addCustomItem($request, 'facepaintitem', 'facepaint', $customPackage);
-        $this->addCustomItem($request, 'setupitem', 'setup', $customPackage);
-        $this->addCustomItem($request, 'fee', 'service_fee', $customPackage);
+        $this->addCustomItem($request, 'lechonitem', 'lechon', $customPackage, $request->input('lechonprice'));
+        $this->addCustomItem($request, 'cakeitem', 'cake', $customPackage, $request->input('cakeprice'));
+        $this->addCustomItem($request, 'clownitem', 'clown', $customPackage, $request->input('clownprice'));
+        $this->addCustomItem($request, 'facepaintitem', 'facepaint', $customPackage, $request->input('facepaintprice'));
+        $this->addCustomItem($request, 'setupitem', 'setup', $customPackage, $request->input('setupprice'));
+        $this->addCustomItem($request, 'fee', 'service_fee', $customPackage, $request->input('fee'));
 
         // Log the update action
         $use = Auth::user();
@@ -794,22 +799,25 @@ class CustomPackagesController extends Controller
 
         // Re-add items (same logic as the store method, now for updates)
         // Re-add custom items for individual ingredients
-        $this->addCustomItem($request, 'beefitem', 'beef', $customPackage);
-        $this->addCustomItem($request, 'porkitem', 'pork', $customPackage);
-        $this->addCustomItem($request, 'chickenitem', 'chicken', $customPackage);
-        $this->addCustomItem($request, 'veggieitem', 'veggie', $customPackage);
-        $this->addCustomItem($request, 'otheritem', 'others', $customPackage);
+        $this->addCustomItem($request, 'beefitem', 'beef', $customPackage, $request->input('beefprice'));
+        $this->addCustomItem($request, 'porkitem', 'pork', $customPackage, $request->input('porkprice'));
+        $this->addCustomItem($request, 'chickenitem', 'chicken', $customPackage, $request->input('chickenprice'));
+        $this->addCustomItem($request, 'veggieitem', 'veggie', $customPackage, $request->input('veggieprice'));
+        $this->addCustomItem($request, 'otheritem', 'others', $customPackage, $request->input('otherprice'));
+        $this->addCustomItem($request, 'dessertitem', 'dessert', $customPackage, $request->input('dessertprice'));
 
         // Re-add custom items for food pack items
         if (!empty($request->foodpackitem)) {
             foreach ($request->foodpackitem as $index => $item) {
                 $quantity = $request->foodpackquantity[$index] ?? 0; // Get quantity or default to 0
+                $foodpackPrice = $request->foodpackprice[$index] ?? 0;
                 if ($quantity > 0) {
                     $customItem = new Customitem();
                     $customItem->custompackage_id = $customPackage->custompackage_id;
                     $customItem->item_name = $item;
                     $customItem->item_type = 'food_pack';
                     $customItem->quantity = $quantity;
+                    $customItem->item_price = $foodpackPrice;
 
                     if (!$customItem->save()) {
                         Log::error('Failed to save custom item for food pack', ['item' => $item]);
@@ -823,11 +831,13 @@ class CustomPackagesController extends Controller
             foreach ($request->foodcartselected as $foodcartId) {
                 $foodcart = FoodCart::find($foodcartId);
                 if ($foodcart) {
+                    $foodcartPrice = $request->input('foodcartprice')[$index];
                     $customItem = new Customitem();
                     $customItem->custompackage_id = $customPackage->custompackage_id;
                     $customItem->item_name = $foodcart->foodcartname;
                     $customItem->item_type = 'food_cart';
                     $customItem->quantity = 1; // Adjust as necessary
+                    $customItem->item_price = $foodcartPrice;
 
                     if (!$customItem->save()) {
                         Log::error('Failed to save custom item for food cart', ['item' => $foodcart->foodcartname]);
@@ -837,12 +847,12 @@ class CustomPackagesController extends Controller
         }
 
         // Re-add custom items for other predefined items (like lechon, cake, clown, etc.)
-        $this->addCustomItem($request, 'lechonitem', 'lechon', $customPackage);
-        $this->addCustomItem($request, 'cakeitem', 'cake', $customPackage);
-        $this->addCustomItem($request, 'clownitem', 'clown', $customPackage);
-        $this->addCustomItem($request, 'facepaintitem', 'facepaint', $customPackage);
-        $this->addCustomItem($request, 'setupitem', 'setup', $customPackage);
-        $this->addCustomItem($request, 'fee', 'service_fee', $customPackage);
+        $this->addCustomItem($request, 'lechonitem', 'lechon', $customPackage, $request->input('lechonprice'));
+        $this->addCustomItem($request, 'cakeitem', 'cake', $customPackage, $request->input('cakeprice'));
+        $this->addCustomItem($request, 'clownitem', 'clown', $customPackage, $request->input('clownprice'));
+        $this->addCustomItem($request, 'facepaintitem', 'facepaint', $customPackage, $request->input('facepaintprice'));
+        $this->addCustomItem($request, 'setupitem', 'setup', $customPackage, $request->input('setupprice'));
+        $this->addCustomItem($request, 'fee', 'service_fee', $customPackage, $request->input('fee'));
 
         // Update balance for connected appointments
         $appointments = Appointment::where('package_id', $package_id)->get();
@@ -868,7 +878,7 @@ class CustomPackagesController extends Controller
     /**
      * Helper method to add or update a custom item
      */
-    private function addCustomItem(Request $request, $field, $itemType, $customPackage)
+    private function addCustomItem(Request $request, $field, $itemType, $customPackage, $itemPrice = null)
     {
         if ($request->filled($field)) {
             $customItem = new Customitem();
@@ -876,6 +886,11 @@ class CustomPackagesController extends Controller
             $customItem->item_name = $request->input($field);
             $customItem->item_type = $itemType;
             $customItem->quantity = 1;
+
+            // If price is provided, save it
+        if ($itemPrice !== null) {
+            $customItem->item_price = $itemPrice;
+        }
 
             if (!$customItem->save()) {
                 Log::error("Failed to save custom item for $itemType", ['item' => $request->input($field)]);

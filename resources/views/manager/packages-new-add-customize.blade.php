@@ -883,9 +883,6 @@
         // Create menu section with space
         createSection('Menu:', menuItems, true);
 
-        // Create others section with space
-        createSection('Others:', otherItems, false);
-
         // Display selected dessert
         const dessertSelect = document.getElementById('dessertItem');
         const selectedDessertOption = dessertSelect.options[dessertSelect.selectedIndex];
@@ -910,6 +907,11 @@
             // Add dessert price to total
             total += dessertPrice;
         }
+
+        // Create others section with space
+        createSection('Others:', otherItems, false);
+
+        
 
         // Display total price for food packs
         const foodPackTotal = Array.from(document.querySelectorAll('input[name="foodpackquantity[]"]')).reduce((acc, input, index) => {

@@ -134,6 +134,7 @@ class OwnerCustomPackagesPagesController extends Controller
         $selectedChicken = $customItems->where('item_type', 'chicken')->first();
         $selectedVeggie = $customItems->where('item_type', 'veggie')->first();
         $selectedOther = $customItems->where('item_type', 'others')->first();
+        $selectedDessert = $customItems->where('item_type', 'dessert')->first();
         $selectedCake = $customItems->where('item_type', 'cake')->first();
         $selectedLechon = $customItems->where('item_type', 'lechon')->first();
         $selectedClown = $customItems->where('item_type', 'clown')->first();
@@ -155,6 +156,7 @@ class OwnerCustomPackagesPagesController extends Controller
         $chickens = Chicken::all();
         $veggies = Veggie::all();
         $others = Others::all();
+        $desserts = Dessert::all();
         $foodpacks = Foodpack::all();
         $foodcarts = Foodcart::all();
         $cake = Cake::all();
@@ -183,11 +185,13 @@ class OwnerCustomPackagesPagesController extends Controller
             'chickens',
             'veggies',
             'others',
+            'desserts',
             'selectedBeef',
             'selectedPork',
             'selectedChicken',
             'selectedVeggie',
             'selectedOther',
+            'selectedDessert',
             'selectedCake',
             'selectedLechon',
             'selectedClown',
@@ -223,6 +227,7 @@ class OwnerCustomPackagesPagesController extends Controller
         $selectedChicken = $customItems->where('item_type', 'chicken')->first();
         $selectedVeggie = $customItems->where('item_type', 'veggie')->first();
         $selectedOther = $customItems->where('item_type', 'others')->first();
+        $selectedDessert = $customItems->where('item_type', 'dessert')->first();
         $selectedCake = $customItems->where('item_type', 'cake')->first();
         $selectedLechon = $customItems->where('item_type', 'lechon')->first();
         $selectedClown = $customItems->where('item_type', 'clown')->first();
@@ -245,6 +250,7 @@ class OwnerCustomPackagesPagesController extends Controller
         $chickens = Chicken::all();
         $veggies = Veggie::all();
         $others = Others::all();
+        $desserts = Dessert::all();
         $foodpacks = Foodpack::all();
         $foodcarts = Foodcart::all();
         $cake = Cake::all();
@@ -273,11 +279,13 @@ class OwnerCustomPackagesPagesController extends Controller
             'chickens',
             'veggies',
             'others',
+            'desserts',
             'selectedBeef',
             'selectedPork',
             'selectedChicken',
             'selectedVeggie',
             'selectedOther',
+            'selectedDessert',
             'selectedCake',
             'selectedLechon',
             'selectedClown',
