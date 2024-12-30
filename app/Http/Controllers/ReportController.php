@@ -279,4 +279,36 @@ class ReportController extends Controller
         // Return the generated PDF for download
         return $pdf->stream($filename);
     }
+
+
+    public function contract(string $appointment_id)
+    {
+        $appointment = Appointment::with(['user', 'package.custompackage.items'])
+            ->where('status', 'booked')
+            ->where('appointment_id', $appointment_id)
+            ->first();
+
+        if (!$appointment) {
+            return redirect()->route('adminappointments')->with('error', 'Appointment not found or not booked.');
+        }
+
+        // Fetch the custom package if it exists
+        $customPackage = $appointment->package ? $appointment->package->custompackage : null;
+
+        // Prepare data for the PDF
+        $data = [
+            'appointment' => $appointment,
+            'package' => $appointment->package,
+            'customPackage' => $customPackage,
+        ];
+
+        /// Generate a filename using edate and etime
+        $filename = $appointment->edate . '_' . str_replace(':', '-', $appointment->etime) . ' contract.pdf';
+
+        // Load the view and generate the PDF
+        $pdf = Pdf::loadView('report.contract', $data);
+
+        // Return the generated PDF for download
+        return $pdf->stream($filename);
+    }
 }

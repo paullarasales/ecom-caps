@@ -96,6 +96,11 @@ Route::post('/reports/pending-details/{appointment_id}', [ReportController::clas
 Route::post('/reports/cancelled-details/{appointment_id}', [ReportController::class, 'cancelledDetails'])
     ->name('reports.cancelled.details');
 //DETAILS //DETAILS //DETAILS //DETAILS //DETAILS //DETAILS //DETAILS 
+
+//CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT
+Route::post('/contract/{appointment_id}', [ReportController::class, 'contract'])
+    ->name('contract');
+//CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT //CONTRACT
 //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF //PDF 
 
 //ADMIN

@@ -280,7 +280,7 @@
                         </script>
                     </tbody>
                 </table>
-                <div class="flex justify-center my-5">
+                <div class="flex justify-center my-5 gap-2">
                     @if($appointment->package_id)
                     <form action="{{route('reports.pending.details', $appointment->appointment_id)}}" method="POST">
                         @csrf
