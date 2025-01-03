@@ -15,7 +15,7 @@
             text-align: center;
         }
         .head {
-            font-size: 20px;
+            font-size: 24px;
             margin: 0 0 4px 0;
         }
         .appointment-table {
@@ -48,6 +48,9 @@
         .minimum {
             text-decoration: underline;
         }
+        .name {
+            margin: 0 0 0 40px;
+        }
         .footer {
             position: absolute;
             bottom: 20px;
@@ -58,12 +61,18 @@
             font-style: italic;
             font-size: 12px;
         }
+        .con {
+            border: 3px solid #b7982f;
+            font-size: 20px;
+            margin: 15px 170px;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <p class="head"><strong>The Siblings Catering Services</strong></p>
-        <p class="head">Event Contract</p>
+        <p class="con">Contract / Booking Agreement</p>
     </div>
 
     <div class="main">
@@ -146,6 +155,33 @@
             <p>Date: __________________________</p>
         </div>
         <hr class="break">
+        <div class="pay">
+            <table class="appointment-table">
+                {{-- <p>For more information, please contact us at:</p> --}}
+                <tr>
+                    <td>Phone :</td>
+                    <td>09052336855 / 09395728979</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        Ms. Cheska Mae Rosario / Mr. Mark Christian Rosario
+                    </td>
+                </tr>
+                <tr>
+                    <td>Facebook :</td>
+                    <td>The Siblings Catering Services</td>
+                </tr>
+                <tr>
+                    <td>Instagram :</td>
+                    <td>thesiblingscateringservices</td>
+                </tr>
+                <tr>
+                    <td>Email :</td>
+                    <td>thesiblingscateringservices@gmail.com</td>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <div class="footer">

@@ -468,6 +468,15 @@
                         <i class="fa-solid fa-download ml-3"></i>
                     </button>  
                 </form>
+                @if(!$appointment->contract)
+                <form action="{{route('contract', $appointment->appointment_id)}}" method="GET">
+                    @csrf
+                    <button type="submit" name="submit" class="inline-flex items-center w-25 px-2 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                        Print Contract
+                        <i class="fa-solid fa-download ml-3"></i>
+                    </button>  
+                </form>
+                @endif
             </div>
             <div class="flex justify-end gap-3 my-5">
 

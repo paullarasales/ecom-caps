@@ -674,12 +674,12 @@
 <style>
 /* Success Alert Button */
 .custom-button {
-        background-color: #FFCF81 !important; /* Orange button background */
+        background-color: #E07B39 !important; /* Orange button background */
         color: white !important; /* White button text */
         border-radius: 5px;
     }
     .custom-button:hover {
-        background-color: #E07B39 !important; /* Darker orange on hover */
+        background-color: #b5612a !important; /* Darker orange on hover */
     }
 
     /* Error Alert Button */

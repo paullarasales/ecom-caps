@@ -246,6 +246,127 @@
                                 </div>
                             </div>
                         </div>
+
+                        <tr class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700 ">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap ">
+                                Contract
+                            </th>
+                            <td class="px-6 py-4">
+                                @if($appointment->contract)
+                                    <a 
+                                        href="{{ asset($appointment->contract) }}" 
+                                        target="_blank" 
+                                        class="underline"
+                                        id="view-contract-btn"
+                                    >
+                                        View Attached Contract
+                                    </a>
+                                @else
+                                    <button 
+                                        id="attach-contract-btn" 
+                                        class="underline"
+                                    >
+                                        Attach Contract
+                                    </button>
+                                @endif
+                            </td>
+                        </tr>
+                        
+                        <!-- Modal to display the image -->
+                        <div id="contractModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 hidden flex items-center justify-center">
+                            <div class="relative w-full h-full flex flex-col justify-center pb-12">
+                                <!-- Close button -->
+                                <button id="closeModal" class="absolute top-4 right-4 text-white text-3xl">&times;</button>
+                                
+                                <!-- Contract Image -->
+                                <img id="contractImage" class="object-contain max-h-screen max-w-screen" />
+                                
+                                <!-- Edit Button -->
+                                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                                    <button id="editContractBtn" class="bg-yellow-500 hover:bg-yellow-700 text-white px-6 py-2 rounded-full">
+                                        Replace
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            document.getElementById('view-contract-btn').addEventListener('click', function(e) {
+                                e.preventDefault();  // Prevent the default behavior of opening the link in a new tab
+                                var contractUrl = e.target.href;
+                                
+                                // Set the source of the image in the modal
+                                document.getElementById('contractImage').src = contractUrl;
+                                
+                                // Show the modal
+                                document.getElementById('contractModal').classList.remove('hidden');
+                            });
+    
+                            // Close the modal when the close button is clicked
+                            document.getElementById('closeModal').addEventListener('click', function() {
+                                document.getElementById('contractModal').classList.add('hidden');
+                            });
+    
+                            // Close the modal when clicking outside the image
+                            document.getElementById('contractModal').addEventListener('click', function(e) {
+                                if (e.target === this) {
+                                    document.getElementById('contractModal').classList.add('hidden');
+                                }
+                            });
+    
+                            document.addEventListener('DOMContentLoaded', () => {
+                                document.getElementById('editContractBtn')?.addEventListener('click', () => {
+                                    Swal.fire({
+                                        title: 'Attach Contract',
+                                        html: `
+                                            <div class="flex justify-center items-center">
+                                                <label for="swal-contract-input" class="block w-full text-center">
+                                                    <input 
+                                                        type="file" 
+                                                        id="swal-contract-input" 
+                                                        accept="image/*" 
+                                                        class="swal2-input w-60 text-center file:mx-auto file:bg-yellow-100 file:text-gray-500 file:py-2  file:rounded file:border file:border-gray-200"
+                                                    >
+                                                </label>
+                                            </div>
+    
+                                        `,
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Submit',
+                                        cancelButtonText: 'Cancel',
+                                        customClass: {
+                                            confirmButton: 'custom-button'
+                                        },
+                                        didOpen: () => {
+                                            // Focus the file input when the modal opens
+                                            document.getElementById('swal-contract-input').focus();
+                                        },
+                                        preConfirm: () => {
+                                            const fileInput = document.getElementById('swal-contract-input');
+                                            if (!fileInput.files.length) {
+                                                Swal.showValidationMessage('Please select a file to upload');
+                                                return false;
+                                            }
+                                            return fileInput.files[0];
+                                        },
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            const file = result.value;
+                        
+                                            // Populate the hidden form with the selected file
+                                            const hiddenForm = document.getElementById('contractform');
+                                            const hiddenInput = document.getElementById('hidden-contract-input');
+                        
+                                            const dataTransfer = new DataTransfer();
+                                            dataTransfer.items.add(file);
+                                            hiddenInput.files = dataTransfer.files;
+                        
+                                            // Submit the hidden form
+                                            hiddenForm.submit();
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
     
                         <script>
                             function toggleModal(packageId) {

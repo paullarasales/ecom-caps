@@ -588,9 +588,13 @@ class AppointmentController extends Controller
             $log->logdate = now();
             $log->save();
 
-        return redirect()->back()->with([
+        // return redirect()->back()->with([
+        //     'alert' => 'success',
+        //     'message' => 'Event booked! reference number is ' . $appointment->reference
+        // ]);
+        return redirect()->route('contract', ['appointment_id' => $appointment->appointment_id])->with([
             'alert' => 'success',
-            'message' => 'Event booked! reference number is ' . $appointment->reference
+            'message' => 'Event Successfully Booked. Proceeding to contract.'
         ]);
     }
 
@@ -772,9 +776,9 @@ class AppointmentController extends Controller
         // Redirect back or to a specific route
         // session()->flash('alert', 'Event Successfully Booked');
         // return redirect()->route('pending')->with('alert', 'Event Successfully Booked');
-        return redirect()->route('pending')->with([
+        return redirect()->route('contract', ['appointment_id' => $appointment_id])->with([
             'alert' => 'success',
-            'message' => 'Event Successfully Booked.'
+            'message' => 'Event Successfully Booked. Proceeding to contract.'
         ]);
     }
 

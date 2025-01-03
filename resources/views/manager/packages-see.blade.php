@@ -64,26 +64,52 @@
                                 <th scope="col" class="px-6 py-3 capitalize">
                                     Item Name
                                 </th>
-                                {{-- <th scope="col" class="px-6 py-3 capitalize text-center">
-                                    Quantity
-                                </th> --}}
+                                <th scope="col" class="px-6 py-3 capitalize">
+                                    Item Price
+                                </th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach($customPackage->items as $item)
+                        <tbody class="text-xs">
+                            @php
+                                $menuItems = ['beef', 'pork', 'chicken', 'veggie', 'dessert', 'others'];
+                            @endphp
+            
+                            {{-- Menu Items --}}
+                            <tr>
+                                <td colspan="3" class="px-6 py-2 text-lg font-semibold bg-gray-300 text-center text-gray-700">Menu</td>
+                            </tr>
+                            @foreach($customPackage->items->filter(fn($item) => in_array($item->item_type, $menuItems)) as $item)
                                 <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700">
-                                    <td class="px-6 py-4 font-medium capitalize text-gray-800 whitespace-nowrap">
-                                        {{ str_replace('_', ' ', $item->item_type) }}
+                                    <td class="px-6 py-3 font-medium capitalize text-gray-800 whitespace-nowrap">
+                                        {{ $item->item_type === 'others' ? 'fish' : str_replace('_', ' ', $item->item_type) }}
                                     </td>
-                                    <td class="px-6 py-4 capitalize">
+                                    <td class="px-6 py-3 capitalize">
                                         {{ $item->item_name }}
                                         @if ($item->item_type === 'food_pack')
                                             ({{ $item->quantity ?? 'N/A' }})
                                         @endif
                                     </td>
-                                    {{-- <td class="px-6 py-4 text-center">
-                                        {{ $item->quantity ?? 'N/A' }}
-                                    </td> --}}
+                                    <td class="px-6 py-3 font-medium text-right capitalize text-gray-800 whitespace-nowrap">
+                                        ₱{{ number_format($item->item_price, 2) }}
+                                    </td>
+                                </tr>
+                            @endforeach
+            
+                            {{-- Other Items --}}
+                            <tr>
+                                <td colspan="3" class="px-6 py-2 text-lg font-semibold bg-gray-300 text-center text-gray-700">Others</td>
+                            </tr>
+                            @foreach($customPackage->items->filter(fn($item) => !in_array($item->item_type, $menuItems)) as $item)
+                                <tr class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700">
+                                    <td class="px-6 py-3 font-medium capitalize text-gray-800 whitespace-nowrap">
+                                        {{ str_replace('_', ' ', $item->item_type) }}
+                                    </td>
+                                    <td class="px-6 py-3 capitalize">
+                                        {{ $item->item_name }}
+                                    </td>
+                                    <td class="px-6 py-3 font-medium text-right capitalize text-gray-800 whitespace-nowrap">
+                                        ₱{{ number_format($item->item_price, 2) }}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
