@@ -893,6 +893,7 @@
                             <div class="bg-gray-100 rounded-md p-4 text-center">
                                 <h4 class="text-xl font-semibold">Total</h4>
                                 <p id="total" class="text-3xl font-bold text-yellow-600">₱ 0.00</p>
+                                <input type="hidden" name="total_amount" id="totalAmount" value="{{ old('total_amount', '0.00') }}">
                             </div>
                         </div>
                         <hr class="my-5 border border-yellow-100">
@@ -903,10 +904,57 @@
                             </div>
                             <div class="lg:col-span-2">
                                 <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-                                    <div class="md:col-span-5">
+                                    <div class="md:col-span-4">
                                         {{-- <label for="final">Enter Final Price</label> --}}
-                                        <input type="text" name="final" id="final" placeholder="Enter Final Price"  class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('final') }}"  />
+                                        <input type="text" name="final" id="final" oninput="validateFinalInput(this)" readonly  placeholder="Enter Final Price"  class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('final') }}"  />
                                     </div>
+                                    <div class="md:col-span-1">
+                                        <select name="discount" id="discount" onchange="applyDiscount()" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
+                                            <option value="" disabled selected>Discount</option>
+                                            <option value="1">1%</option>
+                                            <option value="2">2%</option>
+                                            <option value="3">3%</option>
+                                            <option value="4">4%</option>
+                                            <option value="5">5%</option>
+                                            <option value="6">6%</option>
+                                            <option value="7">7%</option>
+                                            <option value="8">8%</option>
+                                            <option value="9">9%</option>
+                                            <option value="10">10%</option>
+                                        </select>
+                                    </div>
+                                    <script>
+                                        let originalPrice = 0;  // Variable to store the original price
+                                    
+                                        function applyDiscount() {
+                                            const finalInput = document.getElementById('final');
+                                            const discountSelect = document.getElementById('discount');
+                                            
+                                            if (originalPrice <= 0) {
+                                                // Get the original price from the final input if it's not set
+                                                originalPrice = parseFloat(finalInput.value);
+                                            }
+                                    
+                                            // Get the selected discount
+                                            const discount = parseFloat(discountSelect.value);
+                                    
+                                            if (isNaN(originalPrice) || originalPrice <= 0) {
+                                                alert('Please enter a valid final price before selecting a discount.');
+                                                return;
+                                            }
+                                    
+                                            // Calculate the discounted price
+                                            const discountedPrice = originalPrice - (originalPrice * discount / 100);
+                                    
+                                            // Update the final price field with the discounted price
+                                            finalInput.value = discountedPrice.toFixed(2); // Format to 2 decimal places
+                                        }
+                                    
+                                        function validateFinalInput(input) {
+                                            // Allow only numbers and dots (for decimal values)
+                                            input.value = input.value.replace(/[^0-9.]/g, '');
+                                        }
+                                    </script>
                                     <div class="md:col-span-5">
                                         {{-- <label for="final">Enter Final Price</label> --}}
                                         <input type="text" name="packagename" id="packagename" placeholder="Enter Package Name"  class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('packagename', $package->packagename ?? '') }}"  />
@@ -1248,7 +1296,9 @@
             total += fee; // Add the service fee to the total
     
             // Update the total display
-            document.getElementById('total').textContent = `₱${total.toFixed(2)}`;
+            document.getElementById('total').textContent = `₱ ${total.toFixed(2)}`;
+            document.getElementById('totalAmount').value = total.toFixed(2);
+            document.getElementById('final').value = total.toFixed(2);
             displaySelectedItems();
         }
     

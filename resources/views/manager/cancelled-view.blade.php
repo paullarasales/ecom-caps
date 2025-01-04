@@ -140,7 +140,7 @@
                                     @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
                                     {{ $appointment->package->packagename }} 
                                     @endif 
-                                (₱{{ number_format($appointment->package->packagedesc, 2) }})
+                                (₱{{ number_format($appointment->package->discountedprice, 2) }})
                             </button>
                             @else
                                 No package assigned
@@ -292,7 +292,11 @@
                                 @if($appointment->package && $appointment->package->packagetype == 'Custom')
                                     {{-- <strong class="capitalize">{{$appointment->package->packagename}}</strong> --}}
                                     <br>
-                                    <strong>Package Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
+                                    <strong>Package Total Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
+                                    <br>
+                                    <div class="underline my-2">
+                                        <strong class="text-xl">Final Price: ₱{{ number_format($appointment->package->discountedprice ?? 0, 2) }}</strong>
+                                    </div>
                                     @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
                                     <strong>Estimated Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
                                     @endif

@@ -49,7 +49,8 @@
             <!-- Package Info -->
             <div class="p-6 w-full">
                 <h2 class="text-2xl font-semibold text-gray-800 capitalize dark:text-gray-900">{{ $customPackage->target }}</h2>
-                <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Package Price: ₱{{ number_format($package->packagedesc, 2) }}</p>
+                <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Package Total Price: ₱{{ number_format($package->packagedesc, 2) }}</p>
+                <p class="text-xl lg:text-2xl font-bold text-gray-700 dark:text-gray-700 mt-2 border-4 mx-14 border-yellow-500">Final Price: ₱{{ number_format($package->discountedprice, 2) }}</p>
                 <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Pax: {{$customPackage->person}}</p>
 
                 {{-- Check if there are items to display --}}

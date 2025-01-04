@@ -74,7 +74,8 @@ class CustomPackagesController extends Controller
         $package = new Package();
         $package->user_id = Auth::id();
         $package->packagename = $packagename; 
-        $package->packagedesc = $request->input('final'); 
+        $package->packagedesc = $request->input('total_amount'); 
+        $package->discountedprice = $request->input('final'); 
         $package->packagephoto = 'images/custom.jpg'; 
         $package->packagetype = "Custom";
         
@@ -343,7 +344,8 @@ class CustomPackagesController extends Controller
         $package = new Package();
         $package->user_id = Auth::id();
         // $package->packagename = $packagename; 
-        $package->packagedesc = $request->input('final'); 
+        $package->packagedesc = $request->input('total_amount'); 
+        $package->discountedprice = $request->input('final'); 
         $package->packagephoto = 'images/custom.jpg'; 
         $package->packagetype = "Custom";
         
@@ -627,7 +629,8 @@ class CustomPackagesController extends Controller
 
         // Update package details
         $package->packagename = $request->input('packagename');
-        $package->packagedesc = $request->input('final');
+        $package->packagedesc = $request->input('total_amount'); 
+        $package->discountedprice = $request->input('final'); 
         // You might want to update package photo or other fields, if necessary
         // $package->packagephoto = $request->input('new_photo') ?? 'images/custom.jpg'; 
 
@@ -769,7 +772,8 @@ class CustomPackagesController extends Controller
 
         // Update package details
         // $package->packagename = $request->input('packagename');
-        $package->packagedesc = $request->input('final');
+        $package->packagedesc = $request->input('total_amount'); 
+        $package->discountedprice = $request->input('final'); 
         // You might want to update package photo or other fields, if necessary
         // $package->packagephoto = $request->input('new_photo') ?? 'images/custom.jpg'; 
 
