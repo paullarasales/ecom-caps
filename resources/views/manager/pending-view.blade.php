@@ -144,12 +144,13 @@
                                 @if ($appointment->package)
                                 <button type="button" onclick="toggleModal({{ json_encode($appointment->package->package_id) }})"
                                         class="bg-white border-b dark:bg-gray-200 border-yellow-900 text-gray-700">
-                                    @if($appointment->package && $appointment->package->packagetype == 'Custom')
-                                    {{ $appointment->package->customPackage->target }} 
-                                    @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
-                                    {{ $appointment->package->packagename }} 
-                                    @endif
-                                    (₱{{ number_format($appointment->package->discountedprice, 2) }})
+                                        @if($appointment->package && $appointment->package->packagetype == 'Custom')
+                                        {{ $appointment->package->customPackage->target }} 
+                                        (₱{{ number_format($appointment->package->discountedprice, 2) }})
+                                        @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
+                                        {{ $appointment->package->packagename }} 
+                                        (₱{{ number_format($appointment->package->packagedesc, 2) }})
+                                        @endif
                                 </button>
                                 @else
                                     {{-- No package assigned --}}

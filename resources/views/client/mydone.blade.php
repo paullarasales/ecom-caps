@@ -123,10 +123,11 @@
                                         class="bg-white border-b dark:bg-yellow-50 border-yellow-900 text-gray-700">
                                         @if($appointment->package && $appointment->package->packagetype == 'Custom')
                                         {{ $appointment->package->customPackage->target }} 
+                                        (₱{{ number_format($appointment->package->discountedprice, 2) }})
                                         @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
                                         {{ $appointment->package->packagename }} 
+                                        (₱{{ number_format($appointment->package->packagedesc, 2) }})
                                         @endif
-                                    (₱{{ number_format($appointment->package->discountedprice, 2) }})
                                 </button>
                                 @else
                                     No package assigned
