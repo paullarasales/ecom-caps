@@ -6,7 +6,7 @@
     <title>Booked Events Reports</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'DejaVu Sans', sans-serif;
         }
         .main {
             margin: 0 50px;
@@ -15,8 +15,8 @@
             text-align: center;
         }
         .head {
-            font-size: 20px;
-            margin: 0;
+            font-size: 24px;
+            margin: 0 0 4px 0;
         }
         
         .appointment-table {
@@ -28,25 +28,25 @@
         .appointment-table td {
             padding: 2px;
             text-align: left;
-            font-size: 13px
+            font-size: 11px
         }
 
         .appointment-table td:first-child {
-            font-weight: bold;
+            font-weight: normal;
         }
 
         ul {
             list-style-type: disc;
             padding-left: 50px;
-            font-size: 14px;
+            font-size: 11px;
         }
         li {
             margin: 5px 0;
             text-transform: capitalize;
         }
         .title {
-            font-size: 18px;
-            margin: 20px 0;
+            font-size: 14px;
+            margin: 5px 0;
         }
         .pack {
             margin: 0 40px;
@@ -56,11 +56,15 @@
         }
         .pack p {
             text-transform: capitalize;
-            font-size: 13px;
+            font-size: 11px;
             margin: 8px 0;;
         }
         .bal {
             font-size: 12px;
+            font-style: italic;
+        }
+        .itemprice {
+            float: right;
             font-style: italic;
         }
         .footer {
@@ -73,27 +77,33 @@
             font-style: italic;
             font-size: 12px;
         }
+        .con {
+            border: 3px solid #0ad614;
+            font-size: 20px;
+            margin: 15px 250px;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <p class="head"><strong>The Siblings Catering Services</strong></p>
-        <p class="head">Booked</p>
+        <p class="con">Booked</p>
     </div>
 
     <div class="main">
-        <p class="title"><strong>User Information</strong></p>
+        <p class="title"><strong>Client Information</strong></p>
         <table class="appointment-table">
             <tr>
-                <td><strong>Name:</strong></td>
+                <td>Name:</td>
                 <td>{{ $appointment->user->firstname }} {{ $appointment->user->lastname }}</td>
             </tr>
             <tr>
-                <td><strong>Phone:</strong></td>
+                <td>Phone:</td>
                 <td>{{$appointment->user->phone}}</td>
             </tr>
             <tr>
-                <td><strong>Address:</strong></td>
+                <td>Address:</td>
                 <td>{{$appointment->user->address}}, {{$appointment->user->city}}</td>
             </tr>
         </table>
@@ -102,23 +112,23 @@
         <p class="title"><strong>Event Information</strong></p>
         <table class="appointment-table">
             <tr>
-                <td><strong>Location:</strong></td>
+                <td>Location:</td>
                 <td>{{ ucfirst($appointment->location) }}</td>
             </tr>
             <tr>
-                <td><strong>Date:</strong></td>
+                <td>Date:</td>
                 <td>{{ \Carbon\Carbon::parse($appointment->edate)->format('F j, Y') }}</td>
             </tr>
             <tr>
-                <td><strong>Time:</strong></td>
+                <td>Time:</td>
                 <td>{{ $appointment->etime }}</td>
             </tr>
             <tr>
-                <td><strong>Type:</strong></td>
+                <td>Type:</td>
                 <td>{{ $appointment->type }}</td>
             </tr>
             <tr>
-                <td><strong>Theme:</strong></td>
+                <td>Theme:</td>
                 <td>{{ $appointment->theme }}</td>
             </tr>
         </table>
@@ -128,8 +138,9 @@
             @elseif($package && $package->packagetype == 'Normal')
             {{ $package->packagename }} 
             @endif
-            (Php {{ number_format($package->packagedesc, 2) }})
-            <span class="bal">(Balance: Php {{ number_format($appointment->balance, 2) }})</span>
+            ( ₱{{ number_format($package->discountedprice, 2) }} )
+            <span class="bal">(Balance: ₱{{ number_format($appointment->balance, 2) }})</span>
+            <span class="bal">(Deposit: ₱{{ number_format($appointment->deposit, 2) }})</span>
         </p>
         <div class="pack">
             @if($package)
@@ -174,10 +185,23 @@
                             <ul>
                                 @foreach ($items as $item)
                                     <li>
-                                        {{ $item->item_name }}
-                                        @if ($item->item_type === 'food_pack')
-                                            ({{ $item->quantity ?? 'N/A' }})
-                                        @endif
+                                        <span>{{ $item->item_name }}
+                                            @if ($item->item_type === 'food_pack')
+                                                ({{ $item->quantity ?? 'N/A' }})
+                                            @elseif (in_array($item->item_type, ['beef', 'pork', 'chicken', 'veggie', 'others']))
+                                                (₱{{ $item->item_price ?? 'N/A' }} x {{ $customPackage->person ?? 'Not specified' }}pax)
+                                            @endif
+                                            </span>
+                                            <span class="itemprice">
+                                                ₱{{ number_format(
+                                                    $item->item_type === 'food_pack' 
+                                                        ? ($item->item_price * ($item->quantity ?? 1)) 
+                                                        : (in_array($item->item_type, ['beef', 'pork', 'chicken', 'veggie', 'others']) 
+                                                            ? ($item->item_price * ($customPackage->person ?? 1)) 
+                                                            : $item->item_price), 
+                                                    2
+                                                ) }}
+                                            </span>
                                     </li>
                                 @endforeach
                             </ul>
@@ -186,11 +210,24 @@
                             <p>
                                 <strong>{{ str_replace('_', ' ', $itemType) }}:</strong> 
                                 @foreach ($items as $item)
-                                    {{ $item->item_name }}
+                                    <span>{{ $item->item_name }}</span>
+                                    <span class="itemprice">₱{{ number_format($item->item_price), 2 }}</span>
                                 @endforeach
                             </p>
                         @endif
                     @endforeach
+                    <hr>
+                    <p>
+                        <strong>Package Total Price:</strong> 
+                            {{-- <span>{{ $item->item_name }}</span> --}}
+                            <span class="itemprice">₱{{ number_format($package->packagedesc, 2) }}</span>
+                    </p>
+                    <p>
+                        <strong>Final Price:</strong> 
+                            {{-- <span>{{ $item->item_name }}</span> --}}
+                            <span class="itemprice">₱{{ number_format($package->discountedprice, 2) }}</span>
+                    </p>
+                    <hr>
                 @else
                     <p>No custom items available</p>
                 @endif

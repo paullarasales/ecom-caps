@@ -10,11 +10,11 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 10px;
+            /* margin-bottom: 10px; */
         }
         .head {
-            font-size: 20px;
-            margin: 0;
+            font-size: 24px;
+            margin: 0 0 4px 0;
         }
         table {
             width: 100%;
@@ -29,7 +29,7 @@
             text-transform: capitalize;
         }
         th {
-            background-color: #dde38c;
+            background-color: lightgray;
         }
         tbody tr:nth-child(odd) {
         background-color: #f9f9f9; /* Light gray for odd rows */
@@ -53,12 +53,18 @@
             font-size: 12px;
             font-weight: normal;
         }
+        .con {
+            border: 3px solid #0ab5ee;
+            font-size: 20px;
+            margin: 15px 200px;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <p class="head">The Siblings Catering Services</p>
-        <p class="head">Completed Events Report</p>
+        <p class="con">Completed Events Report</p>
         <p>Month: {{ $month }}</p>
     </div>
 
@@ -76,7 +82,7 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $appointment->user->firstname }} {{ $appointment->user->lastname }}</td>
-                    <td>{{ $appointment->package->custompackage->target ?? 'N/A' }} (Php {{ number_format($appointment->package->packagedesc, 2) }})</td>
+                    <td>{{ $appointment->package->custompackage->target ?? 'N/A' }} (Php {{ number_format($appointment->package->discountedprice, 2) }})</td>
                     <td>{{ $appointment->edate ? \Carbon\Carbon::parse($appointment->edate)->format('F j, Y') : 'No Event Date Assigned' }}</td>
                 </tr>
             @endforeach
@@ -88,7 +94,7 @@
             $totalDeposit = $appointments->sum('deposit');
             $totalBalance = $appointments->sum('balance');
             $totalPackagePrice = $appointments->sum(function ($appointment) {
-                return $appointment->package->packagedesc ?? 0;
+                return $appointment->package->discountedprice ?? 0;
             });
         @endphp
         {{-- <span>Total Deposit: Php {{ number_format($totalDeposit, 2) }}</span>

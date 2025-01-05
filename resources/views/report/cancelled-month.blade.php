@@ -10,11 +10,11 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 10px;
+            /* margin-bottom: 10px; */
         }
         .head {
-            font-size: 20px;
-            margin: 0;
+            font-size: 24px;
+            margin: 0 0 4px 0;
         }
         table {
             width: 100%;
@@ -29,7 +29,7 @@
             text-transform: capitalize;
         }
         th {
-            background-color: #dde38c;
+            background-color: lightgray;
         }
         tbody tr:nth-child(odd) {
         background-color: #f9f9f9; /* Light gray for odd rows */
@@ -47,12 +47,18 @@
             font-style: italic;
             font-size: 12px;
         }
+        .con {
+            border: 3px solid #cc250f;
+            font-size: 20px;
+            margin: 15px 200px;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <p class="head">The Siblings Catering Services</p>
-        <p class="head">Cancelled Events Report</p>
+        <p class="con">Cancelled Events Report</p>
         <p>Month: {{ $month }}</p>
     </div>
 
@@ -71,7 +77,7 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $appointment->user->firstname }} {{ $appointment->user->lastname }}</td>
-                    <td>{{ $appointment->package->custompackage->target ?? 'N/A' }} (Php {{ number_format($appointment->package->packagedesc, 2) }})</td>
+                    <td>{{ $appointment->package->custompackage->target ?? 'N/A' }} (Php {{ number_format($appointment->package->discountedprice, 2) }})</td>
                     <td>{{ $appointment->reason}}</td>
                     <td>{{ $appointment->edate ? \Carbon\Carbon::parse($appointment->edate)->format('F j, Y') : 'No Event Date Assigned' }}</td>
                 </tr>

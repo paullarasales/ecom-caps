@@ -45,8 +45,8 @@ class OwnerAppointmentsController extends Controller
         }
 
         // Ensure deposit is within valid range
-        $minDeposit = $package->packagedesc * 0.20; // Minimum 20% of the package price
-        $maxDeposit = $package->packagedesc; // Maximum is the full package price
+        $minDeposit = $package->discountedprice * 0.20; // Minimum 20% of the package price
+        $maxDeposit = $package->discountedprice; // Maximum is the full package price
 
         $deposit = $request->input('deposit');
         $balance = $maxDeposit - $request->input('deposit');

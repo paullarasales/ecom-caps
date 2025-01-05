@@ -10,11 +10,11 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 10px;
+            /* margin-bottom: 10px; */
         }
         .head {
-            font-size: 20px;
-            margin: 0;
+            font-size: 24px;
+            margin: 0 0 4px 0;
         }
         table {
             width: 100%;
@@ -29,7 +29,7 @@
             text-transform: capitalize;
         }
         th {
-            background-color: #dde38c;
+            background-color: lightgray;
         }
         tbody tr:nth-child(odd) {
         background-color: #f9f9f9; /* Light gray for odd rows */
@@ -47,12 +47,18 @@
             font-style: italic;
             font-size: 12px;
         }
+        .con {
+            border: 3px solid #b7982f;
+            font-size: 20px;
+            margin: 15px 200px;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <p class="head"><strong>The Siblings Catering Services</strong></p>
-        <p class="head">Pending Appointments</p>
+        <p class="con">Pending Appointments</p>
         <p>Month: {{ $month }}</p>
     </div>
 

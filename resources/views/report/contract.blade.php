@@ -124,11 +124,15 @@
             </tr>
             <tr>
                 <td>Total Amount :</td>
-                <td>Php {{ number_format($package->packagedesc, 2) }}</td>
+                <td>Php {{ number_format($package->discountedprice, 2) }}</td>
             </tr>
             <tr>
                 <td>Balance :</td>
                 <td>Php {{ number_format($appointment->balance, 2) }}</td>
+            </tr>
+            <tr>
+                <td>Deposit :</td>
+                <td>Php {{ number_format($appointment->deposit, 2) }}</td>
             </tr>
         </table>
 
@@ -136,7 +140,7 @@
         <div class="pay">
             <p>Payment Terms</p>
             <ul>
-                <li>A non-refundable, non-transferable deposit minimum of (20%) <span class="minimum">Php {{ number_format($package->packagedesc * 0.20, 2) }}</span> is required to book your event for an available date.</li>
+                <li>A non-refundable, non-transferable deposit minimum of (20%) <span class="minimum">Php {{ number_format($package->discountedprice * 0.20, 2) }}</span> is required to book your event for an available date.</li>
                 <li>Full Payment must be completed on the day of event.</li>
             </ul>
             <p>NOTE: CANCELLATION IS STRICTLY PROHIBITED, However, in Terms of Uncertain Circumstances: We allow rescheduling of the event</p>

@@ -26,6 +26,7 @@ use App\Models\Veggie;
 use App\Models\Others;
 use App\Models\Dessert;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class CustomPackagesController extends Controller
 {
@@ -593,7 +594,7 @@ class CustomPackagesController extends Controller
 
 
         // Return success message
-        return redirect()->back()->with('success', 'Custom package created successfully!');
+        return redirect()->route('pendingView', $appointment_id)->with('success', 'Package created successfully!');
     }
 
 
@@ -874,6 +875,39 @@ class CustomPackagesController extends Controller
         $log->description = $customPackage->target . " package edited for event on " .$DateFormatted . " by " . $use->firstname . " " . $use->lastname;
         $log->logdate = now();
         $log->save();
+
+        // Get the user who made the appointment
+        $user = $appointment->user; // Assuming you have a relation between Appointment and User models
+
+        // Format the appointment date and time
+        $appointmentDateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
+
+        // Create the email content
+        $emailContent = "
+            <div style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                <h1 style='color: #333;'>The package of your event: {$appointment->type} on {$appointmentDateFormatted} have been updated</h1>
+                <p>Dear <strong>{$user->firstname} {$user->lastname}</strong>,</p>
+                <p>We look forward on making your next event wonderful.</p>
+                <p style='color: #555;'>Message us on our Facebook page or on our Website for more details</p>
+            </div>
+        ";
+
+        try {
+            // Send the email
+            if (!empty($user->email)) {
+                Mail::send([], [], function ($message) use ($user, $emailContent) {
+                    $message->to($user->email)
+                            ->subject('Event Package Updated')
+                            ->html($emailContent);
+                });
+            }
+        } catch (\Exception $e) {
+            // Log the error or handle it
+            Log::error('Email could not be sent: ' . $e->getMessage());
+            
+            // Redirect back with an error message
+            return redirect()->back()->with('error', 'Failed to send confirmation email.');
+        }
 
         // Return success message
         return redirect()->back()->with('success', 'Custom package updated successfully!');

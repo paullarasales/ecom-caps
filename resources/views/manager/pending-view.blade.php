@@ -331,7 +331,7 @@
                         <script>
                             document.getElementById('acceptButton').addEventListener('click', function () {
                                 // Get the package description from the Blade variable
-                                var packageDesc = parseFloat("{{ $appointment->package->packagedesc ?? '' }}");
+                                var packageDesc = parseFloat("{{ $appointment->package->discountedprice ?? '' }}");
 
                                 // Calculate the minimum deposit (20% of package price)
                                 var minDeposit = (packageDesc * 0.20).toFixed(2); // 20% of package price with 2 decimals

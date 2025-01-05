@@ -506,8 +506,8 @@ class AppointmentController extends Controller
         }
 
         // Ensure deposit is within valid range
-        $minDeposit = $package->packagedesc * 0.20; // Minimum 20% of the package price
-        $maxDeposit = $package->packagedesc; // Maximum is the full package price
+        $minDeposit = $package->discountedprice * 0.20; // Minimum 20% of the package price
+        $maxDeposit = $package->discountedprice; // Maximum is the full package price
 
         $deposit = $request->input('deposit');
         $balance = $maxDeposit - $request->input('deposit');
@@ -629,8 +629,8 @@ class AppointmentController extends Controller
         }
 
         // Ensure deposit is within valid range
-        $minDeposit = $package->packagedesc * 0.20; // Minimum 20% of the package price
-        $maxDeposit = $package->packagedesc; // Maximum is the full package price
+        $minDeposit = $package->discountedprice * 0.20; // Minimum 20% of the package price
+        $maxDeposit = $package->discountedprice; // Maximum is the full package price
 
         $deposit = $request->input('deposit');
 
@@ -703,7 +703,7 @@ class AppointmentController extends Controller
 
         $package = $appointment->package;
         if ($package) {
-            $appointment->balance = $package->packagedesc - $appointment->deposit;
+            $appointment->balance = $package->discountedprice - $appointment->deposit;
         } else {
             return response()->json(['error' => 'Package not found'], 404);
         }
@@ -1508,7 +1508,14 @@ class AppointmentController extends Controller
         }
 
         // Redirect back or to a success page
-        return redirect()->back()->with('success', 'Event updated successfully!');
+        // return redirect()->back()->with('success', 'Event updated successfully!');
+        if ($appointment->status === 'booked') {
+            return redirect()->route('bookedView', $appointment_id)->with('success', 'Event updated details successfully!');
+        } elseif ($appointment->status === 'pending') {
+            return redirect()->route('pendingView', $appointment_id)->with('success', 'Event updated details successfully!');
+        } elseif ($appointment->status === 'cancelled') {
+            return redirect()->route('cancelledView', $appointment_id)->with('success', 'Event updated details successfully!');
+        }
 
     }
 

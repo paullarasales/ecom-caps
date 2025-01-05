@@ -267,7 +267,7 @@
                             
                                     @foreach ($packages as $pk)
                                         <option value="{{$pk->package_id}}" 
-                                            data-packagedesc="{{ $pk->packagedesc }}" 
+                                            data-packagedesc="{{ $pk->discountedprice }}" 
                                             @if (isset($appointment) && $appointment->package_id == $pk->package_id) selected @endif>
                                             {{$pk->customPackage->target}} - {{$pk->packagename}}
                                         </option>
@@ -306,7 +306,7 @@
                                                     <button type="button" onclick="toggleModal({{ $pk->package_id }})" class="text-gray-600 hover:text-gray-900 font-bold text-xl">&times;</button>
                                                 </div>
                                                 
-                                                <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Package Price: ₱{{ number_format($pk->packagedesc, 2) }}</p>
+                                                <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Package Price: ₱{{ number_format($pk->discountedprice, 2) }}</p>
                                                 <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Pax: {{$pk->customPackage->person ?? 'N/A'}}</p> <!-- Ensure this is not null -->
                             
                                                 @if ($pk->customPackage && $pk->customPackage->items->isNotEmpty())
