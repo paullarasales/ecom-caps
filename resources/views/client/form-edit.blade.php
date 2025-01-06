@@ -199,31 +199,15 @@
                                 <input type="text" name="theme" id="theme" placeholder="Enter theme" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ $appointment->theme }}" />
                             </div>
 
-                            <div class="md:col-span-5">
-                                <label for="city">Package</label>
-                                {{-- <input type="text" name="package" id="package" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" /> --}}
-                                <select name="package_id" id="" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
-                                    
-                                    <option disabled>See the packages below</option>
-                                
-                                        @foreach ($packages as $pk)
-                                            <option value="{{$pk->package_id}}" 
-                                                @if (isset($appointment) && $appointment->package_id == $pk->package_id) selected @endif>
-                                                {{$pk->packagename}}
-                                            </option>
-                                        @endforeach
-                                    
-                                </select>
-                                
-                                
-                                
-                            </div>
+                            <!-- Hidden input to store the selected package -->
+                            <input type="hidden" id="selected-package" name="package_id" value="{{ $appointment->package_id ?? '' }}">
 
                             <div class="md:col-span-5">
                                 <label for="package" class="uppercase bg-yellow-100 my-10 rounded-xl py-1 px-2">Package Overview</label>
                                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 mt-2 lg:grid-cols-4 gap-4">
                                     @foreach ($packages as $pk)
-                                    <div class="max-w-[12rem] bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-200 dark:border-gray-700">
+                                    <div id="package-card-{{ $pk->package_id }}" class="max-w-[12rem] bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-200 dark:border-gray-700
+                                        @if ($pk->package_id == $appointment->package_id) selected @endif">
                                         <div class="p-3">
                                             <a href="#">
                                                 <h5 class="mb-2 text-lg font-bold uppercase tracking-tight text-gray-900 dark:text-gray-700">{{ $pk->packagename }}</h5>
@@ -238,7 +222,7 @@
                                             </button>
                                         </div>
                                     </div>
-                            
+
                                     <!-- Modal structure -->
                                     <div id="modal-{{ $pk->package_id }}" class="hidden fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-50">
                                         <div class="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-hidden flex flex-col">
@@ -248,7 +232,6 @@
                                             </div>
                                             
                                             <p class="text-xl font-bold text-gray-700 dark:text-gray-700 mt-2">Estimated Price: ₱{{ number_format($pk->packagedesc, 2) }}</p>
-                            
                                             <!-- Scrollable Content Area -->
                                             <div class="mt-4 overflow-y-auto flex-grow">
                                                 <table class="min-w-full table-auto text-sm text-left text-gray-700 dark:text-gray-900">
@@ -268,30 +251,58 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+
+                                            <!-- Confirm Selection Button -->
+                                            <div class="mt-4 flex justify-end">
+                                                <button type="button" onclick="confirmSelection({{ $pk->package_id }}, '{{ $pk->packagename }}')" 
+                                                        class="px-4 py-2 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300">
+                                                    Confirm Selection
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                     @endforeach
                                 </div>
                             </div>
-                            
+
                             <script>
                                 // Function to toggle visibility of the modal
                                 function toggleModal(packageId) {
-                                    console.log("Toggling modal for package ID: " + packageId); // Log for debugging
-                            
-                                    // Find the modal for the specific package
                                     const modal = document.getElementById('modal-' + packageId);
-                            
-                                    // Check if the modal container was found
                                     if (modal) {
-                                        // Toggle the 'hidden' class to show/hide the modal
                                         modal.classList.toggle('hidden');
-                                        console.log("Modal toggled: ", modal.classList.contains('hidden') ? "Hidden" : "Visible");
-                                    } else {
-                                        console.error("Modal not found for package ID: " + packageId);
                                     }
                                 }
-                            
+
+                                // Function to confirm package selection
+                                function confirmSelection(packageId, packageName) {
+                                    // Close the modal
+                                    toggleModal(packageId);
+
+                                    // Set the selected package in a hidden input field
+                                    const selectedPackageInput = document.getElementById('selected-package');
+                                    if (selectedPackageInput) {
+                                        selectedPackageInput.value = packageId;
+                                    }
+
+                                    // Remove the 'selected' class from all package cards
+                                    document.querySelectorAll('[id^="package-card-"]').forEach(card => {
+                                        card.classList.remove('selected');
+                                    });
+
+                                    // Add the 'selected' class to the currently selected package card
+                                    const selectedCard = document.getElementById('package-card-' + packageId);
+                                    if (selectedCard) {
+                                        selectedCard.classList.add('selected');
+                                    }
+
+                                    // Update the dropdown with the selected package
+                                    const dropdown = document.getElementById('selected-package-dropdown');
+                                    if (dropdown) {
+                                        dropdown.value = packageId;
+                                    }
+                                }
+
                                 // Prevent page reloads when closing modal and not submitting forms
                                 document.querySelectorAll('button[type="button"]').forEach(button => {
                                     button.addEventListener('click', function(event) {
@@ -299,6 +310,14 @@
                                     });
                                 });
                             </script>
+
+                            <style>
+                                .selected {
+                                    background-color: #fef08a; /* Light yellow */
+                                    border-color: #2b2920; /* Yellow border */
+                                }
+                            </style>
+
                             
                             
                             

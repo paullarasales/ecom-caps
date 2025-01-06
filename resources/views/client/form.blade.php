@@ -185,42 +185,31 @@
                                 <input type="text" name="theme" id="theme" placeholder="Enter theme" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('type') }}" />
                             </div>
 
+                            <!-- Hidden input to store the selected package -->
+                            <input type="hidden" id="selected-package" name="package_id" value="">
                             <div class="md:col-span-5">
-                                <label for="city">Package</label>
-                                {{-- <input type="text" name="package" id="package" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="" /> --}}
-                                <select name="package_id" id="" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
-                                    
-                                    @foreach ($packages as $pk)
-                                    <option value="{{$pk->package_id}}">{{$pk->packagename}}</option>
-                                    
-                                    @endforeach
-                                    <option disabled selected>See the packages below</option>
-                                    
-                                </select>
-                                
-                                
-                                
-                            </div>
-
-                            <div class="md:col-span-5">
-                                <label for="package" class="uppercase bg-yellow-100 my-10 rounded-xl py-1 px-2">Package Overview</label>
+                                <label for="package" class="uppercase bg-yellow-100 my-10 rounded-xl py-1 px-2">Preferred Package</label>
                                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 mt-2 lg:grid-cols-4 gap-4">
                                     @foreach ($packages as $pk)
-                                    <div class="max-w-[12rem] bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-200 dark:border-gray-700">
+                                    <div id="package-card-{{ $pk->package_id }}" 
+                                        class="max-w-[12rem] bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-200 dark:border-gray-700">
                                         <div class="p-3">
                                             <a href="#">
-                                                <h5 class="mb-2 text-lg font-bold uppercase tracking-tight text-gray-900 dark:text-gray-700">{{ $pk->packagename }}</h5>
+                                                <h5 class="mb-2 text-lg font-bold uppercase tracking-tight text-gray-900 dark:text-gray-700">
+                                                    {{ $pk->packagename }}
+                                                </h5>
                                             </a>
                                             <!-- Button to trigger showing the details -->
                                             <button type="button" onclick="toggleModal({{ $pk->package_id }})" 
                                                     class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
-                                                Read more
+                                                See Details
                                                 <svg class="rtl:rotate-180 w-3 h-3 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
                                                 </svg>
                                             </button>
                                         </div>
                                     </div>
+                                    
                             
                                     <!-- Modal structure -->
                                     <div id="modal-{{ $pk->package_id }}" class="hidden fixed inset-0 z-50 flex justify-center items-center bg-gray-800 bg-opacity-50">
@@ -251,6 +240,14 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                            
+                                            <!-- Confirm Selection Button -->
+                                            <div class="mt-4 flex justify-end">
+                                                <button type="button" onclick="confirmSelection({{ $pk->package_id }}, '{{ $pk->packagename }}')" 
+                                                        class="px-4 py-2 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300">
+                                                    Confirm Selection
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                     @endforeach
@@ -260,28 +257,45 @@
                             <script>
                                 // Function to toggle visibility of the modal
                                 function toggleModal(packageId) {
-                                    console.log("Toggling modal for package ID: " + packageId); // Log for debugging
-                            
-                                    // Find the modal for the specific package
                                     const modal = document.getElementById('modal-' + packageId);
-                            
-                                    // Check if the modal container was found
                                     if (modal) {
-                                        // Toggle the 'hidden' class to show/hide the modal
                                         modal.classList.toggle('hidden');
-                                        console.log("Modal toggled: ", modal.classList.contains('hidden') ? "Hidden" : "Visible");
-                                    } else {
-                                        console.error("Modal not found for package ID: " + packageId);
                                     }
                                 }
                             
-                                // Prevent page reloads when closing modal and not submitting forms
-                                document.querySelectorAll('button[type="button"]').forEach(button => {
-                                    button.addEventListener('click', function(event) {
-                                        event.preventDefault(); // Prevent form submission or page reload
+                                // Function to confirm package selection
+                                function confirmSelection(packageId, packageName) {
+                                    // Close the modal
+                                    toggleModal(packageId);
+
+                                    // Set the selected package in a hidden input field
+                                    const selectedPackageInput = document.getElementById('selected-package');
+                                    if (selectedPackageInput) {
+                                        selectedPackageInput.value = packageId;
+                                    }
+
+                                    // Remove the 'selected' class from all package cards
+                                    document.querySelectorAll('[id^="package-card-"]').forEach(card => {
+                                        card.classList.remove('selected');
                                     });
-                                });
+
+                                    // Add the 'selected' class to the currently selected package card
+                                    const selectedCard = document.getElementById('package-card-' + packageId);
+                                    if (selectedCard) {
+                                        selectedCard.classList.add('selected');
+                                    }
+                                }
+
                             </script>
+                            <style>
+                                .selected {
+                                    background-color: #fef08a; /* Light yellow */
+                                    border-color: #2b2920; /* Yellow border */
+                                }
+                            </style>
+                            
+                            
+                            
                             
                             
                             
