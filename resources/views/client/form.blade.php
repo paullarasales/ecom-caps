@@ -300,11 +300,18 @@
                             
                             
                             
+                            
 
                             {{-- @foreach ($packages as $pk)
                                 <h1>{{$pk->packagename}}</h1>
                             @endforeach --}}
 
+                        </div>
+                        <div class="flex justify-center mt-5">
+                            <a href="{{route('custom.client.inclusion')}}" class="bg-yellow-500 text-center hover:bg-yellow-700 text-white font-bold px-4 py-2 text-xs w-32 rounded-lg">
+                                Customize
+                                <i class="fa-solid fa-pencil ml-5"></i>
+                            </a>
                         </div>
                     </div>
                 </div>

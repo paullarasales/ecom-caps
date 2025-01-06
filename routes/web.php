@@ -34,6 +34,7 @@ use App\Http\Controllers\NewSampleController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DishesController;
 use App\Http\Controllers\ReminderController;
+use App\Http\Controllers\ClientPackageController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -1314,6 +1315,7 @@ Route::get('/form/meeting-edit/{appointment_id}', [UserController::class, 'formM
 Route::get('/form-edit/{appointment_id}', [UserController::class, 'formEdit'])->middleware(['auth', 'verified','user'])->name('form.edit');
 Route::get('/meeting-form', [UserController::class, 'meetingform'])->middleware(['auth', 'verified','user'])->name('meetingform');
 
+Route::get('/client/customize/inclusion', [ClientPackageController::class, 'custom'])->middleware(['auth', 'verified','user'])->name('custom.client.inclusion');
 
 //REVIEWS
 
