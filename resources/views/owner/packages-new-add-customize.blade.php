@@ -8,7 +8,7 @@
 
     <div class="text-center py-2 my-2">
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Add <span class="text-yellow-600">Custom Package</span>
+            Create <span class="text-yellow-600">Custom Package</span>
         </h3>
     </div>
 

@@ -193,7 +193,7 @@ class ReviewController extends Controller
             
             // Redirect back with an error message
             // return redirect()->route('pending')->with('error', 'Failed to send confirmation email.');
-            return redirect()->route('pending')->with([
+            return redirect()->back()->with([
                 'alert' => 'success',
                 'message' => 'Event Successfully Booked. However, we could not send a confirmation email at the moment.'
             ]);

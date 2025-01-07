@@ -767,9 +767,9 @@ class AppointmentController extends Controller
             
             // Redirect back with an error message
             // return redirect()->route('pending')->with('error', 'Failed to send confirmation email.');
-            return redirect()->route('pending')->with([
+            return redirect()->route('contract', ['appointment_id' => $appointment_id])->with([
                 'alert' => 'success',
-                'message' => 'Event Successfully Booked. However, we could not send a confirmation email at the moment.'
+                'message' => 'Event Successfully Booked. Proceeding to contract.'
             ]);
         }
 
