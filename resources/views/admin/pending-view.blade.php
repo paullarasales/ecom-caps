@@ -147,7 +147,7 @@
                                     @if($appointment->package && $appointment->package->packagetype == 'Custom')
                                     {{ $appointment->package->customPackage->target }} 
                                     (₱{{ number_format($appointment->package->discountedprice, 2) }})
-                                    @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
+                                    @elseif($appointment->package && ($appointment->package->packagetype == 'Normal' || $appointment->package->packagetype == 'Client'))
                                     {{ $appointment->package->packagename }} 
                                     (₱{{ number_format($appointment->package->packagedesc, 2) }})
                                     @endif
@@ -167,7 +167,13 @@
                             <div class="bg-white p-6 rounded-lg shadow-lg w-full lg:w-1/2 max-h-[90vh] overflow-y-auto">
                                 <div class="flex justify-between items-center">
                                     <h2 class="text-2xl font-semibold capitalize text-gray-800 dark:text-gray-900">
+                                        @if($appointment->package && $appointment->package->packagetype == 'Custom')
                                         {{ $appointment->package->customPackage->target ?? 'Package Details' }}
+                                        @elseif($appointment->package && ($appointment->package->packagetype == 'Normal'))
+                                        {{ $appointment->package->packagename ?? 'Package Details' }}
+                                        @elseif($appointment->package && ($appointment->package->packagetype == 'Client'))
+                                        {{ $appointment->package->packagename ?? 'Package Details' }} <span class="text-sm font-normal italic">Created by Client</span>
+                                        @endif
                                     </h2>
                                     <!-- Close Button -->
                                     <button type="button" 
@@ -183,7 +189,7 @@
                                     <div class="underline my-2">
                                         <strong class="text-xl">Final Price: ₱{{ number_format($appointment->package->discountedprice ?? 0, 2) }}</strong>
                                     </div>
-                                    @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
+                                    @elseif($appointment->package && ($appointment->package->packagetype == 'Normal' || $appointment->package->packagetype == 'Client'))
                                     <strong>Estimated Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
                                     @endif
                                 </p>
@@ -196,7 +202,7 @@
                                 <div class="mt-4">
                                     <h3 class="text-lg font-bold text-gray-700">Inclusions</h3>
                                     <ul class="list-disc pl-5 space-y-2 text-gray-700">
-                                        @if($appointment->package && $appointment->package->packagetype == 'Normal')
+                                        @if($appointment->package && ($appointment->package->packagetype == 'Normal' || $appointment->package->packagetype == 'Client'))
                                             <!-- Normal Package Inclusions -->
                                             @if (isset($appointment->package->packageinclusion))
                                                 @foreach (json_decode($appointment->package->packageinclusion) as $inclusion)

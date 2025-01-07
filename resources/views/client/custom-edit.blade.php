@@ -2,13 +2,13 @@
     <div class="text-center py-2 my-20">
                 
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
-            Customize <span class="text-yellow-600">Package Inclusion</span>
+            Edit <span class="text-yellow-600">Package Inclusion</span>
         </h3>
 
     </div>
-
+{{-- <h1>{{$package_id}}</h1> --}}
     
-    <form action="{{route('client.package.store')}}" method="POST" enctype="multipart/form-data">
+    <form action="{{route('client.package.update', $package_id)}}" method="POST" enctype="multipart/form-data">
         @csrf
         <script>
             // Check if there are validation errors

@@ -268,7 +268,11 @@
                                         <option value="{{$pk->package_id}}" 
                                             data-packagedesc="{{ $pk->discountedprice }}" 
                                             @if (isset($appointment) && $appointment->package_id == $pk->package_id) selected @endif>
+                                            @if ($pk->customPackage->target != "Custom")
                                             {{$pk->customPackage->target}} - {{$pk->packagename}}
+                                            @else
+                                            {{$pk->customPackage->target}} - ₱{{number_format($pk->discountedprice, 2)}}
+                                            @endif
                                         </option>
                                     @endforeach
                                     

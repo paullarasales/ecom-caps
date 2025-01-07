@@ -211,8 +211,21 @@ class UserController extends Controller
     {
         $packages = Package::where('packagetype', '!=', 'Custom')
                     ->where('packagestatus', 'active')
-                   ->orderBy('created_at', 'desc')
-                   ->paginate(50);
+                    ->where(function ($query) {
+                        $query->where('packagetype', '!=', 'Client')
+                              ->orWhere('user_id', Auth::id());
+                    })
+                    ->orderByRaw('
+                        CASE 
+                            WHEN packagetype = "Client" AND user_id = ' . Auth::id() . ' THEN 0 
+                            ELSE 1 
+                        END
+                    ')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(50);
+
+
+
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $blockedApps = Blockedapp::pluck('blocked_app')->toArray(); 
         $bookedDates = Appointment::select('edate')
@@ -240,8 +253,18 @@ class UserController extends Controller
 
         $packages = Package::where('packagetype', '!=', 'Custom')
                     ->where('packagestatus', 'active')
-                   ->orderBy('created_at', 'desc')
-                   ->paginate(50);
+                    ->where(function ($query) {
+                        $query->where('packagetype', '!=', 'Client')
+                              ->orWhere('user_id', Auth::id());
+                    })
+                    ->orderByRaw('
+                        CASE 
+                            WHEN packagetype = "Client" AND user_id = ' . Auth::id() . ' THEN 0 
+                            ELSE 1 
+                        END
+                    ')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(50);
         $blockedDates = BlockedDate::pluck('blocked_date')->toArray();
         $blockedApps = Blockedapp::pluck('blocked_app')->toArray(); 
         $bookedDates = Appointment::select('edate')

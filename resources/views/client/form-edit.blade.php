@@ -68,7 +68,7 @@
                             
                             <div class="md:col-span-5">
                                 <label for="firstname">Event Locaton</label>
-                                <input type="text" name="location" id="location" placeholder="N/A if still" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ $appointment->location }}" />
+                                <input type="text" name="location" id="location" placeholder="Enter Location" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ $appointment->location }}" />
                             </div>
 
                             <div class="md:col-span-3">
@@ -253,7 +253,15 @@
                                             </div>
 
                                             <!-- Confirm Selection Button -->
-                                            <div class="mt-4 flex justify-end">
+                                            <div class="mt-4 flex justify-center gap-2">
+                                                <!-- Conditionally show the edit button -->
+                                                @if ($pk->user_id == auth()->id())
+                                                    <a href="{{route('client.package.edit', $pk->package_id)}}" 
+                                                            class="px-4 py-2 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300">
+                                                        Edit
+                                                        <i class="fa-solid fa-pencil ml-3"></i>
+                                                    </a>
+                                                @endif
                                                 <button type="button" onclick="confirmSelection({{ $pk->package_id }}, '{{ $pk->packagename }}')" 
                                                         class="px-4 py-2 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300">
                                                     Confirm Selection

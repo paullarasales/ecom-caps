@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Log;
+use App\Models\Log as ModelsLog;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class VerifyIdController extends Controller
@@ -80,7 +81,7 @@ class VerifyIdController extends Controller
 
             $use = Auth::user();
 
-            $log = new Log();
+            $log = new ModelsLog();
             $log->user_id = Auth::id();
             $log->action = 'Verification';
             $log->description = "A user has been " . $request->verifystatus . " by " . $use->firstname . " " . $use->lastname;

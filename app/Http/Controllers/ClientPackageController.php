@@ -38,8 +38,76 @@ class ClientPackageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'total_amount' => 'required|numeric',
+            'pax' => 'nullable|string', // Pax is a string now
+            'pack' => 'nullable|string', // Dropdown
+            'cart' => 'nullable|string', // Dropdown
+            'cake' => 'nullable|boolean', // Checkbox
+            'clown' => 'nullable|string', // Dropdown
+            'paint' => 'nullable|boolean', // Checkbox
+            'setup' => 'nullable|boolean', // Checkbox
+        ]);
+
+        // Initialize inclusions as an empty array
+        $inclusions = [];
+
+        // Add valid fields to inclusions array if they are not null
+        if ($request->has('pax') && $request->input('pax')) {
+            $inclusions[] = $request->input('pax');
+        }
+        if ($request->has('pack') && $request->input('pack')) {
+            $inclusions[] = $request->input('pack');
+        }
+        if ($request->has('cart') && $request->input('cart')) {
+            $inclusions[] = $request->input('cart');
+        }
+        if ($request->has('clown') && $request->input('clown')) {
+            $inclusions[] = $request->input('clown');
+        }
+
+        // Add strings for checkboxes if they are checked (i.e., the value is 1)
+        if ($request->has('cake') && $request->input('cake') == '1') {
+            $inclusions[] = 'Cake';
+        }
+        if ($request->has('paint') && $request->input('paint') == '1') {
+            $inclusions[] = 'Facepaint';
+        }
+        if ($request->has('setup') && $request->input('setup') == '1') {
+            $inclusions[] = 'Setup';
+        }
+
+        // Encode inclusions as JSON (this will only include non-null, non-empty values)
+        $encodedInclusions = json_encode($inclusions);
+
+        $packageCount = Package::where('user_id', Auth::id())->count();
+
+        // Create the package name based on the user's first name, last name, and package count
+        $packageName = Auth::user()->firstname . ' ' . Auth::user()->lastname . ' (' . ($packageCount + 1) . ')';
+
+        // Create a new package record
+        $package = new Package();
+        $package->packagename = $packageName;
+        $package->packagedesc = $request->total_amount; // Assuming package price is used as description
+        $package->user_id = Auth::id();
+        $package->packageinclusion = $encodedInclusions; // Store inclusions in the database
+        $package->packagetype = "Client"; // Or adjust if dynamic
+        $package->save();
+
+        // Log the package creation action
+        $user = Auth::user();
+        $log = new Log();
+        $log->user_id = Auth::id();
+        $log->action = 'Client Package';
+        $log->description = $package->packagename . "Package Customize Inclusion created by " . $user->firstname . " " . $user->lastname;
+        $log->logdate = now();
+        $log->save();
+
+        return redirect()->route('book-form')->with('success', 'Package added successfully!');
     }
+
+
+
 
     /**
      * Display the specified resource.
@@ -52,9 +120,9 @@ class ClientPackageController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $package_id)
     {
-        //
+        return view('client.custom-edit', ['package_id' => $package_id]);
     }
 
     /**

@@ -1316,6 +1316,9 @@ Route::get('/form-edit/{appointment_id}', [UserController::class, 'formEdit'])->
 Route::get('/meeting-form', [UserController::class, 'meetingform'])->middleware(['auth', 'verified','user'])->name('meetingform');
 
 Route::get('/client/customize/inclusion', [ClientPackageController::class, 'custom'])->middleware(['auth', 'verified','user'])->name('custom.client.inclusion');
+Route::post('/client/customize/inclusion/store', [ClientPackageController::class, 'store'])->middleware(['auth', 'verified','user'])->name('client.package.store');
+Route::get('/client/customize/inclusion/edit/{package_id}', [ClientPackageController::class, 'edit'])->middleware(['auth', 'verified','user'])->name('client.package.edit');
+Route::put('/client/customize/inclusion/update/{package_id}', [ClientPackageController::class, 'update'])->middleware(['auth', 'verified','user'])->name('client.package.update');
 
 //REVIEWS
 

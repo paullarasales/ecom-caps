@@ -66,7 +66,7 @@
                             
                             <div class="md:col-span-5">
                                 <label for="firstname">Event Locaton</label>
-                                <input type="text" name="location" id="location" placeholder="N/A if still" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('location') }}" />
+                                <input type="text" name="location" id="location" placeholder="Enter Location" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" value="{{ old('location') }}" />
                             </div>
 
                             <div class="md:col-span-3">
@@ -680,5 +680,71 @@
         document.body.classList.remove('overflow-hidden');
     }
 </script>
+
+@if (session('success'))
+<script>
+    Swal.fire({
+        title: 'Success!',
+        text: '{{ session('success') }}',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        customClass: {
+        popup: 'custom-popup',
+        title: 'custom-title',
+        confirmButton: 'custom-button'
+    }
+    });
+</script>
+@endif
+
+@if (session('error'))
+<script>
+    Swal.fire({
+        title: 'Error!',
+        text: '{{ session('error') }}',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        customClass: {
+            popup: 'custom-popup-error',
+            title: 'custom-title-error',
+            confirmButton: 'custom-button-error'
+        }
+    });
+</script>
+@endif
+
+<style>
+/* Success Alert Button */
+.custom-button {
+        background-color: #FFCF81 !important; /* Orange button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button:hover {
+        background-color: #E07B39 !important; /* Darker orange on hover */
+    }
+
+    /* Error Alert Button */
+    .custom-button-error {
+        background-color: #E07B39 !important; /* Red button background */
+        color: white !important; /* White button text */
+        border-radius: 5px;
+    }
+    .custom-button-error:hover {
+        background-color: #C0392B !important; /* Darker red on hover */
+    }
+
+    /* Customize Popup Background for Error */
+    .custom-popup-error {
+        background-color: #FDEDEC; /* Light red background */
+        border: 2px solid #E07B39; /* Red border */
+    }
+
+    /* Customize Title for Error */
+    .custom-title-error {
+        color: #E07B39; /* Red text for title */
+        font-weight: bold;
+    }
+</style>
 
 

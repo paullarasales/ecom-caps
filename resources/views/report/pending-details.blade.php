@@ -135,10 +135,12 @@
 
         <p class="title"><strong>Package :</strong> @if($appointment->package && $appointment->package->packagetype == 'Custom')
             {{ $package->customPackage->target }} 
-            @elseif($package && $package->packagetype == 'Normal')
-            {{ $package->packagename }} 
-            @endif
             ( ₱{{ number_format($package->discountedprice, 2) }} )
+            @elseif($package && $package->packagetype == 'Normal' || $package && $package->packagetype == 'Client')
+            {{ $package->packagename }} 
+            ( ₱{{ number_format($package->packagedesc, 2) }} ) <span>Tentative</span>
+            @endif
+            
             {{-- <span class="bal">(Balance: ₱{{ number_format($appointment->balance, 2) }})</span>
             <span class="bal">(Deposit: ₱{{ number_format($appointment->deposit, 2) }})</span> --}}
         </p>
@@ -146,12 +148,14 @@
             @if($package)
                 {{-- <p class="package"><strong>Package Type:</strong> {{ $package->customPackage->target }}</p>
                 <p class="package"><strong>Price :</strong> Php {{ number_format($package->packagedesc, 2) }}</p> --}}
-            @if($package && $package->packagetype == 'Normal')
+            @if($package && $package->packagetype == 'Normal' || $package && $package->packagetype == 'Client')
                 <!-- Normal Package Inclusions -->
                 @if (isset($package->packageinclusion))
+                <ul>
                     @foreach (json_decode($package->packageinclusion) as $inclusion)
                         <li>{{ $inclusion }}</li>
                     @endforeach
+                </ul>
                 @else
                     <li>No inclusions available</li>
                 @endif
