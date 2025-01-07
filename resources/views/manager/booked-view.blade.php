@@ -573,14 +573,14 @@
 
                         // Create the modal
                         Swal.fire({
-                            title: 'Enter Deposit Amount',
+                            title: 'Enter Payment',
                             html: `
                                 <p><strong>Package Price:</strong> ₱${formattedPackageDesc}</p>
                                 <p><strong>Current Deposit :</strong> ₱${formattedDeposit}</p>
                                 <p><strong>Balance :</strong> ₱${formattedBalance}</p>
                                 ${deposit === packageDesc ? 
                                     '<p><strong>Status:</strong> Fully Paid</p>' : 
-                                    `<input type="text" id="deposit" class="swal2-input" placeholder="Enter deposit amount">`
+                                    `<input type="text" id="deposit" class="swal2-input" placeholder="Enter Balance">`
                                 }
                             `,
                             showCancelButton: true,
