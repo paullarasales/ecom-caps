@@ -6,10 +6,11 @@
         </h3>
 
     </div>
-{{-- <h1>{{$package_id}}</h1> --}}
+{{-- <h1>{{$package->package_id}}</h1> --}}
     
-    <form action="{{route('client.package.update', $package_id)}}" method="POST" enctype="multipart/form-data">
+    <form action="{{route('client.package.update', $package->package_id)}}" method="POST" enctype="multipart/form-data">
         @csrf
+        @method('PUT')
         <script>
             // Check if there are validation errors
             var errors = @json($errors->any()); // Check if there are any errors
@@ -78,81 +79,133 @@
                                     <label for="firstname"><strong>Note: </strong>Foods: 4 Dishes (1 Beef, 1 Pork, 1 Chicken/Fish, 1 Veggie, Free dessert)</label>
                                     <select name="pax" id="pax" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
                                         <option disabled selected>Select How Many Pax</option>
-                                        <option value="30 pax">30 pax</option>
-                                        <option value="40 pax">40 pax</option>
-                                        <option value="50 pax">50 pax</option>
-                                        <option value="60 pax">60 pax</option>
-                                        <option value="70 pax">70 pax</option>
-                                        <option value="80 pax">80 pax</option>
-                                        <option value="90 pax">90 pax</option>
-                                        <option value="100 pax">100 pax</option>
-                                        <option value="110 pax">110 pax</option>
-                                        <option value="120 pax">120 pax</option>
-                                        <option value="130 pax">130 pax</option>
-                                        <option value="140 pax">140 pax</option>
-                                        <option value="150 pax">150 pax</option>
-                                        <option value="160 pax">160 pax</option>
-                                        <option value="170 pax">170 pax</option>
-                                        <option value="180 pax">180 pax</option>
-                                        <option value="190 pax">190 pax</option>
-                                        <option value="200 pax">200 pax</option>
-                                        <option value="250 pax">250 pax</option>
-                                        <option value="300 pax">300 pax</option>
-                                        <option value="350 pax">350 pax</option>
-                                        <option value="400 pax">400 pax</option>
+                                        @foreach(['30 pax', '40 pax', '50 pax', '60 pax', '70 pax', '80 pax', '90 pax', '100 pax', '110 pax', '120 pax', '130 pax', '140 pax', '150 pax', '160 pax', '170 pax', '180 pax', '190 pax', '200 pax', '250 pax', '300 pax', '350 pax', '400 pax'] as $paxOption)
+                                            <option value="{{ $paxOption }}" 
+                                                {{ in_array($paxOption, $inclusions) ? 'selected' : '' }}>
+                                                {{ $paxOption }}
+                                            </option>
+                                        @endforeach
                                     </select>
+                                    <button type="button" onclick="clearPaxSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                                 </div>
+                                
+                                <script>
+                                    function clearPaxSelection() {
+                                        // Get the select element
+                                        var paxSelect = document.getElementById('pax');
+                                        
+                                        // Reset the selection to the first option (Select How Many Pax)
+                                        paxSelect.selectedIndex = 0;
+                                
+                                        // Manually trigger the 'change' event to update the total
+                                        paxSelect.dispatchEvent(new Event('change'));
+                                    }
+                                </script>
+                                
+
+                                {{-- {{dd($inclusions);}} --}}
+                                
 
                                 <div class="md:col-span-2">
                                     <label for="pack">Foodpack</label>
                                     <select name="pack" id="pack" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
                                         <option disabled selected>Select How Many Foodpack</option>
-                                        <option value="10 Foodpack">10 Foodpack</option>
-                                        <option value="15 Foodpack">15 Foodpack</option>
-                                        <option value="20 Foodpack">20 Foodpack</option>
-                                        <option value="25 Foodpack">25 Foodpack</option>
-                                        <option value="30 Foodpack">30 Foodpack</option>
-                                        <option value="35 Foodpack">35 Foodpack</option>
-                                        <option value="40 Foodpack">40 Foodpack</option>
-                                        <option value="45 Foodpack">45 Foodpack</option>
-                                        <option value="50 Foodpack">50 Foodpack</option>
+                                        @foreach(['10 Foodpack', '15 Foodpack', '20 Foodpack', '25 Foodpack', '30 Foodpack', '35 Foodpack', '40 Foodpack', '45 Foodpack', '50 Foodpack'] as $packOption)
+                                            <option value="{{ $packOption }}" 
+                                                {{ in_array($packOption, $inclusions) ? 'selected' : '' }}>
+                                                {{ $packOption }}
+                                            </option>
+                                        @endforeach
                                     </select>
+                                    <button type="button" onclick="clearPackSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                                 </div>
+                                
+                                <script>
+                                    function clearPackSelection() {
+                                        // Get the select element
+                                        var packSelect = document.getElementById('pack');
+                                        
+                                        // Reset the selection to the first option (Select How Many Foodpack)
+                                        packSelect.selectedIndex = 0;
+                                
+                                        // Manually trigger the 'change' event to update the total
+                                        packSelect.dispatchEvent(new Event('change'));
+                                    }
+                                </script>
+                                
 
                                 <div class="md:col-span-2">
                                     <label for="cart">Foodcart</label>
                                     <select name="cart" id="cart" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
                                         <option disabled selected>Select How Many Foodcart</option>
-                                        <option value="1 Foodcart">1 Foodcart</option>
-                                        <option value="2 Foodcart">2 Foodcart</option>
-                                        <option value="3 Foodcart">3 Foodcart</option>
-                                        <option value="4 Foodcart">4 Foodcart</option>
+                                        @foreach(['1 Foodcart', '2 Foodcart', '3 Foodcart', '4 Foodcart'] as $cartOption)
+                                            <option value="{{ $cartOption }}" 
+                                                {{ in_array($cartOption, $inclusions) ? 'selected' : '' }}>
+                                                {{ $cartOption }}
+                                            </option>
+                                        @endforeach
                                     </select>
+                                    <button type="button" onclick="clearCartSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                                 </div>
+                                
+                                <script>
+                                    function clearCartSelection() {
+                                        // Get the select element
+                                        var cartSelect = document.getElementById('cart');
+                                        
+                                        // Reset the selection to the first option (Select How Many Foodcart)
+                                        cartSelect.selectedIndex = 0;
+                                
+                                        // Manually trigger the 'change' event to update the total
+                                        cartSelect.dispatchEvent(new Event('change'));
+                                    }
+                                </script>
+                                
 
                                 <div class="md:col-span-1">
                                     <label for="cake">Cake</label>
-                                    <input type="checkbox" name="cake" id="cake" value="1" class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input" />
+                                    <input type="checkbox" name="cake" id="cake" value="1" class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input"
+                                    {{ in_array('Cake', $inclusions) ? 'checked' : '' }} />
                                 </div>
 
                                 <div class="md:col-span-3">
-                                    <label for="clown">Clow/Emcee</label>
+                                    <label for="clown">Clown/Emcee</label>
                                     <select name="clown" id="clown" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
                                         <option disabled selected>Select Clown/Emcee</option>
-                                        <option value="Clown">Clown</option>
-                                        <option value="Emcee">Emcee</option>
-                                        <option value="Clown and Emcee">Clown/Emcee</option>
+                                        @foreach(['Clown', 'Emcee', 'Clown/Emcee'] as $clownOption)
+                                            <option value="{{ $clownOption }}" 
+                                                {{ in_array($clownOption, $inclusions) ? 'selected' : '' }}>
+                                                {{ $clownOption }}
+                                            </option>
+                                        @endforeach
                                     </select>
+                                    <button type="button" onclick="clearClownSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                                 </div>
+                                
+                                <script>
+                                    function clearClownSelection() {
+                                        // Get the select element
+                                        var clownSelect = document.getElementById('clown');
+                                        
+                                        // Reset the selection to the first option (Select Clown/Emcee)
+                                        clownSelect.selectedIndex = 0;
+                                
+                                        // Manually trigger the 'change' event to update the total
+                                        clownSelect.dispatchEvent(new Event('change'));
+                                    }
+                                </script>
+                                
                                 
                                 <div class="md:col-span-1">
                                     <label for="paint">Facepaint</label>
-                                    <input type="checkbox" name="paint" id="paint" class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input" />
+                                    <input type="checkbox" name="paint" value="1" id="paint" class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input"
+                                    {{ in_array('Facepaint', $inclusions) ? 'checked' : '' }} />
                                 </div>
 
                                 <div class="md:col-span-1">
                                     <label for="setup">Setup</label>
-                                    <input type="checkbox" name="setup" id="setup" class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input" />
+                                    <input type="checkbox" name="setup" value="1" id="setup" class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input"
+                                    {{ in_array('Setup', $inclusions) ? 'checked' : '' }} />
                                 </div>
 
                                 <div class="md:col-span-5 text-right mt-4">
@@ -236,7 +289,7 @@
             clown: {
                 "Clown": 2000,
                 "Emcee": 2500,
-                "Clown and Emcee": 3000,
+                "Clown/Emcee": 3000,
             },
         };
 

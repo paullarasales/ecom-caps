@@ -49,6 +49,11 @@ class ClientPackageController extends Controller
             'setup' => 'nullable|boolean', // Checkbox
         ]);
 
+        // Custom check for total_amount being 0
+        if ($request->total_amount == 0) {
+            return back()->withErrors(['total_amount' => 'Total amount cannot be zero.'])->withInput();
+        }
+
         // Initialize inclusions as an empty array
         $inclusions = [];
 
@@ -122,15 +127,93 @@ class ClientPackageController extends Controller
      */
     public function edit(string $package_id)
     {
-        return view('client.custom-edit', ['package_id' => $package_id]);
+        // Fetch the package by ID and ensure it belongs to the authenticated user
+        $package = Package::where('package_id', $package_id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Decode packageinclusion into an associative array
+        $inclusions = json_decode($package->packageinclusion, true);
+
+        return view('client.custom-edit', [
+            'package' => $package,
+            'inclusions' => $inclusions,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $package_id)
     {
-        //
+        // dd($request->all());
+        $request->validate([
+            'total_amount' => 'required|numeric',
+            'pax' => 'nullable|string', // Pax is a string now
+            'pack' => 'nullable|string', // Dropdown
+            'cart' => 'nullable|string', // Dropdown
+            'cake' => 'nullable|boolean', // Checkbox
+            'clown' => 'nullable|string', // Dropdown
+            'paint' => 'nullable|boolean', // Checkbox
+            'setup' => 'nullable|boolean', // Checkbox
+        ]);
+
+        // Custom check for total_amount being 0
+        if ($request->total_amount == 0) {
+            return back()->withErrors(['total_amount' => 'Total amount cannot be zero.'])->withInput();
+        }
+
+        // Fetch the package by ID and ensure it belongs to the authenticated user
+        $package = Package::where('package_id', $package_id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Initialize inclusions as an empty array
+        $inclusions = [];
+
+        // Add valid fields to inclusions array if they are not null
+        if ($request->has('pax') && $request->input('pax')) {
+            $inclusions[] = $request->input('pax');
+        }
+        if ($request->has('pack') && $request->input('pack')) {
+            $inclusions[] = $request->input('pack');
+        }
+        if ($request->has('cart') && $request->input('cart')) {
+            $inclusions[] = $request->input('cart');
+        }
+        if ($request->has('clown') && $request->input('clown')) {
+            $inclusions[] = $request->input('clown');
+        }
+
+        // Add strings for checkboxes if they are checked (i.e., the value is 1)
+        if ($request->has('cake') && $request->input('cake') == '1') {
+            $inclusions[] = 'Cake';
+        }
+        if ($request->has('paint') && $request->input('paint') == '1') {
+            $inclusions[] = 'Facepaint';
+        }
+        if ($request->has('setup') && $request->input('setup') == '1') {
+            $inclusions[] = 'Setup';
+        }
+
+        // Encode inclusions as JSON (this will only include non-null, non-empty values)
+        $encodedInclusions = json_encode($inclusions);
+
+        // Update package fields
+        $package->packagedesc = $request->total_amount; // Update package price/description
+        $package->packageinclusion = $encodedInclusions; // Update inclusions
+        $package->save();
+
+        // Log the package update action
+        $user = Auth::user();
+        $log = new Log();
+        $log->user_id = Auth::id();
+        $log->action = 'Client Package Update';
+        $log->description = $package->packagename . " Package Customize Inclusion updated by " . $user->firstname . " " . $user->lastname;
+        $log->logdate = now();
+        $log->save();
+
+        return redirect()->back()->with('success', 'Package updated successfully!');
     }
 
     /**

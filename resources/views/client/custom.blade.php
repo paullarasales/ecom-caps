@@ -101,7 +101,20 @@
                                         <option value="350 pax">350 pax</option>
                                         <option value="400 pax">400 pax</option>
                                     </select>
+                                    <button type="button" onclick="clearPaxSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                                 </div>
+                                <script>
+                                    function clearPaxSelection() {
+                                        // Get the select element
+                                        var paxSelect = document.getElementById('pax');
+                                        
+                                        // Set the value to the disabled option to reset the selection
+                                        paxSelect.selectedIndex = 0;
+
+                                        // Manually trigger the 'change' event to update the total
+                                        paxSelect.dispatchEvent(new Event('change'));
+                                    }
+                                </script>
 
                                 <div class="md:col-span-2">
                                     <label for="pack">Foodpack</label>
@@ -117,7 +130,20 @@
                                         <option value="45 Foodpack">45 Foodpack</option>
                                         <option value="50 Foodpack">50 Foodpack</option>
                                     </select>
+                                    <button type="button" onclick="clearPackSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                                 </div>
+                                <script>
+                                    function clearPackSelection() {
+                                        // Get the select element
+                                        var packSelect = document.getElementById('pack');
+                                        
+                                        // Set the value to the disabled option to reset the selection
+                                        packSelect.selectedIndex = 0;
+
+                                        // Manually trigger the 'change' event to update the total
+                                        packSelect.dispatchEvent(new Event('change'));
+                                    }
+                                </script>
 
                                 <div class="md:col-span-2">
                                     <label for="cart">Foodcart</label>
@@ -128,7 +154,20 @@
                                         <option value="3 Foodcart">3 Foodcart</option>
                                         <option value="4 Foodcart">4 Foodcart</option>
                                     </select>
+                                    <button type="button" onclick="clearCartSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                                 </div>
+                                <script>
+                                    function clearCartSelection() {
+                                        // Get the select element
+                                        var cartSelect = document.getElementById('cart');
+                                        
+                                        // Set the value to the disabled option to reset the selection
+                                        cartSelect.selectedIndex = 0;
+
+                                        // Manually trigger the 'change' event to update the total
+                                        cartSelect.dispatchEvent(new Event('change'));
+                                    }
+                                </script>
 
                                 <div class="md:col-span-1">
                                     <label for="cake">Cake</label>
@@ -141,18 +180,31 @@
                                         <option disabled selected>Select Clown/Emcee</option>
                                         <option value="Clown">Clown</option>
                                         <option value="Emcee">Emcee</option>
-                                        <option value="Clown and Emcee">Clown/Emcee</option>
+                                        <option value="Clown/Emcee">Clown/Emcee</option>
                                     </select>
+                                    <button type="button" onclick="clearClownSelection()" class="mt-2 text-yellow-600">Clear Selection</button>
                                 </div>
+                                <script>
+                                    function clearClownSelection() {
+                                        // Get the select element
+                                        var clownSelect = document.getElementById('clown');
+                                        
+                                        // Set the value to the disabled option to reset the selection
+                                        clownSelect.selectedIndex = 0;
+
+                                        // Manually trigger the 'change' event to update the total
+                                        clownSelect.dispatchEvent(new Event('change'));
+                                    }
+                                </script>
                                 
                                 <div class="md:col-span-1">
                                     <label for="paint">Facepaint</label>
-                                    <input type="checkbox" name="paint" id="paint" class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input" />
+                                    <input type="checkbox" name="paint" id="paint" value="1" class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input" />
                                 </div>
 
                                 <div class="md:col-span-1">
                                     <label for="setup">Setup</label>
-                                    <input type="checkbox" name="setup" id="setup" class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input" />
+                                    <input type="checkbox" name="setup" id="setup" value="1" class="form-checkbox h-10 text-yellow-200 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1 checkbox-input" />
                                 </div>
 
                                 <div class="md:col-span-5 text-right mt-4">
@@ -236,7 +288,7 @@
             clown: {
                 "Clown": 2000,
                 "Emcee": 2500,
-                "Clown and Emcee": 3000,
+                "Clown/Emcee": 3000,
             },
         };
 
