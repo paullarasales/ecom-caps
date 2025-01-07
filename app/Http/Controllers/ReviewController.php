@@ -138,7 +138,7 @@ class ReviewController extends Controller
         $review->save();
 
         // return redirect()->back()->with('alert', 'Review submitted successfully!');
-        return redirect()->back()->with([
+        return redirect()->route('reviews')->with([
             'alert' => 'success',
             'message' => 'Review submitted successfully!'
         ]);
