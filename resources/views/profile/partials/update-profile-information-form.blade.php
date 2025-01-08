@@ -17,8 +17,12 @@
         @csrf
         @method('patch')
 
+        <div class="text-lg">
+            <h1>{{$user->firstname}} {{$user->lastname}}</h1>
+        </div>
+
         <div>
-            <x-input-label for="name" :value="__('Name')" />
+            <x-input-label for="name" :value="__('Username')" />
             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1" :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
