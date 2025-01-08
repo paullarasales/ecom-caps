@@ -303,8 +303,9 @@
                                     <br>
                                     <strong>Package Total Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
                                     <br>
-                                    <div class="underline my-2">
-                                        <strong class="text-xl">Final Price: ₱{{ number_format($appointment->package->discountedprice ?? 0, 2) }}</strong>
+                                    <div class=" my-2">
+                                        <strong class="text-xl underline">Final Price: ₱{{ number_format($appointment->package->discountedprice ?? 0, 2) }}</strong>
+                                        <span class="ml-3 italic ">({{$appointment->package->discount}}% Discount)</span>
                                     </div>
                                     @elseif($appointment->package && $appointment->package->packagetype == 'Normal')
                                     <strong>Estimated Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}

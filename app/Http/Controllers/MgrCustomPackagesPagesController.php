@@ -208,20 +208,14 @@ class MgrCustomPackagesPagesController extends Controller
         ));
     }
 
-    public function customeditBooked($package_id)
+    public function customeditBooked($package_id, $appointment_id)
     {
         // Retrieve the package
         $package = Package::findOrFail($package_id);
 
-        // Count the number of appointments tied to the package with specific statuses
-        $appointmentCount = Appointment::where('package_id', $package_id)
-            ->whereIn('status', ['booked', 'pending', 'cancelled'])
-            ->count();
-
-        if ($appointmentCount > 1) {
-            // Redirect back with an error message if tied to more than one appointment
-            return redirect()->back()->with('error', 'This package cannot be edited as it is tied to multiple appointments. Create a new package instead.');
-        }
+        $appointment = Appointment::where('package_id', $package_id)
+        ->where('appointment_id', $appointment_id)
+        ->firstOrFail();
 
         // Retrieve the associated items for this package
         $customPackage = Custompackage::where('package_id', $package_id)->first();
@@ -299,6 +293,7 @@ class MgrCustomPackagesPagesController extends Controller
             'selectedFoodpacks',
             'selectedFoodcarts',
             'fee',
+            'appointment',
         ));
     }
 

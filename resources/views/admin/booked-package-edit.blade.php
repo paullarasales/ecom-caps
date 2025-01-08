@@ -1,18 +1,17 @@
 <x-admin-layout>
 
     <div class="absolute">
-        <a href="{{ url()->previous() }}">
+        <a href="{{ $appointment->status === 'pending' ? route('pendingView', $appointment->appointment_id) : ($appointment->status === 'booked' ? route('bookedView', $appointment->appointment_id) : url()->previous()) }}">
             <i class="fa-solid fa-arrow-left float-left ml-5 text-xl"></i>
         </a>
     </div>
-
     <div class="text-center py-2 my-2">
         <h3 class="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
             Edit <span class="text-yellow-600">Custom Package</span>
         </h3>
     </div>
 
-    <form action="{{route('admin.booked.custom.updatepackage', $package->package_id)}}" method="POST" enctype="multipart/form-data">
+    <form action="{{route('admin.booked.custom.updatepackage', ['package_id' => $package->package_id, 'appointment_id' => $appointment->appointment_id])}}" method="POST" enctype="multipart/form-data">
         @csrf
         @method("POST")
         <script>
@@ -59,6 +58,7 @@
                 background-color: #C0392B !important; /* Darker red on hover */
             }
         </style>
+        <input type="hidden" name="appointment_id" value="{{ $appointment->appointment_id }}">
         <div class="my-10 p-2 flex items-center justify-center">
             <div class="container max-w-screen-lg mx-auto">
                 <div class="bg-white rounded shadow-lg shadow-yellow-100 p-4 px-4 md:p-8 mb-6">

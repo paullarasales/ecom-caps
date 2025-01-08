@@ -19,6 +19,7 @@ class Package extends Model
         'discountedprice',
         'packagephoto',
         'packageinclusion',
+        'discount',
     ];
 
     protected $primaryKey = 'package_id';

@@ -223,6 +223,11 @@
                             <span class="itemprice">₱{{ number_format($package->packagedesc, 2) }}</span>
                     </p>
                     <p>
+                        <strong>Discount:</strong> 
+                            {{-- <span>{{ $item->item_name }}</span> --}}
+                            <span class="itemprice">{{$package->discount}}%</span>
+                    </p>
+                    <p>
                         <strong>Final Price:</strong> 
                             {{-- <span>{{ $item->item_name }}</span> --}}
                             <span class="itemprice">₱{{ number_format($package->discountedprice, 2) }}</span>

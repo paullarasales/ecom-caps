@@ -77,6 +77,7 @@ class MgrCustomPackagesController extends Controller
         $package->packagename = $packagename; 
         $package->packagedesc = $request->input('total_amount'); 
         $package->discountedprice = $request->input('final');
+        $package->discount = $request->input('discount');
         $package->packagephoto = 'images/custom.jpg'; 
         $package->packagetype = "Custom";
         
@@ -347,6 +348,7 @@ class MgrCustomPackagesController extends Controller
         // $package->packagename = $packagename; 
         $package->packagedesc = $request->input('total_amount'); 
         $package->discountedprice = $request->input('final');
+        $package->discount = $request->input('discount');
         $package->packagephoto = 'images/custom.jpg'; 
         $package->packagetype = "Custom";
         
@@ -729,7 +731,7 @@ class MgrCustomPackagesController extends Controller
         return redirect()->back()->with('success', 'Custom package updated successfully!');
     }
 
-    public function updateBooked(Request $request, $package_id)
+    public function updateBooked(Request $request, $package_id, $appointment_id)
     {
         // Validate incoming request
         $request->validate([
@@ -859,12 +861,16 @@ class MgrCustomPackagesController extends Controller
         $this->addCustomItem($request, 'setupitem', 'setup', $customPackage, $request->input('setupprice'));
         $this->addCustomItem($request, 'fee', 'service_fee', $customPackage, $request->input('fee'));
 
-        // Update balance for connected appointments
-        $appointments = Appointment::where('package_id', $package_id)->get();
-        foreach ($appointments as $appointment) {
-            $appointment->balance = $package->packagedesc - $appointment->deposit;
-            $appointment->save();
+        // Find the specific appointment by its ID
+        $appointment = Appointment::find($appointment_id);
+
+        if (!$appointment) {
+            return redirect()->back()->withErrors('Appointment not found.');
         }
+
+        // Update the balance for the specific appointment
+        $appointment->balance = $package->packagedesc - $appointment->deposit;
+        $appointment->save();
 
         $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');
         // Log the update action
@@ -906,11 +912,21 @@ class MgrCustomPackagesController extends Controller
             Log::error('Email could not be sent: ' . $e->getMessage());
             
             // Redirect back with an error message
-            return redirect()->back()->with('error', 'Failed to send confirmation email.');
+            // return redirect()->back()->with('error', 'Failed to send confirmation email.');
+            if ($appointment->status == 'booked') {
+                return redirect()->route('manager.bookedView', $appointment_id)->with('success', 'Package updated successfully!');
+            } else {
+                return redirect()->route('manager.pendingView', $appointment_id)->with('success', 'Package updated successfully!');
+            }
         }
 
         // Return success message
-        return redirect()->back()->with('success', 'Custom package updated successfully!');
+        // return redirect()->back()->with('success', 'Custom package updated successfully!');
+        if ($appointment->status == 'booked') {
+            return redirect()->route('manager.bookedView', $appointment_id)->with('success', 'Package updated successfully!');
+        } else {
+            return redirect()->route('manager.pendingView', $appointment_id)->with('success', 'Package updated successfully!');
+        }
     }
 
     /**

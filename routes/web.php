@@ -647,7 +647,7 @@ Route::get('/admin/package/{package_id}/custom/edit', [CustomPackagesPagesContro
     ->middleware('auth', 'admin')
     ->name('admin.custom.editpackage');
 
-Route::get('/admin/package/{package_id}/custom/edit/booked', [CustomPackagesPagesController::class, 'customeditBooked'])
+Route::get('/admin/package/{package_id}/custom/edit/booked/{appointment_id}', [CustomPackagesPagesController::class, 'customeditBooked'])
     ->middleware(['auth', 'verified'])
     ->middleware('auth', 'admin')
     ->name('admin.custom.editpackage.booked');
@@ -657,7 +657,7 @@ Route::post('/admin/package/{package_id}/custom/update', [CustomPackagesControll
     ->middleware('auth', 'admin')
     ->name('admin.custom.updatepackage');
 
-Route::post('/admin/package/{package_id}/custom/update/booked', [CustomPackagesController::class, 'updatebooked'])
+Route::post('/admin/package/{package_id}/custom/update/booked/{appointment_id}', [CustomPackagesController::class, 'updatebooked'])
     ->middleware(['auth', 'verified'])
     ->middleware('auth', 'admin')
     ->name('admin.booked.custom.updatepackage');
@@ -721,7 +721,7 @@ Route::get('/manager/package/{package_id}/custom/edit-package', [MgrCustomPackag
     ->middleware('auth', 'manager')
     ->name('manager.custom.editpackage');
 
-Route::get('/manager/package/{package_id}/custom/edit/booked', [MgrCustomPackagesPagesController::class, 'customeditBooked'])
+Route::get('/manager/package/{package_id}/custom/edit/booked/{appointment_id}', [MgrCustomPackagesPagesController::class, 'customeditBooked'])
     ->middleware(['auth', 'verified'])
     ->middleware('auth', 'manager')
     ->name('manager.custom.editpackage.booked');
@@ -731,7 +731,7 @@ Route::post('/manager/package/{package_id}/custom/update', [MgrCustomPackagesCon
     ->middleware('auth', 'manager')
     ->name('manager.custom.updatepackage');
 
-Route::post('/manager/package/{package_id}/custom/update/booked', [MgrCustomPackagesController::class, 'updatebooked'])
+Route::post('/manager/package/{package_id}/custom/update/booked/{appointment_id}', [MgrCustomPackagesController::class, 'updatebooked'])
     ->middleware(['auth', 'verified'])
     ->middleware('auth', 'manager')
     ->name('manager.booked.custom.updatepackage');

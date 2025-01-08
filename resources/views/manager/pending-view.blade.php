@@ -185,8 +185,9 @@
                                     <br>
                                     <strong>Package Total Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
                                     <br>
-                                    <div class="underline my-2">
-                                        <strong class="text-xl">Final Price: ₱{{ number_format($appointment->package->discountedprice ?? 0, 2) }}</strong>
+                                    <div class=" my-2">
+                                        <strong class="text-xl underline">Final Price: ₱{{ number_format($appointment->package->discountedprice ?? 0, 2) }}</strong>
+                                        <span class="ml-3 italic ">({{$appointment->package->discount}}% Discount)</span>
                                     </div>
                                     @elseif($appointment->package && ($appointment->package->packagetype == 'Normal' || $appointment->package->packagetype == 'Client'))
                                     <strong>Estimated Price:</strong> ₱{{ number_format($appointment->package->packagedesc ?? 0, 2) }}
@@ -265,10 +266,10 @@
                                                     </ul>
                                                 @endforeach
                                                 <div class="flex justify-end">
-                                                    <a href="{{ route('manager.custom.editpackage.booked', $appointment->package->package_id) }}" class="inline-flex w-16 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                                    <a href="{{ route('manager.custom.editpackage.booked', ['package_id' => $appointment->package->package_id, 'appointment_id' => $appointment->appointment_id]) }}" class="inline-flex w-16 items-center px-2 py-1 text-xs cursor-pointer font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                                                         Edit
                                                         <i class="fa-solid fa-pen-to-square ml-3"></i>
-                                                    </a>
+                                                    </a> 
                                                 </div>
                                             @else
                                                 <p class="text-gray-700">No custom items available</p>
