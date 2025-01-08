@@ -253,12 +253,7 @@
                                         View Attached Contract
                                     </a>
                                 @else
-                                    <button 
-                                        id="attach-contract-btn" 
-                                        class="underline"
-                                    >
-                                        Attach Contract
-                                    </button>
+                                    No Contract attacted
                                 @endif
                             </td>
                         </tr>
@@ -273,11 +268,11 @@
                                 <img id="contractImage" class="object-contain max-h-screen max-w-screen" />
                                 
                                 <!-- Edit Button -->
-                                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                                {{-- <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                                     <button id="editContractBtn" class="bg-yellow-500 hover:bg-yellow-700 text-white px-6 py-2 rounded-full">
                                         Replace
                                     </button>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <script>
