@@ -634,6 +634,7 @@ class MgrCustomPackagesController extends Controller
         $package->packagename = $request->input('packagename');
         $package->packagedesc = $request->input('total_amount'); 
         $package->discountedprice = $request->input('final');
+        $package->discount = $request->input('discount'); 
         // You might want to update package photo or other fields, if necessary
         // $package->packagephoto = $request->input('new_photo') ?? 'images/custom.jpg'; 
 
@@ -777,6 +778,7 @@ class MgrCustomPackagesController extends Controller
         // $package->packagename = $request->input('packagename');
         $package->packagedesc = $request->input('total_amount'); 
         $package->discountedprice = $request->input('final');
+        $package->discount = $request->input('discount'); 
         // You might want to update package photo or other fields, if necessary
         // $package->packagephoto = $request->input('new_photo') ?? 'images/custom.jpg'; 
 
@@ -869,7 +871,7 @@ class MgrCustomPackagesController extends Controller
         }
 
         // Update the balance for the specific appointment
-        $appointment->balance = $package->packagedesc - $appointment->deposit;
+        $appointment->balance = $package->discountedprice - $appointment->deposit;
         $appointment->save();
 
         $DateFormatted = Carbon::parse($appointment->edate)->format('F j, Y');

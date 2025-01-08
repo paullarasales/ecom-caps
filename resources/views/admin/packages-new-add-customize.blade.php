@@ -756,6 +756,7 @@
                                     <div class="md:col-span-1">
                                         <select name="discount" id="discount" onchange="applyDiscount()" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:outline-none focus:border-yellow-500 focus:ring-yellow-500 focus:ring-1">
                                             <option value="" disabled selected>Discount</option>
+                                            <option value="0">0%</option>
                                             <option value="1">1%</option>
                                             <option value="2">2%</option>
                                             <option value="3">3%</option>

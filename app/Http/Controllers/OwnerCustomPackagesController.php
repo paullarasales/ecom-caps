@@ -632,6 +632,7 @@ class OwnerCustomPackagesController extends Controller
         $package->packagename = $request->input('packagename');
         $package->packagedesc = $request->input('total_amount'); 
         $package->discountedprice = $request->input('final');
+        $package->discount = $request->input('discount'); 
         // You might want to update package photo or other fields, if necessary
         // $package->packagephoto = $request->input('new_photo') ?? 'images/custom.jpg'; 
 
@@ -775,6 +776,7 @@ class OwnerCustomPackagesController extends Controller
         // $package->packagename = $request->input('packagename');
         $package->packagedesc = $request->input('total_amount'); 
         $package->discountedprice = $request->input('final');
+        $package->discount = $request->input('discount'); 
         // You might want to update package photo or other fields, if necessary
         // $package->packagephoto = $request->input('new_photo') ?? 'images/custom.jpg'; 
 
