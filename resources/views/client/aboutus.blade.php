@@ -43,8 +43,8 @@
                                 Address
                             </dt>
                             <dd class="mt-2 text-base text-gray-500">
-                                Brgy Ambonao Calasiao<br>
-                                Sitio Ico Road, Nagsaing Calasiao
+                                
+                                33 Sitio Ico Road, Nagsaing Calasiao
                             </dd>
                         </div>
                     </div>
@@ -62,7 +62,8 @@
                                 Phone number
                             </dt>
                             <dd class="mt-2 text-base text-gray-500">
-                                (555) 555-5555
+                                09052336855 - Globe <br>
+                                09395728979 - Smart
                             </dd>
                         </div>
                     </div>
@@ -98,9 +99,8 @@
                                 Office Hours
                             </dt>
                             <dd class="mt-2 text-base text-gray-500">
-                                Monday - Friday: 9am to 8pm<br>
-                                Saturday: 10am to 6pm<br>
-                                Sunday: 12pm to 4pm
+                                Monday - Friday: 8am to 8pm<br>
+                                Saturday - Sunday: By Appointment
                             </dd>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                                 Facebook
                             </dt>
                             <dd class="mt-2 text-base text-gray-500">
-                                <a href="#">View Facebook Page</a>
+                                <a href="https://www.facebook.com/thesiblingscateringservices">View Facebook Page</a>
                             </dd>
                         </div>
                     </div>
@@ -132,7 +132,23 @@
                                 Tiktok
                             </dt>
                             <dd class="mt-2 text-base text-gray-500">
-                                <a href="#">View Tiktok</a>
+                                <a href="https://www.tiktok.com/@siblingscatering?_t=ZS-8uhTcUsdvRn&_r=1">View Tiktok</a>
+                            </dd>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-black text-white">
+                                <i class="fa-brands fa-instagram"></i>
+                            </div>
+                        </div>
+                        <div class="ml-0 sm:ml-4">
+                            <dt class="text-lg leading-6 font-medium text-gray-900">
+                                Instagram
+                            </dt>
+                            <dd class="mt-2 text-base text-gray-500">
+                                <a href="https://www.instagram.com/thesiblingscatering?igsh=bjl2eWdobm1lZHJ6">View Instagram</a>
                             </dd>
                         </div>
                     </div>

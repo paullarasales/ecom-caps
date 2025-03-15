@@ -15,13 +15,13 @@
                     <li><a href="{{ route('myevent') }}" class=" text-gray-800 hover:text-gray-900">My Events</a></li>
                 </ul>
                 <div class="flex space-x-10 justify-center items-center mb-14">
-                    <a href="#" class="block  text-gray-900 transition-all duration-500 hover:text-yellow-600 ">
+                    <a href="https://www.tiktok.com/@siblingscatering?_t=ZS-8uhTcUsdvRn&_r=1" class="block  text-gray-900 transition-all duration-500 hover:text-yellow-600 ">
                         <i class="fa-brands fa-tiktok text-2xl"></i>
                     </a>
-                    <a href="#" class="block  text-gray-900 transition-all duration-500 hover:text-yellow-600 ">
+                    <a href="https://www.facebook.com/thesiblingscateringservices" class="block  text-gray-900 transition-all duration-500 hover:text-yellow-600 ">
                         <i class="fa-brands fa-facebook-f text-2xl"></i>
                     </a>
-                    <a href="#" class="block  text-gray-900 transition-all duration-500 hover:text-yellow-600 ">
+                    <a href="https://www.instagram.com/thesiblingscatering?igsh=bjl2eWdobm1lZHJ6" class="block  text-gray-900 transition-all duration-500 hover:text-yellow-600 ">
                         <i class="fa-brands fa-instagram text-2xl"></i>
                     </a>
                 </div>
